@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="ImproveYourself.Maui.Views.StatisticsPage"
+             Title="Статистика"
+             BackgroundColor="{StaticResource ColorBackground}">
+    <ScrollView>
+        <VerticalStackLayout Padding="22,16,22,30"
+                             Spacing="16">
+            <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
+                <Border Grid.Column="0" Style="{StaticResource CardBorderStyle}">
+                    <VerticalStackLayout Spacing="4">
+                        <Label Text="Текущий стрик"
+                               Style="{StaticResource BodyLabelStyle}" />
+                        <Label x:Name="CurrentStreakLabel"
+                               Text="0"
+                               FontFamily="OpenSansSemibold"
+                               FontSize="30"
+                               TextColor="{StaticResource ColorTextPrimary}" />
+                        <Label Text="дней"
+                               Style="{StaticResource BodyLabelStyle}" />
+                    </VerticalStackLayout>
+                </Border>
+
+                <Border Grid.Column="1" Style="{StaticResource CardBorderStyle}">
+                    <VerticalStackLayout Spacing="4">
+                        <Label Text="Лучший стрик"
+                               Style="{StaticResource BodyLabelStyle}" />
+                        <Label x:Name="BestStreakLabel"
+                               Text="0"
+                               FontFamily="OpenSansSemibold"
+                               FontSize="30"
+                               TextColor="{StaticResource ColorTextPrimary}" />
+                        <Label Text="дней"
+                               Style="{StaticResource BodyLabelStyle}" />
+                    </VerticalStackLayout>
+                </Border>
+            </Grid>
+
+            <Border Style="{StaticResource CardBorderStyle}">
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="Неделя выполнения"
+                           Style="{StaticResource SubtitleLabelStyle}" />
+                    <Label x:Name="WeekCompletedLabel"
+                           Text="Закрыто дней: 0/7"
+                           Style="{StaticResource BodyLabelStyle}" />
+
+                    <HorizontalStackLayout x:Name="WeeklyBarsContainer"
+                                           Spacing="8"
+                                           HorizontalOptions="Center"
+                                           Margin="0,6,0,0" />
+                </VerticalStackLayout>
+            </Border>
+
+            <Border Style="{StaticResource CardBorderStyle}">
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="Активность за неделю"
+                           Style="{StaticResource SubtitleLabelStyle}" />
+                    <Label x:Name="WeeklyCompletionRateLabel"
+                           Text="Общий completion rate: 0%"
+                           Style="{StaticResource BodyLabelStyle}" />
+                </VerticalStackLayout>
+            </Border>
+
+            <Border Style="{StaticResource CardBorderStyle}">
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="Категории шагов"
+                           Style="{StaticResource SubtitleLabelStyle}" />
+
+                    <Grid ColumnDefinitions="*,Auto"
+                          RowDefinitions="Auto,Auto,Auto"
+                          RowSpacing="10">
+                        <Label Grid.Row="0"
+                               Text="Утренняя практика"
+                               Style="{StaticResource BodyLabelStyle}" />
+                        <Label Grid.Row="0"
+                               Grid.Column="1"
+                               x:Name="PracticeValueLabel"
+                               Text="0"
+                               Style="{StaticResource SubtitleLabelStyle}" />
+
+                        <Label Grid.Row="1"
+                               Text="Цитата дня"
+                               Style="{StaticResource BodyLabelStyle}" />
+                        <Label Grid.Row="1"
+                               Grid.Column="1"
+                               x:Name="QuoteValueLabel"
+                               Text="0"
+                               Style="{StaticResource SubtitleLabelStyle}" />
+
+                        <Label Grid.Row="2"
+                               Text="Социальный вызов"
+                               Style="{StaticResource BodyLabelStyle}" />
+                        <Label Grid.Row="2"
+                               Grid.Column="1"
+                               x:Name="SocialValueLabel"
+                               Text="0"
+                               Style="{StaticResource SubtitleLabelStyle}" />
+                    </Grid>
+                </VerticalStackLayout>
+            </Border>
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

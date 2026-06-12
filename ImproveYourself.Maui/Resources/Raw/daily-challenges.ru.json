@@ -1,0 +1,1352 @@
+[
+  {
+    "id": "challenge-2026-05-17",
+    "date": "2026-05-17",
+    "title": "Твой ежедневный вызов",
+    "status": "NotStarted",
+    "createdAt": "2026-05-17T06:00:00.000Z",
+    "steps": [
+      {
+        "id": "challenge-2026-05-17-practice",
+        "dailyChallengeId": "challenge-2026-05-17",
+        "type": "Practice",
+        "title": "Утренняя практика",
+        "subtitle": "Ровное дыхание",
+        "description": "Сядь прямо и сделай 6 медленных дыхательных циклов: 4 секунды вдох и 6 секунд выдох. В конце 30 секунд просто почувствуй опору под ногами.",
+        "tip": "Выдыхай длиннее вдоха.",
+        "durationSeconds": 180,
+        "sortOrder": 1,
+        "status": "NotStarted",
+        "completedAt": null
+      },
+      {
+        "id": "challenge-2026-05-17-quote",
+        "dailyChallengeId": "challenge-2026-05-17",
+        "type": "Quote",
+        "title": "Цитата дня",
+        "description": "Прочитай цитату и отметь шаг как выполненный.",
+        "quoteText": "Ты властен над своим умом, но не над внешними событиями. Пойми это и найдёшь силу.",
+        "quoteAuthor": "Марк Аврелий",
+        "sortOrder": 2,
+        "status": "NotStarted",
+        "completedAt": null
+      },
+      {
+        "id": "challenge-2026-05-17-social",
+        "dailyChallengeId": "challenge-2026-05-17",
+        "type": "Social",
+        "title": "Социальный вызов",
+        "description": "Поздоровайся первым с одним человеком сегодня и удержи зрительный контакт 1-2 секунды.",
+        "tip": "Достаточно простого Привет или Доброе утро.",
+        "sortOrder": 3,
+        "status": "NotStarted",
+        "completedAt": null
+      }
+    ]
+  },
+  {
+    "id": "challenge-2026-05-18",
+    "date": "2026-05-18",
+    "title": "Твой ежедневный вызов",
+    "status": "NotStarted",
+    "createdAt": "2026-05-18T06:00:00.000Z",
+    "steps": [
+      {
+        "id": "challenge-2026-05-18-practice",
+        "dailyChallengeId": "challenge-2026-05-18",
+        "type": "Practice",
+        "title": "Утренняя практика",
+        "subtitle": "Открытая осанка",
+        "description": "2 минуты стой или сиди с раскрытыми плечами и расслабленной челюстью. Смотри чуть выше линии горизонта и дыши спокойно.",
+        "tip": "Не проверяй телефон во время практики.",
+        "durationSeconds": 120,
+        "sortOrder": 1,
+        "status": "NotStarted",
+        "completedAt": null
+      },
+      {
+        "id": "challenge-2026-05-18-quote",
+        "dailyChallengeId": "challenge-2026-05-18",
+        "type": "Quote",
+        "title": "Цитата дня",
+        "description": "Прочитай цитату и отметь шаг как выполненный.",
+        "quoteText": "Мы страдаем чаще в воображении, чем в реальности.",
+        "quoteAuthor": "Сенека",
+        "sortOrder": 2,
+        "status": "NotStarted",
+        "completedAt": null
+      },
+      {
+        "id": "challenge-2026-05-18-social",
+        "dailyChallengeId": "challenge-2026-05-18",
+        "type": "Social",
+        "title": "Социальный вызов",
+        "description": "Скажи короткое спасибо одному человеку вслух, а не сообщением.",
+        "tip": "Один конкретный повод звучит увереннее.",
+        "sortOrder": 3,
+        "status": "NotStarted",
+        "completedAt": null
+      }
+    ]
+  },
+  {
+    "id": "challenge-2026-05-19",
+    "date": "2026-05-19",
+    "title": "Твой ежедневный вызов",
+    "status": "NotStarted",
+    "createdAt": "2026-05-19T06:00:00.000Z",
+    "steps": [
+      {
+        "id": "challenge-2026-05-19-practice",
+        "dailyChallengeId": "challenge-2026-05-19",
+        "type": "Practice",
+        "title": "Утренняя практика",
+        "subtitle": "Короткая ходьба",
+        "description": "Пройдись 5 минут в ровном темпе без музыки. Замечай шаги и держи спину длинной.",
+        "tip": "Смотри вперед, а не в пол.",
+        "durationSeconds": 300,
+        "sortOrder": 1,
+        "status": "NotStarted",
+        "completedAt": null
+      },
+      {
+        "id": "challenge-2026-05-19-quote",
+        "dailyChallengeId": "challenge-2026-05-19",
+        "type": "Quote",
+        "title": "Цитата дня",
+        "description": "Прочитай цитату и отметь шаг как выполненный.",
+        "quoteText": "Важно не то, что с тобой происходит, а то, как ты на это реагируешь.",
+        "quoteAuthor": "Эпиктет",
+        "sortOrder": 2,
+        "status": "NotStarted",
+        "completedAt": null
+      },
+      {
+        "id": "challenge-2026-05-19-social",
+        "dailyChallengeId": "challenge-2026-05-19",
+        "type": "Social",
+        "title": "Социальный вызов",
+        "description": "Задай один нейтральный вопрос знакомому о том, как проходит день, дорога или работа.",
+        "tip": "Выбирай простой контекстный вопрос.",
+        "sortOrder": 3,
+        "status": "NotStarted",
+        "completedAt": null
+      }
+    ]
+  },
+  {
+    "id": "challenge-2026-05-20",
+    "date": "2026-05-20",
+    "title": "Твой ежедневный вызов",
+    "status": "NotStarted",
+    "createdAt": "2026-05-20T06:00:00.000Z",
+    "steps": [
+      {
+        "id": "challenge-2026-05-20-practice",
+        "dailyChallengeId": "challenge-2026-05-20",
+        "type": "Practice",
+        "title": "Утренняя практика",
+        "subtitle": "Квадрат дыхания",
+        "description": "Сделай 4 спокойных цикла: вдох 4, пауза 4, выдох 4, пауза 4. После каждого цикла мягко расслабляй плечи.",
+        "tip": "Считай про себя без спешки.",
+        "durationSeconds": 240,
+        "sortOrder": 1,
+        "status": "NotStarted",
+        "completedAt": null
+      },
+      {
+        "id": "challenge-2026-05-20-quote",
+        "dailyChallengeId": "challenge-2026-05-20",
+        "type": "Quote",
+        "title": "Цитата дня",
+        "description": "Прочитай цитату и отметь шаг как выполненный.",
+        "quoteText": "Счастье твоей жизни зависит от качества твоих мыслей.",
+        "quoteAuthor": "Марк Аврелий",
+        "sortOrder": 2,
+        "status": "NotStarted",
+        "completedAt": null
+      },
+      {
+        "id": "challenge-2026-05-20-social",
+        "dailyChallengeId": "challenge-2026-05-20",
+        "type": "Social",
+        "title": "Социальный вызов",
+        "description": "Сделай честный комплимент внешнему виду, идее или работе одного человека.",
+        "tip": "Чем конкретнее, тем естественнее.",
+        "sortOrder": 3,
+        "status": "NotStarted",
+        "completedAt": null
+      }
+    ]
+  },
+  {
+    "id": "challenge-2026-05-21",
+    "date": "2026-05-21",
+    "title": "Твой ежедневный вызов",
+    "status": "NotStarted",
+    "createdAt": "2026-05-21T06:00:00.000Z",
+    "steps": [
+      {
+        "id": "challenge-2026-05-21-practice",
+        "dailyChallengeId": "challenge-2026-05-21",
+        "type": "Practice",
+        "title": "Утренняя практика",
+        "subtitle": "Мягкая разминка",
+        "description": "Сделай круги плечами, мягко потяни шею и встряхни руки. Заверши 10 спокойными приседаниями.",
+        "tip": "Двигайся без рывков.",
+        "durationSeconds": 240,
+        "sortOrder": 1,
+        "status": "NotStarted",
+        "completedAt": null
+      },
+      {
+        "id": "challenge-2026-05-21-quote",
+        "dailyChallengeId": "challenge-2026-05-21",
+        "type": "Quote",
+        "title": "Цитата дня",
+        "description": "Прочитай цитату и отметь шаг как выполненный.",
+        "quoteText": "Не трать больше времени на споры о том, каким должен быть хороший человек. Будь им.",
+        "quoteAuthor": "Марк Аврелий",
+        "sortOrder": 2,
+        "status": "NotStarted",
+        "completedAt": null
+      },
+      {
+        "id": "challenge-2026-05-21-social",
+        "dailyChallengeId": "challenge-2026-05-21",
+        "type": "Social",
+        "title": "Социальный вызов",
+        "description": "Назови своё мнение по мелкому вопросу вместо фразы что тебе всё равно.",
+        "tip": "Короткий ответ Я бы выбрал уже достаточно.",
+        "sortOrder": 3,
+        "status": "NotStarted",
+        "completedAt": null
+      }
+    ]
+  },
+  {
+    "id": "challenge-2026-05-22",
+    "date": "2026-05-22",
+    "title": "Твой ежедневный вызов",
+    "status": "NotStarted",
+    "createdAt": "2026-05-22T06:00:00.000Z",
+    "steps": [
+      {
+        "id": "challenge-2026-05-22-practice",
+        "dailyChallengeId": "challenge-2026-05-22",
+        "type": "Practice",
+        "title": "Утренняя практика",
+        "subtitle": "Точка фокуса",
+        "description": "Выбери одну точку на стене и 3 минуты удерживай на ней внимание. Когда мысли уходят, спокойно возвращай взгляд и дыхание.",
+        "tip": "Не пытайся убрать мысли силой.",
+        "durationSeconds": 180,
+        "sortOrder": 1,
+        "status": "NotStarted",
+        "completedAt": null
+      },
+      {
+        "id": "challenge-2026-05-22-quote",
+        "dailyChallengeId": "challenge-2026-05-22",
+        "type": "Quote",
+        "title": "Цитата дня",
+        "description": "Прочитай цитату и отметь шаг как выполненный.",
+        "quoteText": "Сначала скажи себе, кем хочешь быть, а затем делай то, что должен.",
+        "quoteAuthor": "Эпиктет",
+        "sortOrder": 2,
+        "status": "NotStarted",
+        "completedAt": null
+      },
+      {
+        "id": "challenge-2026-05-22-social",
+        "dailyChallengeId": "challenge-2026-05-22",
+        "type": "Social",
+        "title": "Социальный вызов",
+        "description": "Поддержи короткий диалог ещё одной фразой вместо быстрого ухода из разговора.",
+        "tip": "Используй простое уточнение вроде И как это было для тебя.",
+        "sortOrder": 3,
+        "status": "NotStarted",
+        "completedAt": null
+      }
+    ]
+  },
+  {
+    "id": "challenge-2026-05-23",
+    "date": "2026-05-23",
+    "title": "Твой ежедневный вызов",
+    "status": "NotStarted",
+    "createdAt": "2026-05-23T06:00:00.000Z",
+    "steps": [
+      {
+        "id": "challenge-2026-05-23-practice",
+        "dailyChallengeId": "challenge-2026-05-23",
+        "type": "Practice",
+        "title": "Утренняя практика",
+        "subtitle": "Скан тела",
+        "description": "5 минут последовательно пройди вниманием от стоп к плечам. На каждом участке замечай напряжение и отпускай его на выдохе.",
+        "tip": "Достаточно мягкого внимания.",
+        "durationSeconds": 300,
+        "sortOrder": 1,
+        "status": "NotStarted",
+        "completedAt": null
+      },
+      {
+        "id": "challenge-2026-05-23-quote",
+        "dailyChallengeId": "challenge-2026-05-23",
+        "type": "Quote",
+        "title": "Цитата дня",
+        "description": "Прочитай цитату и отметь шаг как выполненный.",
+        "quoteText": "Удача — это то, что происходит, когда подготовка встречается с возможностью.",
+        "quoteAuthor": "Сенека",
+        "sortOrder": 2,
+        "status": "NotStarted",
+        "completedAt": null
+      },
+      {
+        "id": "challenge-2026-05-23-social",
+        "dailyChallengeId": "challenge-2026-05-23",
+        "type": "Social",
+        "title": "Социальный вызов",
+        "description": "Улыбнись и поздоровайся с двумя людьми в течение дня.",
+        "tip": "Не спеши сразу отворачивать взгляд после приветствия.",
+        "sortOrder": 3,
+        "status": "NotStarted",
+        "completedAt": null
+      }
+    ]
+  },
+  {
+    "id": "challenge-2026-05-24",
+    "date": "2026-05-24",
+    "title": "Твой ежедневный вызов",
+    "status": "NotStarted",
+    "createdAt": "2026-05-24T06:00:00.000Z",
+    "steps": [
+      {
+        "id": "challenge-2026-05-24-practice",
+        "dailyChallengeId": "challenge-2026-05-24",
+        "type": "Practice",
+        "title": "Утренняя практика",
+        "subtitle": "Энергичная походка",
+        "description": "6 минут походи чуть быстрее обычного и держи ровную осанку. На каждом выдохе мысленно повторяй спокойно и ровно.",
+        "tip": "Шаг должен оставаться естественным.",
+        "durationSeconds": 360,
+        "sortOrder": 1,
+        "status": "NotStarted",
+        "completedAt": null
+      },
+      {
+        "id": "challenge-2026-05-24-quote",
+        "dailyChallengeId": "challenge-2026-05-24",
+        "type": "Quote",
+        "title": "Цитата дня",
+        "description": "Прочитай цитату и отметь шаг как выполненный.",
+        "quoteText": "Никто не может заставить тебя чувствовать себя ниже без твоего согласия.",
+        "quoteAuthor": "Элеонора Рузвельт",
+        "sortOrder": 2,
+        "status": "NotStarted",
+        "completedAt": null
+      },
+      {
+        "id": "challenge-2026-05-24-social",
+        "dailyChallengeId": "challenge-2026-05-24",
+        "type": "Social",
+        "title": "Социальный вызов",
+        "description": "Попроси о небольшой помощи или уточнении, даже если можешь догадаться сам.",
+        "tip": "Простая просьба тоже тренирует уверенность.",
+        "sortOrder": 3,
+        "status": "NotStarted",
+        "completedAt": null
+      }
+    ]
+  },
+  {
+    "id": "challenge-2026-05-25",
+    "date": "2026-05-25",
+    "title": "Твой ежедневный вызов",
+    "status": "NotStarted",
+    "createdAt": "2026-05-25T06:00:00.000Z",
+    "steps": [
+      {
+        "id": "challenge-2026-05-25-practice",
+        "dailyChallengeId": "challenge-2026-05-25",
+        "type": "Practice",
+        "title": "Утренняя практика",
+        "subtitle": "Перезагрузка дыхания",
+        "description": "Сделай 10 циклов: вдох 4 и выдох 6. После этого минуту посиди молча и заметь своё состояние.",
+        "tip": "Выдох делай тише и длиннее вдоха.",
+        "durationSeconds": 300,
+        "sortOrder": 1,
+        "status": "NotStarted",
+        "completedAt": null
+      },
+      {
+        "id": "challenge-2026-05-25-quote",
+        "dailyChallengeId": "challenge-2026-05-25",
+        "type": "Quote",
+        "title": "Цитата дня",
+        "description": "Прочитай цитату и отметь шаг как выполненный.",
+        "quoteText": "Храбрость — это не отсутствие страха, а сопротивление ему и владение им.",
+        "quoteAuthor": "Марк Твен",
+        "sortOrder": 2,
+        "status": "NotStarted",
+        "completedAt": null
+      },
+      {
+        "id": "challenge-2026-05-25-social",
+        "dailyChallengeId": "challenge-2026-05-25",
+        "type": "Social",
+        "title": "Социальный вызов",
+        "description": "Скажи о своей маленькой предпочтении вслух: место, напиток, время или маршрут.",
+        "tip": "Фраза Я бы выбрал звучит спокойно и ясно.",
+        "sortOrder": 3,
+        "status": "NotStarted",
+        "completedAt": null
+      }
+    ]
+  },
+  {
+    "id": "challenge-2026-05-26",
+    "date": "2026-05-26",
+    "title": "Твой ежедневный вызов",
+    "status": "NotStarted",
+    "createdAt": "2026-05-26T06:00:00.000Z",
+    "steps": [
+      {
+        "id": "challenge-2026-05-26-practice",
+        "dailyChallengeId": "challenge-2026-05-26",
+        "type": "Practice",
+        "title": "Утренняя практика",
+        "subtitle": "Стена и осанка",
+        "description": "Встань спиной к стене на 2 минуты, затем ещё 2 минуты пройди с тем же положением корпуса. Почувствуй открытые плечи и устойчивую шею.",
+        "tip": "Не зажимай поясницу.",
+        "durationSeconds": 240,
+        "sortOrder": 1,
+        "status": "NotStarted",
+        "completedAt": null
+      },
+      {
+        "id": "challenge-2026-05-26-quote",
+        "dailyChallengeId": "challenge-2026-05-26",
+        "type": "Quote",
+        "title": "Цитата дня",
+        "description": "Прочитай цитату и отметь шаг как выполненный.",
+        "quoteText": "Тот, у кого есть зачем жить, выдержит почти любое как.",
+        "quoteAuthor": "Фридрих Ницше",
+        "sortOrder": 2,
+        "status": "NotStarted",
+        "completedAt": null
+      },
+      {
+        "id": "challenge-2026-05-26-social",
+        "dailyChallengeId": "challenge-2026-05-26",
+        "type": "Social",
+        "title": "Социальный вызов",
+        "description": "Начни короткий разговор с сервисным сотрудником или соседом на 2-3 реплики.",
+        "tip": "Подойдёт вопрос по текущей ситуации.",
+        "sortOrder": 3,
+        "status": "NotStarted",
+        "completedAt": null
+      }
+    ]
+  },
+  {
+    "id": "challenge-2026-05-27",
+    "date": "2026-05-27",
+    "title": "Твой ежедневный вызов",
+    "status": "NotStarted",
+    "createdAt": "2026-05-27T06:00:00.000Z",
+    "steps": [
+      {
+        "id": "challenge-2026-05-27-practice",
+        "dailyChallengeId": "challenge-2026-05-27",
+        "type": "Practice",
+        "title": "Утренняя практика",
+        "subtitle": "Осознанное усилие",
+        "description": "Сделай 2 круга по 8 отжиманий от стены или пола и 12 приседаний. Между кругами восстанови дыхание за 30 секунд.",
+        "tip": "Остановись до чувства перенапряжения.",
+        "durationSeconds": 300,
+        "sortOrder": 1,
+        "status": "NotStarted",
+        "completedAt": null
+      },
+      {
+        "id": "challenge-2026-05-27-quote",
+        "dailyChallengeId": "challenge-2026-05-27",
+        "type": "Quote",
+        "title": "Цитата дня",
+        "description": "Прочитай цитату и отметь шаг как выполненный.",
+        "quoteText": "Наша величайшая слава не в том, чтобы никогда не падать, а в том, чтобы подниматься каждый раз после падения.",
+        "quoteAuthor": "Конфуций",
+        "sortOrder": 2,
+        "status": "NotStarted",
+        "completedAt": null
+      },
+      {
+        "id": "challenge-2026-05-27-social",
+        "dailyChallengeId": "challenge-2026-05-27",
+        "type": "Social",
+        "title": "Социальный вызов",
+        "description": "Если кто-то задаст вопрос, ответь чуть подробнее, чем одним словом.",
+        "tip": "Добавь один факт и один короткий комментарий.",
+        "sortOrder": 3,
+        "status": "NotStarted",
+        "completedAt": null
+      }
+    ]
+  },
+  {
+    "id": "challenge-2026-05-28",
+    "date": "2026-05-28",
+    "title": "Твой ежедневный вызов",
+    "status": "NotStarted",
+    "createdAt": "2026-05-28T06:00:00.000Z",
+    "steps": [
+      {
+        "id": "challenge-2026-05-28-practice",
+        "dailyChallengeId": "challenge-2026-05-28",
+        "type": "Practice",
+        "title": "Утренняя практика",
+        "subtitle": "Назови силу",
+        "description": "3 минуты посиди прямо и назови про себя три своих сильных качества на русском или English. К каждому добавь один реальный пример из жизни.",
+        "tip": "Выбирай факты, а не общие слова.",
+        "durationSeconds": 180,
+        "sortOrder": 1,
+        "status": "NotStarted",
+        "completedAt": null
+      },
+      {
+        "id": "challenge-2026-05-28-quote",
+        "dailyChallengeId": "challenge-2026-05-28",
+        "type": "Quote",
+        "title": "Цитата дня",
+        "description": "Прочитай цитату и отметь шаг как выполненный.",
+        "quoteText": "Единственный человек, который не ошибается, — тот, кто ничего не делает.",
+        "quoteAuthor": "Теодор Рузвельт",
+        "sortOrder": 2,
+        "status": "NotStarted",
+        "completedAt": null
+      },
+      {
+        "id": "challenge-2026-05-28-social",
+        "dailyChallengeId": "challenge-2026-05-28",
+        "type": "Social",
+        "title": "Социальный вызов",
+        "description": "Попроси обратную связь по одному своему действию у знакомого человека.",
+        "tip": "Слушай до конца и не оправдывайся сразу.",
+        "sortOrder": 3,
+        "status": "NotStarted",
+        "completedAt": null
+      }
+    ]
+  },
+  {
+    "id": "challenge-2026-05-29",
+    "date": "2026-05-29",
+    "title": "Твой ежедневный вызов",
+    "status": "NotStarted",
+    "createdAt": "2026-05-29T06:00:00.000Z",
+    "steps": [
+      {
+        "id": "challenge-2026-05-29-practice",
+        "dailyChallengeId": "challenge-2026-05-29",
+        "type": "Practice",
+        "title": "Утренняя практика",
+        "subtitle": "Тихое утро",
+        "description": "Выпей воду, чай или кофе без ленты и сообщений. Первые 5 минут просто наблюдай вкус, дыхание и положение тела.",
+        "tip": "Пусть утро начнётся без спешки.",
+        "durationSeconds": 300,
+        "sortOrder": 1,
+        "status": "NotStarted",
+        "completedAt": null
+      },
+      {
+        "id": "challenge-2026-05-29-quote",
+        "dailyChallengeId": "challenge-2026-05-29",
+        "type": "Quote",
+        "title": "Цитата дня",
+        "description": "Прочитай цитату и отметь шаг как выполненный.",
+        "quoteText": "Нам мешают не сами вещи, а мнение о них.",
+        "quoteAuthor": "Эпиктет",
+        "sortOrder": 2,
+        "status": "NotStarted",
+        "completedAt": null
+      },
+      {
+        "id": "challenge-2026-05-29-social",
+        "dailyChallengeId": "challenge-2026-05-29",
+        "type": "Social",
+        "title": "Социальный вызов",
+        "description": "Откажись от чего-то мелкого вежливо, если тебе это правда не подходит.",
+        "tip": "Короткая фраза без длинных объяснений лучше.",
+        "sortOrder": 3,
+        "status": "NotStarted",
+        "completedAt": null
+      }
+    ]
+  },
+  {
+    "id": "challenge-2026-05-30",
+    "date": "2026-05-30",
+    "title": "Твой ежедневный вызов",
+    "status": "NotStarted",
+    "createdAt": "2026-05-30T06:00:00.000Z",
+    "steps": [
+      {
+        "id": "challenge-2026-05-30-practice",
+        "dailyChallengeId": "challenge-2026-05-30",
+        "type": "Practice",
+        "title": "Утренняя практика",
+        "subtitle": "Пять минут спокойствия",
+        "description": "Поставь таймер на 5 минут и наблюдай дыхание в области носа. Каждый раз мягко возвращайся, если внимание ушло.",
+        "tip": "Главная цель не идеальность, а возврат.",
+        "durationSeconds": 300,
+        "sortOrder": 1,
+        "status": "NotStarted",
+        "completedAt": null
+      },
+      {
+        "id": "challenge-2026-05-30-quote",
+        "dailyChallengeId": "challenge-2026-05-30",
+        "type": "Quote",
+        "title": "Цитата дня",
+        "description": "Прочитай цитату и отметь шаг как выполненный.",
+        "quoteText": "Трудности укрепляют ум так же, как труд укрепляет тело.",
+        "quoteAuthor": "Сенека",
+        "sortOrder": 2,
+        "status": "NotStarted",
+        "completedAt": null
+      },
+      {
+        "id": "challenge-2026-05-30-social",
+        "dailyChallengeId": "challenge-2026-05-30",
+        "type": "Social",
+        "title": "Социальный вызов",
+        "description": "Напиши сообщение человеку, с которым давно не общался, и начни с простой живой фразы.",
+        "tip": "Не придумывай идеальный текст, достаточно двух предложений.",
+        "sortOrder": 3,
+        "status": "NotStarted",
+        "completedAt": null
+      }
+    ]
+  },
+  {
+    "id": "challenge-2026-05-31",
+    "date": "2026-05-31",
+    "title": "Твой ежедневный вызов",
+    "status": "NotStarted",
+    "createdAt": "2026-05-31T06:00:00.000Z",
+    "steps": [
+      {
+        "id": "challenge-2026-05-31-practice",
+        "dailyChallengeId": "challenge-2026-05-31",
+        "type": "Practice",
+        "title": "Утренняя практика",
+        "subtitle": "Стойка уверенности",
+        "description": "2 минуты стой с ровной спиной и устойчивыми стопами, затем 2 минуты медленно пройдись, сохраняя это состояние. Заметь, как меняется внутренний тонус.",
+        "tip": "Плечи вниз, подбородок нейтрален.",
+        "durationSeconds": 240,
+        "sortOrder": 1,
+        "status": "NotStarted",
+        "completedAt": null
+      },
+      {
+        "id": "challenge-2026-05-31-quote",
+        "dailyChallengeId": "challenge-2026-05-31",
+        "type": "Quote",
+        "title": "Цитата дня",
+        "description": "Прочитай цитату и отметь шаг как выполненный.",
+        "quoteText": "Если это неверно, не делай этого; если это неправда, не говори этого.",
+        "quoteAuthor": "Марк Аврелий",
+        "sortOrder": 2,
+        "status": "NotStarted",
+        "completedAt": null
+      },
+      {
+        "id": "challenge-2026-05-31-social",
+        "dailyChallengeId": "challenge-2026-05-31",
+        "type": "Social",
+        "title": "Социальный вызов",
+        "description": "Предложи маленькую инициативу: место встречи, время звонка или следующий шаг по делу.",
+        "tip": "Одна ясная идея уже считается.",
+        "sortOrder": 3,
+        "status": "NotStarted",
+        "completedAt": null
+      }
+    ]
+  },
+  {
+    "id": "challenge-2026-06-01",
+    "date": "2026-06-01",
+    "title": "Твой ежедневный вызов",
+    "status": "NotStarted",
+    "createdAt": "2026-06-01T06:00:00.000Z",
+    "steps": [
+      {
+        "id": "challenge-2026-06-01-practice",
+        "dailyChallengeId": "challenge-2026-06-01",
+        "type": "Practice",
+        "title": "Утренняя практика",
+        "subtitle": "Одна ясная мысль",
+        "description": "5 минут запиши одну мысль, которая обычно сбивает твою уверенность, и рядом более точную версию. Закончи одной фразой действия на день.",
+        "tip": "Пиши коротко и честно.",
+        "durationSeconds": 300,
+        "sortOrder": 1,
+        "status": "NotStarted",
+        "completedAt": null
+      },
+      {
+        "id": "challenge-2026-06-01-quote",
+        "dailyChallengeId": "challenge-2026-06-01",
+        "type": "Quote",
+        "title": "Цитата дня",
+        "description": "Прочитай цитату и отметь шаг как выполненный.",
+        "quoteText": "То, чего мы боимся делать больше всего, часто и есть то, что нам нужнее всего.",
+        "quoteAuthor": "Тим Феррис",
+        "sortOrder": 2,
+        "status": "NotStarted",
+        "completedAt": null
+      },
+      {
+        "id": "challenge-2026-06-01-social",
+        "dailyChallengeId": "challenge-2026-06-01",
+        "type": "Social",
+        "title": "Социальный вызов",
+        "description": "Во время разговора задай один вопрос глубже обычного: что для тебя было самым полезным или интересным.",
+        "tip": "Слушай ответ до конца и не спеши к своей истории.",
+        "sortOrder": 3,
+        "status": "NotStarted",
+        "completedAt": null
+      }
+    ]
+  },
+  {
+    "id": "challenge-2026-06-02",
+    "date": "2026-06-02",
+    "title": "Твой ежедневный вызов",
+    "status": "NotStarted",
+    "createdAt": "2026-06-02T06:00:00.000Z",
+    "steps": [
+      {
+        "id": "challenge-2026-06-02-practice",
+        "dailyChallengeId": "challenge-2026-06-02",
+        "type": "Practice",
+        "title": "Утренняя практика",
+        "subtitle": "Ритм 5-5",
+        "description": "Сделай 12 дыхательных циклов по схеме 5 секунд вдох и 5 секунд выдох. Последнюю минуту посиди в тишине и почувствуй устойчивость.",
+        "tip": "Дыши через нос, если комфортно.",
+        "durationSeconds": 300,
+        "sortOrder": 1,
+        "status": "NotStarted",
+        "completedAt": null
+      },
+      {
+        "id": "challenge-2026-06-02-quote",
+        "dailyChallengeId": "challenge-2026-06-02",
+        "type": "Quote",
+        "title": "Цитата дня",
+        "description": "Прочитай цитату и отметь шаг как выполненный.",
+        "quoteText": "Действуй так, будто то, что ты делаешь, имеет значение. Потому что это так.",
+        "quoteAuthor": "Уильям Джеймс",
+        "sortOrder": 2,
+        "status": "NotStarted",
+        "completedAt": null
+      },
+      {
+        "id": "challenge-2026-06-02-social",
+        "dailyChallengeId": "challenge-2026-06-02",
+        "type": "Social",
+        "title": "Социальный вызов",
+        "description": "Сделай короткое self-introduction, если появится подходящий момент: кто ты и чем сейчас занят.",
+        "tip": "Держи версию на 1-2 предложения.",
+        "sortOrder": 3,
+        "status": "NotStarted",
+        "completedAt": null
+      }
+    ]
+  },
+  {
+    "id": "challenge-2026-06-03",
+    "date": "2026-06-03",
+    "title": "Твой ежедневный вызов",
+    "status": "NotStarted",
+    "createdAt": "2026-06-03T06:00:00.000Z",
+    "steps": [
+      {
+        "id": "challenge-2026-06-03-practice",
+        "dailyChallengeId": "challenge-2026-06-03",
+        "type": "Practice",
+        "title": "Утренняя практика",
+        "subtitle": "Свободное тело",
+        "description": "7 минут чередуй наклоны, вращения плеч, мягкие выпады и растяжку грудного отдела. Двигайся плавно и следи за качеством дыхания.",
+        "tip": "Лучше плавность, чем амплитуда.",
+        "durationSeconds": 420,
+        "sortOrder": 1,
+        "status": "NotStarted",
+        "completedAt": null
+      },
+      {
+        "id": "challenge-2026-06-03-quote",
+        "dailyChallengeId": "challenge-2026-06-03",
+        "type": "Quote",
+        "title": "Цитата дня",
+        "description": "Прочитай цитату и отметь шаг как выполненный.",
+        "quoteText": "Всегда кажется невозможным, пока это не сделано.",
+        "quoteAuthor": "Нельсон Мандела",
+        "sortOrder": 2,
+        "status": "NotStarted",
+        "completedAt": null
+      },
+      {
+        "id": "challenge-2026-06-03-social",
+        "dailyChallengeId": "challenge-2026-06-03",
+        "type": "Social",
+        "title": "Социальный вызов",
+        "description": "Выскажи своё несогласие по мелкому вопросу уважительно и спокойно.",
+        "tip": "Начни с фразы Я вижу это немного иначе.",
+        "sortOrder": 3,
+        "status": "NotStarted",
+        "completedAt": null
+      }
+    ]
+  },
+  {
+    "id": "challenge-2026-06-04",
+    "date": "2026-06-04",
+    "title": "Твой ежедневный вызов",
+    "status": "NotStarted",
+    "createdAt": "2026-06-04T06:00:00.000Z",
+    "steps": [
+      {
+        "id": "challenge-2026-06-04-practice",
+        "dailyChallengeId": "challenge-2026-06-04",
+        "type": "Practice",
+        "title": "Утренняя практика",
+        "subtitle": "Один приоритет",
+        "description": "Выбери одну важную задачу на сегодня и 4 минуты спокойно визуализируй её первый шаг. Затем вслух назови время, когда начнёшь.",
+        "tip": "Первый шаг должен занимать меньше 10 минут.",
+        "durationSeconds": 240,
+        "sortOrder": 1,
+        "status": "NotStarted",
+        "completedAt": null
+      },
+      {
+        "id": "challenge-2026-06-04-quote",
+        "dailyChallengeId": "challenge-2026-06-04",
+        "type": "Quote",
+        "title": "Цитата дня",
+        "description": "Прочитай цитату и отметь шаг как выполненный.",
+        "quoteText": "Не проси лёгкой жизни, проси силы выдержать трудную.",
+        "quoteAuthor": "Брюс Ли",
+        "sortOrder": 2,
+        "status": "NotStarted",
+        "completedAt": null
+      },
+      {
+        "id": "challenge-2026-06-04-social",
+        "dailyChallengeId": "challenge-2026-06-04",
+        "type": "Social",
+        "title": "Социальный вызов",
+        "description": "Попроси о небольшом одолжении, которое реально упростит тебе день.",
+        "tip": "Чёткая просьба легче, чем намёк.",
+        "sortOrder": 3,
+        "status": "NotStarted",
+        "completedAt": null
+      }
+    ]
+  },
+  {
+    "id": "challenge-2026-06-05",
+    "date": "2026-06-05",
+    "title": "Твой ежедневный вызов",
+    "status": "NotStarted",
+    "createdAt": "2026-06-05T06:00:00.000Z",
+    "steps": [
+      {
+        "id": "challenge-2026-06-05-practice",
+        "dailyChallengeId": "challenge-2026-06-05",
+        "type": "Practice",
+        "title": "Утренняя практика",
+        "subtitle": "Взгляд вперед",
+        "description": "3 минуты походи по комнате или улице, удерживая взгляд на уровне глаз, а не вниз. На каждом шаге замечай опору и ровное дыхание.",
+        "tip": "Пусть лицо остаётся расслабленным.",
+        "durationSeconds": 180,
+        "sortOrder": 1,
+        "status": "NotStarted",
+        "completedAt": null
+      },
+      {
+        "id": "challenge-2026-06-05-quote",
+        "dailyChallengeId": "challenge-2026-06-05",
+        "type": "Quote",
+        "title": "Цитата дня",
+        "description": "Прочитай цитату и отметь шаг как выполненный.",
+        "quoteText": "Препятствие к действию продвигает действие. То, что стоит на пути, становится путём.",
+        "quoteAuthor": "Марк Аврелий",
+        "sortOrder": 2,
+        "status": "NotStarted",
+        "completedAt": null
+      },
+      {
+        "id": "challenge-2026-06-05-social",
+        "dailyChallengeId": "challenge-2026-06-05",
+        "type": "Social",
+        "title": "Социальный вызов",
+        "description": "Во время общения удержи телефон вне рук хотя бы 5 минут.",
+        "tip": "Полное внимание само по себе повышает уверенность.",
+        "sortOrder": 3,
+        "status": "NotStarted",
+        "completedAt": null
+      }
+    ]
+  },
+  {
+    "id": "challenge-2026-06-06",
+    "date": "2026-06-06",
+    "title": "Твой ежедневный вызов",
+    "status": "NotStarted",
+    "createdAt": "2026-06-06T06:00:00.000Z",
+    "steps": [
+      {
+        "id": "challenge-2026-06-06-practice",
+        "dailyChallengeId": "challenge-2026-06-06",
+        "type": "Practice",
+        "title": "Утренняя практика",
+        "subtitle": "Пауза уважения к себе",
+        "description": "6 минут посиди в тишине и вспомни три момента, где ты действовал достойно, даже если было неидеально. На выдохе отмечай, что этого уже достаточно, чтобы продолжать.",
+        "tip": "Ищи честные, небольшие примеры.",
+        "durationSeconds": 360,
+        "sortOrder": 1,
+        "status": "NotStarted",
+        "completedAt": null
+      },
+      {
+        "id": "challenge-2026-06-06-quote",
+        "dailyChallengeId": "challenge-2026-06-06",
+        "type": "Quote",
+        "title": "Цитата дня",
+        "description": "Прочитай цитату и отметь шаг как выполненный.",
+        "quoteText": "Ты промахиваешься по 100% бросков, которые не делаешь.",
+        "quoteAuthor": "Уэйн Гретцки",
+        "sortOrder": 2,
+        "status": "NotStarted",
+        "completedAt": null
+      },
+      {
+        "id": "challenge-2026-06-06-social",
+        "dailyChallengeId": "challenge-2026-06-06",
+        "type": "Social",
+        "title": "Социальный вызов",
+        "description": "Пригласи знакомого на короткий кофе, прогулку или звонок на этой неделе.",
+        "tip": "Предложи конкретный формат и время.",
+        "sortOrder": 3,
+        "status": "NotStarted",
+        "completedAt": null
+      }
+    ]
+  },
+  {
+    "id": "challenge-2026-06-07",
+    "date": "2026-06-07",
+    "title": "Твой ежедневный вызов",
+    "status": "NotStarted",
+    "createdAt": "2026-06-07T06:00:00.000Z",
+    "steps": [
+      {
+        "id": "challenge-2026-06-07-practice",
+        "dailyChallengeId": "challenge-2026-06-07",
+        "type": "Practice",
+        "title": "Утренняя практика",
+        "subtitle": "Лестница дыхания",
+        "description": "Сделай 2 цикла 4-4, затем 2 цикла 4-6 и затем 2 цикла 5-6. В конце минуту просто сиди спокойно.",
+        "tip": "Если темп неудобен, не удлиняй вдох.",
+        "durationSeconds": 360,
+        "sortOrder": 1,
+        "status": "NotStarted",
+        "completedAt": null
+      },
+      {
+        "id": "challenge-2026-06-07-quote",
+        "dailyChallengeId": "challenge-2026-06-07",
+        "type": "Quote",
+        "title": "Цитата дня",
+        "description": "Прочитай цитату и отметь шаг как выполненный.",
+        "quoteText": "Свободен тот, кто смел.",
+        "quoteAuthor": "Сенека",
+        "sortOrder": 2,
+        "status": "NotStarted",
+        "completedAt": null
+      },
+      {
+        "id": "challenge-2026-06-07-social",
+        "dailyChallengeId": "challenge-2026-06-07",
+        "type": "Social",
+        "title": "Социальный вызов",
+        "description": "Сформулируй и озвучь одну границу: время, темп, формат общения или приоритет.",
+        "tip": "Говори о своём выборе, не обвиняя другого.",
+        "sortOrder": 3,
+        "status": "NotStarted",
+        "completedAt": null
+      }
+    ]
+  },
+  {
+    "id": "challenge-2026-06-08",
+    "date": "2026-06-08",
+    "title": "Твой ежедневный вызов",
+    "status": "NotStarted",
+    "createdAt": "2026-06-08T06:00:00.000Z",
+    "steps": [
+      {
+        "id": "challenge-2026-06-08-practice",
+        "dailyChallengeId": "challenge-2026-06-08",
+        "type": "Practice",
+        "title": "Утренняя практика",
+        "subtitle": "Устойчивая ходьба",
+        "description": "8 минут иди без спешки и замечай контакт стоп с землёй. Каждую минуту мягко выпрямляй спину и расслабляй плечи.",
+        "tip": "Никакой многозадачности во время ходьбы.",
+        "durationSeconds": 480,
+        "sortOrder": 1,
+        "status": "NotStarted",
+        "completedAt": null
+      },
+      {
+        "id": "challenge-2026-06-08-quote",
+        "dailyChallengeId": "challenge-2026-06-08",
+        "type": "Quote",
+        "title": "Цитата дня",
+        "description": "Прочитай цитату и отметь шаг как выполненный.",
+        "quoteText": "Ты получаешь силу, мужество и уверенность всякий раз, когда действительно смотришь страху в лицо.",
+        "quoteAuthor": "Элеонора Рузвельт",
+        "sortOrder": 2,
+        "status": "NotStarted",
+        "completedAt": null
+      },
+      {
+        "id": "challenge-2026-06-08-social",
+        "dailyChallengeId": "challenge-2026-06-08",
+        "type": "Social",
+        "title": "Социальный вызов",
+        "description": "Спроси рекомендацию у кого-то: книгу, место, привычку или полезный ресурс.",
+        "tip": "Людям обычно приятно делиться опытом.",
+        "sortOrder": 3,
+        "status": "NotStarted",
+        "completedAt": null
+      }
+    ]
+  },
+  {
+    "id": "challenge-2026-06-09",
+    "date": "2026-06-09",
+    "title": "Твой ежедневный вызов",
+    "status": "NotStarted",
+    "createdAt": "2026-06-09T06:00:00.000Z",
+    "steps": [
+      {
+        "id": "challenge-2026-06-09-practice",
+        "dailyChallengeId": "challenge-2026-06-09",
+        "type": "Practice",
+        "title": "Утренняя практика",
+        "subtitle": "Голос и дыхание",
+        "description": "Сделай 6 медленных выдохов, затем 2 минуты чётко и спокойно произноси вслух короткие фразы. Слушай свой голос без критики.",
+        "tip": "Говори чуть медленнее обычного.",
+        "durationSeconds": 180,
+        "sortOrder": 1,
+        "status": "NotStarted",
+        "completedAt": null
+      },
+      {
+        "id": "challenge-2026-06-09-quote",
+        "dailyChallengeId": "challenge-2026-06-09",
+        "type": "Quote",
+        "title": "Цитата дня",
+        "description": "Прочитай цитату и отметь шаг как выполненный.",
+        "quoteText": "Делай что можешь, с тем что у тебя есть, там где ты находишься.",
+        "quoteAuthor": "Теодор Рузвельт",
+        "sortOrder": 2,
+        "status": "NotStarted",
+        "completedAt": null
+      },
+      {
+        "id": "challenge-2026-06-09-social",
+        "dailyChallengeId": "challenge-2026-06-09",
+        "type": "Social",
+        "title": "Социальный вызов",
+        "description": "Поделись одной своей небольшой победой без самоуменьшения.",
+        "tip": "Один факт без извинений достаточно.",
+        "sortOrder": 3,
+        "status": "NotStarted",
+        "completedAt": null
+      }
+    ]
+  },
+  {
+    "id": "challenge-2026-06-10",
+    "date": "2026-06-10",
+    "title": "Твой ежедневный вызов",
+    "status": "NotStarted",
+    "createdAt": "2026-06-10T06:00:00.000Z",
+    "steps": [
+      {
+        "id": "challenge-2026-06-10-practice",
+        "dailyChallengeId": "challenge-2026-06-10",
+        "type": "Practice",
+        "title": "Утренняя практика",
+        "subtitle": "Перезапуск утра",
+        "description": "7 минут чередуй 1 минуту дыхания, 3 минуты лёгкой разминки и 3 минуты спокойной ходьбы. Переключайся без спешки.",
+        "tip": "Не оценивай себя, просто продолжай.",
+        "durationSeconds": 420,
+        "sortOrder": 1,
+        "status": "NotStarted",
+        "completedAt": null
+      },
+      {
+        "id": "challenge-2026-06-10-quote",
+        "dailyChallengeId": "challenge-2026-06-10",
+        "type": "Quote",
+        "title": "Цитата дня",
+        "description": "Прочитай цитату и отметь шаг как выполненный.",
+        "quoteText": "Единственное, что ограничивает наше завтра, — это наши сомнения сегодня.",
+        "quoteAuthor": "Франклин Рузвельт",
+        "sortOrder": 2,
+        "status": "NotStarted",
+        "completedAt": null
+      },
+      {
+        "id": "challenge-2026-06-10-social",
+        "dailyChallengeId": "challenge-2026-06-10",
+        "type": "Social",
+        "title": "Социальный вызов",
+        "description": "Начни разговор с новым человеком с открытого вопроса и поддержи 3-4 реплики.",
+        "tip": "Слушай ответ и цепляйся за одну деталь.",
+        "sortOrder": 3,
+        "status": "NotStarted",
+        "completedAt": null
+      }
+    ]
+  },
+  {
+    "id": "challenge-2026-06-11",
+    "date": "2026-06-11",
+    "title": "Твой ежедневный вызов",
+    "status": "NotStarted",
+    "createdAt": "2026-06-11T06:00:00.000Z",
+    "steps": [
+      {
+        "id": "challenge-2026-06-11-practice",
+        "dailyChallengeId": "challenge-2026-06-11",
+        "type": "Practice",
+        "title": "Утренняя практика",
+        "subtitle": "Спокойная неподвижность",
+        "description": "4 минуты сиди без телефона и без лишних движений. Отмечай импульс отвлечься и мягко возвращайся к дыханию.",
+        "tip": "Неподвижность тоже тренирует уверенность.",
+        "durationSeconds": 240,
+        "sortOrder": 1,
+        "status": "NotStarted",
+        "completedAt": null
+      },
+      {
+        "id": "challenge-2026-06-11-quote",
+        "dailyChallengeId": "challenge-2026-06-11",
+        "type": "Quote",
+        "title": "Цитата дня",
+        "description": "Прочитай цитату и отметь шаг как выполненный.",
+        "quoteText": "Смелость начинается с того, что ты показываешься и позволяешь себя увидеть.",
+        "quoteAuthor": "Брене Браун",
+        "sortOrder": 2,
+        "status": "NotStarted",
+        "completedAt": null
+      },
+      {
+        "id": "challenge-2026-06-11-social",
+        "dailyChallengeId": "challenge-2026-06-11",
+        "type": "Social",
+        "title": "Социальный вызов",
+        "description": "В рабочем или бытовом общении скажи свою мысль первой, не дожидаясь идеальной формулировки.",
+        "tip": "Сначала смысл, потом polishing.",
+        "sortOrder": 3,
+        "status": "NotStarted",
+        "completedAt": null
+      }
+    ]
+  },
+  {
+    "id": "challenge-2026-06-12",
+    "date": "2026-06-12",
+    "title": "Твой ежедневный вызов",
+    "status": "NotStarted",
+    "createdAt": "2026-06-12T06:00:00.000Z",
+    "steps": [
+      {
+        "id": "challenge-2026-06-12-practice",
+        "dailyChallengeId": "challenge-2026-06-12",
+        "type": "Practice",
+        "title": "Утренняя практика",
+        "subtitle": "Намерение дня",
+        "description": "5 минут посвяти короткой записи: сегодня я хочу быть человеком, который действует спокойно и прямо. Заверши одной конкретной линией поведения для сложного момента.",
+        "tip": "Фраза должна описывать поведение, а не настроение.",
+        "durationSeconds": 300,
+        "sortOrder": 1,
+        "status": "NotStarted",
+        "completedAt": null
+      },
+      {
+        "id": "challenge-2026-06-12-quote",
+        "dailyChallengeId": "challenge-2026-06-12",
+        "type": "Quote",
+        "title": "Цитата дня",
+        "description": "Прочитай цитату и отметь шаг как выполненный.",
+        "quoteText": "Самое большое препятствие к жизни — ожидание, зависящее от завтрашнего дня.",
+        "quoteAuthor": "Сенека",
+        "sortOrder": 2,
+        "status": "NotStarted",
+        "completedAt": null
+      },
+      {
+        "id": "challenge-2026-06-12-social",
+        "dailyChallengeId": "challenge-2026-06-12",
+        "type": "Social",
+        "title": "Социальный вызов",
+        "description": "Сделай голосовое сообщение вместо текста, если это уместно.",
+        "tip": "Запиши один дубль и не переписывай пять раз.",
+        "sortOrder": 3,
+        "status": "NotStarted",
+        "completedAt": null
+      }
+    ]
+  },
+  {
+    "id": "challenge-2026-06-13",
+    "date": "2026-06-13",
+    "title": "Твой ежедневный вызов",
+    "status": "NotStarted",
+    "createdAt": "2026-06-13T06:00:00.000Z",
+    "steps": [
+      {
+        "id": "challenge-2026-06-13-practice",
+        "dailyChallengeId": "challenge-2026-06-13",
+        "type": "Practice",
+        "title": "Утренняя практика",
+        "subtitle": "Сильная спина",
+        "description": "Сделай 2 подхода по 12 приседаний и 20 секунд планки, затем минуту восстанови дыхание. Заверши 1 минутой с открытой осанкой.",
+        "tip": "Держи корпус собранным, но без зажима.",
+        "durationSeconds": 300,
+        "sortOrder": 1,
+        "status": "NotStarted",
+        "completedAt": null
+      },
+      {
+        "id": "challenge-2026-06-13-quote",
+        "dailyChallengeId": "challenge-2026-06-13",
+        "type": "Quote",
+        "title": "Цитата дня",
+        "description": "Прочитай цитату и отметь шаг как выполненный.",
+        "quoteText": "Лучший выход — всегда проходить через.",
+        "quoteAuthor": "Роберт Фрост",
+        "sortOrder": 2,
+        "status": "NotStarted",
+        "completedAt": null
+      },
+      {
+        "id": "challenge-2026-06-13-social",
+        "dailyChallengeId": "challenge-2026-06-13",
+        "type": "Social",
+        "title": "Социальный вызов",
+        "description": "Попроси человека уточнить то, что ты не понял, вместо молчаливого согласия.",
+        "tip": "Фраза Уточни, пожалуйста звучит уверенно и спокойно.",
+        "sortOrder": 3,
+        "status": "NotStarted",
+        "completedAt": null
+      }
+    ]
+  },
+  {
+    "id": "challenge-2026-06-14",
+    "date": "2026-06-14",
+    "title": "Твой ежедневный вызов",
+    "status": "NotStarted",
+    "createdAt": "2026-06-14T06:00:00.000Z",
+    "steps": [
+      {
+        "id": "challenge-2026-06-14-practice",
+        "dailyChallengeId": "challenge-2026-06-14",
+        "type": "Practice",
+        "title": "Утренняя практика",
+        "subtitle": "Тренировка внимания",
+        "description": "6 минут попеременно уделяй минуту дыханию, минуту звукам вокруг и минуту ощущениям в теле, затем повтори цикл. Это помогает не выпадать из себя в течение дня.",
+        "tip": "Просто замечай, ничего не исправляй.",
+        "durationSeconds": 360,
+        "sortOrder": 1,
+        "status": "NotStarted",
+        "completedAt": null
+      },
+      {
+        "id": "challenge-2026-06-14-quote",
+        "dailyChallengeId": "challenge-2026-06-14",
+        "type": "Quote",
+        "title": "Цитата дня",
+        "description": "Прочитай цитату и отметь шаг как выполненный.",
+        "quoteText": "Будь терпим к другим и строг к себе.",
+        "quoteAuthor": "Марк Аврелий",
+        "sortOrder": 2,
+        "status": "NotStarted",
+        "completedAt": null
+      },
+      {
+        "id": "challenge-2026-06-14-social",
+        "dailyChallengeId": "challenge-2026-06-14",
+        "type": "Social",
+        "title": "Социальный вызов",
+        "description": "Скажи кому-то тёплые слова поддержки, глядя в глаза или честно в сообщении.",
+        "tip": "Короткая искренность работает лучше пафоса.",
+        "sortOrder": 3,
+        "status": "NotStarted",
+        "completedAt": null
+      }
+    ]
+  },
+  {
+    "id": "challenge-2026-06-15",
+    "date": "2026-06-15",
+    "title": "Твой ежедневный вызов",
+    "status": "NotStarted",
+    "createdAt": "2026-06-15T06:00:00.000Z",
+    "steps": [
+      {
+        "id": "challenge-2026-06-15-practice",
+        "dailyChallengeId": "challenge-2026-06-15",
+        "type": "Practice",
+        "title": "Утренняя практика",
+        "subtitle": "Спокойный обзор",
+        "description": "7 минут вспомни, что за месяц стало легче в теле, мыслях и общении. Запиши три наблюдения и один шаг, который оставишь как привычку.",
+        "tip": "Смотри на прогресс, а не на идеал.",
+        "durationSeconds": 420,
+        "sortOrder": 1,
+        "status": "NotStarted",
+        "completedAt": null
+      },
+      {
+        "id": "challenge-2026-06-15-quote",
+        "dailyChallengeId": "challenge-2026-06-15",
+        "type": "Quote",
+        "title": "Цитата дня",
+        "description": "Прочитай цитату и отметь шаг как выполненный.",
+        "quoteText": "Ничто не может приглушить свет, который сияет изнутри.",
+        "quoteAuthor": "Майя Энджелоу",
+        "sortOrder": 2,
+        "status": "NotStarted",
+        "completedAt": null
+      },
+      {
+        "id": "challenge-2026-06-15-social",
+        "dailyChallengeId": "challenge-2026-06-15",
+        "type": "Social",
+        "title": "Социальный вызов",
+        "description": "Подведи социальный итог месяца: скажи одному человеку, чему научился в общении, или запиши это голосом для себя.",
+        "tip": "Сфокусируйся на одном реальном сдвиге.",
+        "sortOrder": 3,
+        "status": "NotStarted",
+        "completedAt": null
+      }
+    ]
+  }
+]

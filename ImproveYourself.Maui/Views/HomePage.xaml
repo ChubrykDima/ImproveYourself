@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="ImproveYourself.Maui.Views.HomePage"
+             Title="Главная"
+             BackgroundColor="{StaticResource ColorBackground}">
+    <ScrollView>
+        <VerticalStackLayout Padding="22,16,22,30"
+                             Spacing="16">
+            <Grid ColumnDefinitions="*,Auto"
+                  VerticalOptions="Center">
+                <VerticalStackLayout Grid.Column="0" Spacing="4">
+                    <Label Text="Добро пожаловать"
+                           Style="{StaticResource BodyLabelStyle}" />
+                    <Label x:Name="GreetingNameLabel"
+                           Text="Друг"
+                           Style="{StaticResource TitleLabelStyle}" />
+                </VerticalStackLayout>
+
+                <Border Grid.Column="1"
+                        WidthRequest="56"
+                        HeightRequest="56"
+                        Stroke="{StaticResource ColorBorder}"
+                        StrokeThickness="1"
+                        StrokeShape="RoundRectangle 28"
+                        BackgroundColor="{StaticResource ColorSurfaceRaised}">
+                    <Label x:Name="AvatarInitialLabel"
+                           Text="Д"
+                           FontFamily="OpenSansSemibold"
+                           FontSize="20"
+                           TextColor="{StaticResource ColorTextPrimary}"
+                           HorizontalTextAlignment="Center"
+                           VerticalTextAlignment="Center" />
+                </Border>
+            </Grid>
+
+            <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
+                <Border Grid.Column="0" Style="{StaticResource CardBorderStyle}">
+                    <VerticalStackLayout Spacing="4">
+                        <Label Text="Текущий стрик"
+                               Style="{StaticResource BodyLabelStyle}" />
+                        <Label x:Name="StreakValueLabel"
+                               Text="0"
+                               FontFamily="OpenSansSemibold"
+                               FontSize="30"
+                               TextColor="{StaticResource ColorTextPrimary}" />
+                        <Label Text="дней подряд"
+                               Style="{StaticResource BodyLabelStyle}" />
+                    </VerticalStackLayout>
+                </Border>
+
+                <Border Grid.Column="1" Style="{StaticResource CardBorderStyle}">
+                    <VerticalStackLayout Spacing="4">
+                        <Label Text="Прогресс месяца"
+                               Style="{StaticResource BodyLabelStyle}" />
+                        <Label x:Name="MonthPercentLabel"
+                               Text="0%"
+                               FontFamily="OpenSansSemibold"
+                               FontSize="30"
+                               TextColor="{StaticResource ColorTextPrimary}" />
+                        <Label x:Name="MonthHintLabel"
+                               Text="0/30 дней"
+                               Style="{StaticResource BodyLabelStyle}" />
+                    </VerticalStackLayout>
+                </Border>
+            </Grid>
+
+            <Border Stroke="#8A4A23"
+                    StrokeThickness="1"
+                    StrokeShape="RoundRectangle 24"
+                    BackgroundColor="{StaticResource ColorSurface}"
+                    Padding="22"
+                    Margin="0,4,0,0">
+                <VerticalStackLayout Spacing="10">
+                                   <Label x:Name="ChallengeLeadLabel"
+                                             Text="Главный фокус дня"
+                           TextColor="{StaticResource ColorAccent}"
+                           FontFamily="OpenSansRegular"
+                           FontSize="15" />
+                    <Label x:Name="ChallengeTitleLabel"
+                           Text="Твой ежедневный вызов"
+                           Style="{StaticResource TitleLabelStyle}" />
+                    <Label x:Name="ChallengeSubtitleLabel"
+                           Text="Выполнено шагов: 0/3"
+                           Style="{StaticResource BodyLabelStyle}" />
+
+                    <ProgressBar x:Name="ChallengeProgressBar"
+                                 Progress="0"
+                                 ProgressColor="{StaticResource ColorAccent}"
+                                 BackgroundColor="{StaticResource ColorFrame}"
+                                 HeightRequest="10" />
+
+                    <Label x:Name="RemainingDaysLabel"
+                           Text="Осталось дней до цели: 30"
+                           Style="{StaticResource BodyLabelStyle}" />
+
+                    <Button x:Name="ChallengeButton"
+                            Text="Открыть ежедневный вызов"
+                            Style="{StaticResource PrimaryButtonStyle}"
+                            Margin="0,6,0,0"
+                            Clicked="OnOpenChallengeClicked" />
+                </VerticalStackLayout>
+            </Border>
+
+            <VerticalStackLayout Spacing="12">
+                <Button Text="Статистика&#10;Неделя, стрики и категории"
+                        Style="{StaticResource GhostButtonStyle}"
+                        Clicked="OnOpenStatisticsClicked" />
+                <Button Text="Календарь&#10;История выполненных дней"
+                        Style="{StaticResource GhostButtonStyle}"
+                        Clicked="OnOpenProfileClicked" />
+            </VerticalStackLayout>
+
+            <Button Text="Открыть настройки"
+                    BackgroundColor="Transparent"
+                    TextColor="{StaticResource ColorAccent}"
+                    FontFamily="OpenSansRegular"
+                    FontSize="15"
+                    HorizontalOptions="Start"
+                    Clicked="OnOpenSettingsClicked" />
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

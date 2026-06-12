@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="ImproveYourself.Maui.Views.OnboardingSlideOnePage"
+             NavigationPage.HasNavigationBar="False">
+    <ContentPage.Background>
+        <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+            <GradientStop Color="#0E131D" Offset="0" />
+            <GradientStop Color="#090C12" Offset="1" />
+        </LinearGradientBrush>
+    </ContentPage.Background>
+
+    <Grid Padding="22,36,22,30"
+          RowDefinitions="Auto,*,Auto">
+        <HorizontalStackLayout Grid.Row="0" Spacing="6">
+            <Border WidthRequest="26"
+                    HeightRequest="6"
+                    StrokeThickness="0"
+                    StrokeShape="RoundRectangle 999"
+                    BackgroundColor="{StaticResource ColorAccent}" />
+            <Border WidthRequest="26"
+                    HeightRequest="6"
+                    StrokeThickness="0"
+                    StrokeShape="RoundRectangle 999"
+                    BackgroundColor="{StaticResource ColorSurfaceRaised}" />
+            <Border WidthRequest="26"
+                    HeightRequest="6"
+                    StrokeThickness="0"
+                    StrokeShape="RoundRectangle 999"
+                    BackgroundColor="{StaticResource ColorSurfaceRaised}" />
+        </HorizontalStackLayout>
+
+        <VerticalStackLayout Grid.Row="1"
+                             VerticalOptions="Center"
+                             Spacing="16">
+            <Border WidthRequest="116"
+                    HeightRequest="116"
+                    StrokeThickness="0"
+                    StrokeShape="RoundRectangle 58"
+                    BackgroundColor="#33FF8A3D"
+                    HorizontalOptions="Center">
+                <Border WidthRequest="82"
+                        HeightRequest="82"
+                        StrokeThickness="0"
+                        StrokeShape="RoundRectangle 41"
+                        BackgroundColor="#73FF8A3D"
+                        HorizontalOptions="Center"
+                        VerticalOptions="Center">
+                    <Label Text="01"
+                           FontFamily="OpenSansSemibold"
+                           FontSize="28"
+                           TextColor="{StaticResource ColorTextPrimary}"
+                           HorizontalTextAlignment="Center"
+                           VerticalTextAlignment="Center" />
+                </Border>
+            </Border>
+
+            <Label Text="Меняй себя каждый день"
+                   Style="{StaticResource HeroLabelStyle}" />
+            <Label Text="Одно осознанное действие сегодня делает тебя сильнее завтра."
+                   Style="{StaticResource BodyLabelStyle}"
+                   HorizontalTextAlignment="Center" />
+        </VerticalStackLayout>
+
+        <Grid Grid.Row="2"
+              ColumnDefinitions="70,*"
+              ColumnSpacing="10"
+              VerticalOptions="End">
+            <Label />
+            <Button Grid.Column="1"
+                    Text="Дальше"
+                    Style="{StaticResource PrimaryButtonStyle}"
+                    Clicked="OnNextClicked" />
+        </Grid>
+    </Grid>
+</ContentPage>

@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="ImproveYourself.Maui.Views.ProfilePage"
+             Title="Профиль и календарь"
+             BackgroundColor="{StaticResource ColorBackground}">
+    <ScrollView>
+        <VerticalStackLayout Padding="22,16,22,30"
+                             Spacing="16">
+            <Border Style="{StaticResource CardBorderStyle}"
+                    Padding="22">
+                <VerticalStackLayout Spacing="12"
+                                     HorizontalOptions="Center">
+                    <Border WidthRequest="84"
+                            HeightRequest="84"
+                            Stroke="{StaticResource ColorBorder}"
+                            StrokeThickness="1"
+                            StrokeShape="RoundRectangle 42"
+                            BackgroundColor="{StaticResource ColorSurfaceRaised}">
+                        <Label x:Name="AvatarLabel"
+                               Text="Д"
+                               FontFamily="OpenSansSemibold"
+                               FontSize="28"
+                               TextColor="{StaticResource ColorTextPrimary}"
+                               HorizontalTextAlignment="Center"
+                               VerticalTextAlignment="Center" />
+                    </Border>
+
+                    <Label x:Name="DisplayNameLabel"
+                           Text="Друг"
+                           Style="{StaticResource TitleLabelStyle}"
+                           HorizontalTextAlignment="Center" />
+
+                    <Grid ColumnDefinitions="*,*,*"
+                          ColumnSpacing="10"
+                          Margin="0,6,0,0">
+                        <VerticalStackLayout Grid.Column="0"
+                                             HorizontalOptions="Center"
+                                             Spacing="2">
+                            <Label x:Name="CurrentStreakMetricLabel"
+                                   Text="0"
+                                   Style="{StaticResource SubtitleLabelStyle}"
+                                   HorizontalTextAlignment="Center" />
+                            <Label Text="Текущий стрик"
+                                   Style="{StaticResource BodyLabelStyle}"
+                                   HorizontalTextAlignment="Center" />
+                        </VerticalStackLayout>
+
+                        <VerticalStackLayout Grid.Column="1"
+                                             HorizontalOptions="Center"
+                                             Spacing="2">
+                            <Label x:Name="TotalCompletedMetricLabel"
+                                   Text="0"
+                                   Style="{StaticResource SubtitleLabelStyle}"
+                                   HorizontalTextAlignment="Center" />
+                            <Label Text="Всего вызовов"
+                                   Style="{StaticResource BodyLabelStyle}"
+                                   HorizontalTextAlignment="Center" />
+                        </VerticalStackLayout>
+
+                        <VerticalStackLayout Grid.Column="2"
+                                             HorizontalOptions="Center"
+                                             Spacing="2">
+                            <Label x:Name="CompletionRateMetricLabel"
+                                   Text="0%"
+                                   Style="{StaticResource SubtitleLabelStyle}"
+                                   HorizontalTextAlignment="Center" />
+                            <Label Text="Completion rate"
+                                   Style="{StaticResource BodyLabelStyle}"
+                                   HorizontalTextAlignment="Center" />
+                        </VerticalStackLayout>
+                    </Grid>
+                </VerticalStackLayout>
+            </Border>
+
+            <Border Style="{StaticResource CardBorderStyle}">
+                <VerticalStackLayout Spacing="12">
+                    <Label Text="Активность месяца"
+                           Style="{StaticResource SubtitleLabelStyle}" />
+
+                    <Grid ColumnDefinitions="*,*,*,*,*,*,*">
+                        <Label Grid.Column="0" Text="Пн" Style="{StaticResource BodyLabelStyle}" HorizontalTextAlignment="Center" />
+                        <Label Grid.Column="1" Text="Вт" Style="{StaticResource BodyLabelStyle}" HorizontalTextAlignment="Center" />
+                        <Label Grid.Column="2" Text="Ср" Style="{StaticResource BodyLabelStyle}" HorizontalTextAlignment="Center" />
+                        <Label Grid.Column="3" Text="Чт" Style="{StaticResource BodyLabelStyle}" HorizontalTextAlignment="Center" />
+                        <Label Grid.Column="4" Text="Пт" Style="{StaticResource BodyLabelStyle}" HorizontalTextAlignment="Center" />
+                        <Label Grid.Column="5" Text="Сб" Style="{StaticResource BodyLabelStyle}" HorizontalTextAlignment="Center" />
+                        <Label Grid.Column="6" Text="Вс" Style="{StaticResource BodyLabelStyle}" HorizontalTextAlignment="Center" />
+                    </Grid>
+
+                    <Grid x:Name="CalendarGrid"
+                          ColumnSpacing="6"
+                          RowSpacing="6">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                    </Grid>
+                </VerticalStackLayout>
+            </Border>
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

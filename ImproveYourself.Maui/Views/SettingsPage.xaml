@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="ImproveYourself.Maui.Views.SettingsPage"
+             Title="Настройки"
+             BackgroundColor="{StaticResource ColorBackground}">
+    <ScrollView>
+        <VerticalStackLayout Padding="22,16,22,30"
+                             Spacing="16">
+            <Border Style="{StaticResource CardBorderStyle}">
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="Профиль"
+                           Style="{StaticResource SubtitleLabelStyle}" />
+                    <Label Text="Имя в приветствии"
+                           Style="{StaticResource BodyLabelStyle}" />
+
+                    <Entry x:Name="NameEntry"
+                           MaxLength="24"
+                           Placeholder="Введите имя"
+                           PlaceholderColor="{StaticResource ColorTextSecondary}"
+                           FontFamily="OpenSansSemibold"
+                           FontSize="18"
+                           TextColor="{StaticResource ColorTextPrimary}"
+                           BackgroundColor="{StaticResource ColorFrame}"
+                           HeightRequest="52" />
+
+                    <Button Text="Сохранить имя"
+                            Style="{StaticResource PrimaryButtonStyle}"
+                            Clicked="OnSaveNameClicked" />
+                </VerticalStackLayout>
+            </Border>
+
+            <Border Style="{StaticResource CardBorderStyle}">
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="Напоминания"
+                           Style="{StaticResource SubtitleLabelStyle}" />
+                    <Label Text="Ежедневное утреннее и вечернее напоминание поддерживают ритм привычки."
+                           Style="{StaticResource BodyLabelStyle}"
+                           LineBreakMode="WordWrap" />
+
+                    <Grid ColumnDefinitions="*,Auto"
+                          VerticalOptions="Center">
+                        <Label Text="Включить уведомления"
+                               FontFamily="OpenSansRegular"
+                               FontSize="15"
+                               TextColor="{StaticResource ColorTextPrimary}"
+                               VerticalTextAlignment="Center" />
+                        <Switch Grid.Column="1"
+                                x:Name="NotificationSwitch"
+                                OnColor="{StaticResource ColorAccent}"
+                                ThumbColor="{StaticResource ColorTextPrimary}"
+                                Toggled="OnNotificationToggled" />
+                    </Grid>
+                </VerticalStackLayout>
+            </Border>
+
+            <Border Style="{StaticResource CardBorderStyle}">
+                <VerticalStackLayout Spacing="6">
+                    <Label Text="Offline-first"
+                           FontFamily="OpenSansSemibold"
+                           FontSize="18"
+                           TextColor="{StaticResource ColorAccent}" />
+                    <Label Text="Все данные прогресса, стриков и календаря сохраняются локально и работают без сети."
+                           Style="{StaticResource BodyLabelStyle}"
+                           LineBreakMode="WordWrap" />
+                </VerticalStackLayout>
+            </Border>
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

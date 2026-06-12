@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="ImproveYourself.Maui.Views.ChallengeDetailPage"
+             Title="Ежедневный вызов"
+             BackgroundColor="{StaticResource ColorBackground}">
+    <ScrollView>
+        <VerticalStackLayout Padding="22,16,22,30"
+                             Spacing="16">
+            <Border Style="{StaticResource CardBorderStyle}"
+                    Padding="22">
+                <VerticalStackLayout Spacing="10">
+                    <Label x:Name="DateLabel"
+                           Text="Дата: --"
+                           Style="{StaticResource BodyLabelStyle}" />
+                    <Label x:Name="ChallengeTitleLabel"
+                           Text="Твой ежедневный вызов"
+                           Style="{StaticResource TitleLabelStyle}" />
+                    <Label x:Name="ProgressLabel"
+                           Text="Прогресс: 0/3"
+                           Style="{StaticResource BodyLabelStyle}" />
+
+                    <ProgressBar x:Name="ChallengeProgressBar"
+                                 Progress="0"
+                                 ProgressColor="{StaticResource ColorAccent}"
+                                 BackgroundColor="{StaticResource ColorFrame}"
+                                 HeightRequest="10" />
+
+                    <Label x:Name="CompletedTextLabel"
+                           Text="Вызов дня закрыт. Можно переходить к следующему дню."
+                           TextColor="{StaticResource ColorSuccess}"
+                           FontFamily="OpenSansRegular"
+                           FontSize="15"
+                           IsVisible="False" />
+
+                    <Button x:Name="NextDayButton"
+                            Text="Перейти к следующему дню"
+                            Style="{StaticResource PrimaryButtonStyle}"
+                            IsVisible="False"
+                            Clicked="OnOpenNextDayClicked" />
+                </VerticalStackLayout>
+            </Border>
+
+            <VerticalStackLayout x:Name="StepsContainer" Spacing="12" />
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

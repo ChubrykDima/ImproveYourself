@@ -1,0 +1,78 @@
+﻿<?xml version = "1.0" encoding = "UTF-8" ?>
+<Application xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:ImproveYourself.Maui"
+             x:Class="ImproveYourself.Maui.App">
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Resources/Styles/Colors.xaml" />
+                <ResourceDictionary Source="Resources/Styles/Styles.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+
+            <Color x:Key="ColorBackground">#090C12</Color>
+            <Color x:Key="ColorFrame">#101520</Color>
+            <Color x:Key="ColorSurface">#161D29</Color>
+            <Color x:Key="ColorSurfaceRaised">#1C2636</Color>
+            <Color x:Key="ColorBorder">#2C3648</Color>
+            <Color x:Key="ColorTextPrimary">#F5F7FB</Color>
+            <Color x:Key="ColorTextSecondary">#9EA8BD</Color>
+            <Color x:Key="ColorAccent">#FF8A3D</Color>
+            <Color x:Key="ColorSuccess">#56D89A</Color>
+
+            <Style x:Key="HeroLabelStyle" TargetType="Label">
+                <Setter Property="FontFamily" Value="OpenSansSemibold" />
+                <Setter Property="FontSize" Value="36" />
+                <Setter Property="LineBreakMode" Value="WordWrap" />
+                <Setter Property="TextColor" Value="{StaticResource ColorTextPrimary}" />
+                <Setter Property="HorizontalTextAlignment" Value="Center" />
+            </Style>
+
+            <Style x:Key="TitleLabelStyle" TargetType="Label">
+                <Setter Property="FontFamily" Value="OpenSansSemibold" />
+                <Setter Property="FontSize" Value="26" />
+                <Setter Property="TextColor" Value="{StaticResource ColorTextPrimary}" />
+            </Style>
+
+            <Style x:Key="SubtitleLabelStyle" TargetType="Label">
+                <Setter Property="FontFamily" Value="OpenSansSemibold" />
+                <Setter Property="FontSize" Value="18" />
+                <Setter Property="TextColor" Value="{StaticResource ColorTextPrimary}" />
+            </Style>
+
+            <Style x:Key="BodyLabelStyle" TargetType="Label">
+                <Setter Property="FontFamily" Value="OpenSansRegular" />
+                <Setter Property="FontSize" Value="15" />
+                <Setter Property="TextColor" Value="{StaticResource ColorTextSecondary}" />
+            </Style>
+
+            <Style x:Key="PrimaryButtonStyle" TargetType="Button">
+                <Setter Property="BackgroundColor" Value="{StaticResource ColorAccent}" />
+                <Setter Property="TextColor" Value="{StaticResource ColorBackground}" />
+                <Setter Property="FontFamily" Value="OpenSansSemibold" />
+                <Setter Property="FontSize" Value="16" />
+                <Setter Property="CornerRadius" Value="18" />
+                <Setter Property="Padding" Value="22,14" />
+            </Style>
+
+            <Style x:Key="GhostButtonStyle" TargetType="Button">
+                <Setter Property="BackgroundColor" Value="{StaticResource ColorSurface}" />
+                <Setter Property="TextColor" Value="{StaticResource ColorTextPrimary}" />
+                <Setter Property="BorderColor" Value="{StaticResource ColorBorder}" />
+                <Setter Property="BorderWidth" Value="1" />
+                <Setter Property="FontFamily" Value="OpenSansSemibold" />
+                <Setter Property="FontSize" Value="16" />
+                <Setter Property="CornerRadius" Value="18" />
+                <Setter Property="Padding" Value="22,14" />
+            </Style>
+
+            <Style x:Key="CardBorderStyle" TargetType="Border">
+                <Setter Property="Stroke" Value="{StaticResource ColorBorder}" />
+                <Setter Property="StrokeThickness" Value="1" />
+                <Setter Property="StrokeShape" Value="RoundRectangle 24" />
+                <Setter Property="BackgroundColor" Value="{StaticResource ColorSurface}" />
+                <Setter Property="Padding" Value="16" />
+            </Style>
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>
