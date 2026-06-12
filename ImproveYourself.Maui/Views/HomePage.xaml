@@ -81,7 +81,7 @@
                            Text="Твой ежедневный вызов"
                            Style="{StaticResource TitleLabelStyle}" />
                     <Label x:Name="ChallengeSubtitleLabel"
-                           Text="Выполнено шагов: 0/3"
+                           Text="Выполнено шагов: 0/2"
                            Style="{StaticResource BodyLabelStyle}" />
 
                     <ProgressBar x:Name="ChallengeProgressBar"

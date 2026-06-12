@@ -62,6 +62,10 @@ public sealed class DailyChallenge
 
     public string CreatedAt { get; set; } = string.Empty;
 
+    public string? QuoteText { get; set; }
+
+    public string? QuoteAuthor { get; set; }
+
     public List<ChallengeStep> Steps { get; set; } = [];
 }
 
@@ -109,6 +113,8 @@ public sealed class WeeklyDayStat
 
     public int CompletedSteps { get; set; }
 
+    public int TotalSteps { get; set; }
+
     public bool IsCompleted { get; set; }
 }
 
@@ -123,7 +129,6 @@ public sealed class WeeklyStats
     public Dictionary<StepType, int> CategoryBreakdown { get; set; } = new()
     {
         [StepType.Practice] = 0,
-        [StepType.Quote] = 0,
         [StepType.Social] = 0,
     };
 

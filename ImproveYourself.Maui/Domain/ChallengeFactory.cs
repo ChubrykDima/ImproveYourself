@@ -61,23 +61,23 @@ public static class ChallengeFactory
     private static readonly IReadOnlyList<SocialTemplate> SocialTemplates =
     [
         new(
-            "Социальный вызов",
+            "Челлендж дня",
             "Заведи короткий диалог с незнакомым человеком: 2-3 фразы.",
             "Начни с простого вопроса по ситуации вокруг."),
         new(
-            "Социальный вызов",
+            "Челлендж дня",
             "Сделай комплимент коллеге или знакомому по делу.",
             "Комплимент должен быть конкретным и честным."),
         new(
-            "Социальный вызов",
+            "Челлендж дня",
             "Попроси обратную связь по одному своему действию сегодня.",
             "Слушай без оправданий, только уточняй детали."),
         new(
-            "Социальный вызов",
+            "Челлендж дня",
             "Поддержи разговор минимум 5 минут без телефона в руках.",
             "Поддерживай контакт глазами и задавай уточняющие вопросы."),
         new(
-            "Социальный вызов",
+            "Челлендж дня",
             "Поздоровайся первым с тремя людьми в течение дня.",
             "Голос ровный, осанка открытая, без спешки."),
     ];
@@ -97,6 +97,8 @@ public static class ChallengeFactory
             Title = "Твой ежедневный вызов",
             Status = ChallengeStatus.NotStarted,
             CreatedAt = DateTime.UtcNow.ToString("o", CultureInfo.InvariantCulture),
+            QuoteText = quote.Text,
+            QuoteAuthor = quote.Author,
             Steps =
             [
                 new ChallengeStep
@@ -115,26 +117,13 @@ public static class ChallengeFactory
                 },
                 new ChallengeStep
                 {
-                    Id = $"{challengeId}-quote",
-                    DailyChallengeId = challengeId,
-                    Type = StepType.Quote,
-                    Title = "Цитата дня",
-                    Description = "Прочитай цитату и отметь шаг как выполненный.",
-                    QuoteText = quote.Text,
-                    QuoteAuthor = quote.Author,
-                    SortOrder = 2,
-                    Status = StepStatus.NotStarted,
-                    CompletedAt = null,
-                },
-                new ChallengeStep
-                {
                     Id = $"{challengeId}-social",
                     DailyChallengeId = challengeId,
                     Type = StepType.Social,
                     Title = social.Title,
                     Description = social.Description,
                     Tip = social.Tip,
-                    SortOrder = 3,
+                    SortOrder = 2,
                     Status = StepStatus.NotStarted,
                     CompletedAt = null,
                 },

@@ -33,7 +33,6 @@ public partial class StatisticsPage : ContentPage
         WeeklyCompletionRateLabel.Text = $"Общий completion rate: {stats.CompletionRate}%";
 
         PracticeValueLabel.Text = GetCategoryValue(stats, StepType.Practice).ToString();
-        QuoteValueLabel.Text = GetCategoryValue(stats, StepType.Quote).ToString();
         SocialValueLabel.Text = GetCategoryValue(stats, StepType.Social).ToString();
 
         RenderWeeklyBars(stats.Days);
@@ -46,8 +45,9 @@ public partial class StatisticsPage : ContentPage
         for (var index = 0; index < Math.Min(7, days.Count); index += 1)
         {
             var day = days[index];
-            var value = Math.Clamp(day.CompletedSteps, 0, 3);
-            var barHeight = Math.Max(value / 3d * 96d, 4d);
+            var totalSteps = Math.Max(day.TotalSteps, 1);
+            var value = Math.Clamp(day.CompletedSteps, 0, totalSteps);
+            var barHeight = Math.Max(value / (double)totalSteps * 96d, 4d);
 
             var barHost = new Grid
             {

@@ -96,17 +96,20 @@ public static class ProgressCalculator
                     {
                         Date = isoDate,
                         CompletedSteps = 0,
+                        TotalSteps = 0,
                         IsCompleted = false,
                     };
                 }
 
                 var completedSteps = CountCompletedSteps(challenge.Steps);
+                var totalSteps = challenge.Steps.Count;
 
                 return new WeeklyDayStat
                 {
                     Date = isoDate,
                     CompletedSteps = completedSteps,
-                    IsCompleted = completedSteps == 3,
+                    TotalSteps = totalSteps,
+                    IsCompleted = totalSteps > 0 && completedSteps == totalSteps,
                 };
             })
             .ToList();
@@ -115,7 +118,6 @@ public static class ProgressCalculator
         var categoryBreakdown = new Dictionary<StepType, int>
         {
             [StepType.Practice] = 0,
-            [StepType.Quote] = 0,
             [StepType.Social] = 0,
         };
 
@@ -123,7 +125,10 @@ public static class ProgressCalculator
         {
             foreach (var step in challenge.Steps.Where(step => step.Status == StepStatus.Completed))
             {
-                categoryBreakdown[step.Type] += 1;
+                if (categoryBreakdown.TryGetValue(step.Type, out var value))
+                {
+                    categoryBreakdown[step.Type] = value + 1;
+                }
             }
         }
 

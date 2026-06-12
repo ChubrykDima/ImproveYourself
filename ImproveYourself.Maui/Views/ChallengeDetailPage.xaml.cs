@@ -31,10 +31,11 @@ public partial class ChallengeDetailPage : ContentPage
         {
             DateLabel.Text = "Дата: --";
             ChallengeTitleLabel.Text = "Челлендж не найден";
-            ProgressLabel.Text = "Прогресс: 0/3";
+            ProgressLabel.Text = "Прогресс: 0/2";
             ChallengeProgressBar.Progress = 0;
             CompletedTextLabel.IsVisible = false;
             NextDayButton.IsVisible = false;
+            QuoteSectionBorder.IsVisible = false;
             return;
         }
 
@@ -49,11 +50,35 @@ public partial class ChallengeDetailPage : ContentPage
         CompletedTextLabel.IsVisible = isCompleted;
         NextDayButton.IsVisible = isCompleted;
         NextDayButton.IsEnabled = isCompleted;
+        RenderQuoteSection(_challenge);
 
-        foreach (var step in _challenge.Steps.OrderBy(step => step.SortOrder))
+        foreach (var step in _challenge.Steps
+                     .Where(step => step.Type != StepType.Quote)
+                     .OrderBy(step => step.SortOrder))
         {
             StepsContainer.Children.Add(BuildStepCard(step));
         }
+    }
+
+    private void RenderQuoteSection(DailyChallenge challenge)
+    {
+        var hasQuote = !string.IsNullOrWhiteSpace(challenge.QuoteText);
+
+        QuoteSectionBorder.IsVisible = hasQuote;
+
+        if (!hasQuote)
+        {
+            QuoteTextLabel.Text = string.Empty;
+            QuoteAuthorLabel.Text = string.Empty;
+            QuoteAuthorLabel.IsVisible = false;
+            return;
+        }
+
+        QuoteTextLabel.Text = $"\u201C{challenge.QuoteText}\u201D";
+        QuoteAuthorLabel.IsVisible = !string.IsNullOrWhiteSpace(challenge.QuoteAuthor);
+        QuoteAuthorLabel.Text = QuoteAuthorLabel.IsVisible
+            ? $"\u2014 {challenge.QuoteAuthor}"
+            : string.Empty;
     }
 
     private View BuildStepCard(ChallengeStep step)
@@ -127,53 +152,6 @@ public partial class ChallengeDetailPage : ContentPage
             TextColor = Color.FromArgb("#F5F7FB"),
             LineBreakMode = LineBreakMode.WordWrap,
         });
-
-        if (step.Type == StepType.Quote && !string.IsNullOrWhiteSpace(step.QuoteText))
-        {
-            var quoteGrid = new Grid
-            {
-                ColumnDefinitions =
-                {
-                    new ColumnDefinition(new GridLength(3)),
-                    new ColumnDefinition(GridLength.Star),
-                },
-            };
-
-            quoteGrid.Add(new BoxView
-            {
-                Color = Color.FromArgb("#FF8A3D"),
-                WidthRequest = 3,
-            }, 0, 0);
-
-            var quoteStack = new VerticalStackLayout
-            {
-                Spacing = 6,
-                Padding = new Thickness(12, 0, 0, 0),
-            };
-
-            quoteStack.Children.Add(new Label
-            {
-                Text = $"\u201C{step.QuoteText}\u201D",
-                FontFamily = "OpenSansRegular",
-                FontSize = 15,
-                TextColor = Color.FromArgb("#F5F7FB"),
-                LineBreakMode = LineBreakMode.WordWrap,
-            });
-
-            if (!string.IsNullOrWhiteSpace(step.QuoteAuthor))
-            {
-                quoteStack.Children.Add(new Label
-                {
-                    Text = $"\u2014 {step.QuoteAuthor}",
-                    FontFamily = "OpenSansRegular",
-                    FontSize = 15,
-                    TextColor = Color.FromArgb("#9EA8BD"),
-                });
-            }
-
-            quoteGrid.Add(quoteStack, 1, 0);
-            stack.Children.Add(quoteGrid);
-        }
 
         if (!string.IsNullOrWhiteSpace(step.Tip))
         {

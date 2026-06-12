@@ -26,23 +26,23 @@ public static class TypeMappings
         _ => "not_started",
     };
 
-    public static StepType ToStepType(this string value) => value switch
+    public static StepType ToStepType(this string value) => NormalizeStorageValue(value) switch
     {
         "quote" => StepType.Quote,
         "social" => StepType.Social,
         _ => StepType.Practice,
     };
 
-    public static StepStatus ToStepStatus(this string value) => value switch
+    public static StepStatus ToStepStatus(this string value) => NormalizeStorageValue(value) switch
     {
-        "in_progress" => StepStatus.InProgress,
+        "inprogress" or "in_progress" => StepStatus.InProgress,
         "completed" => StepStatus.Completed,
         _ => StepStatus.NotStarted,
     };
 
-    public static ChallengeStatus ToChallengeStatus(this string value) => value switch
+    public static ChallengeStatus ToChallengeStatus(this string value) => NormalizeStorageValue(value) switch
     {
-        "in_progress" => ChallengeStatus.InProgress,
+        "inprogress" or "in_progress" => ChallengeStatus.InProgress,
         "completed" => ChallengeStatus.Completed,
         _ => ChallengeStatus.NotStarted,
     };
@@ -62,4 +62,9 @@ public static class TypeMappings
         StepStatus.Completed => "Выполнено",
         _ => "Начать",
     };
+
+    private static string NormalizeStorageValue(string value) =>
+        string.IsNullOrWhiteSpace(value)
+            ? string.Empty
+            : value.Trim().Replace("_", string.Empty, StringComparison.Ordinal).ToLowerInvariant();
 }

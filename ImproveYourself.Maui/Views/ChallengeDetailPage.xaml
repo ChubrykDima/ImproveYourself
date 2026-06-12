@@ -17,7 +17,7 @@
                            Text="Твой ежедневный вызов"
                            Style="{StaticResource TitleLabelStyle}" />
                     <Label x:Name="ProgressLabel"
-                           Text="Прогресс: 0/3"
+                           Text="Прогресс: 0/2"
                            Style="{StaticResource BodyLabelStyle}" />
 
                     <ProgressBar x:Name="ChallengeProgressBar"
@@ -40,6 +40,35 @@
                             Clicked="OnOpenNextDayClicked" />
                 </VerticalStackLayout>
             </Border>
+
+                     <Border x:Name="QuoteSectionBorder"
+                                   Style="{StaticResource CardBorderStyle}"
+                                   IsVisible="False">
+                            <Grid ColumnDefinitions="4,*"
+                                     ColumnSpacing="14">
+                                   <BoxView Color="{StaticResource ColorAccent}"
+                                                  CornerRadius="2"
+                                                  WidthRequest="4"
+                                                  HorizontalOptions="Start"
+                                                  VerticalOptions="Fill" />
+
+                                   <VerticalStackLayout Grid.Column="1"
+                                                                       Spacing="8">
+                                          <Label Text="Цитата дня"
+                                                    TextColor="{StaticResource ColorAccent}"
+                                                    FontFamily="OpenSansRegular"
+                                                    FontSize="15" />
+                                          <Label x:Name="QuoteTextLabel"
+                                                    Text=""
+                                                    Style="{StaticResource SubtitleLabelStyle}"
+                                                    LineBreakMode="WordWrap" />
+                                          <Label x:Name="QuoteAuthorLabel"
+                                                    Text=""
+                                                    Style="{StaticResource BodyLabelStyle}"
+                                                    IsVisible="False" />
+                                   </VerticalStackLayout>
+                            </Grid>
+                     </Border>
 
             <VerticalStackLayout x:Name="StepsContainer" Spacing="12" />
         </VerticalStackLayout>

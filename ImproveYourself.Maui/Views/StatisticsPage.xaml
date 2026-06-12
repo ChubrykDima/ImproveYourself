@@ -64,11 +64,11 @@
 
             <Border Style="{StaticResource CardBorderStyle}">
                 <VerticalStackLayout Spacing="10">
-                    <Label Text="Категории шагов"
+                    <Label Text="Категории заданий"
                            Style="{StaticResource SubtitleLabelStyle}" />
 
                     <Grid ColumnDefinitions="*,Auto"
-                          RowDefinitions="Auto,Auto,Auto"
+                          RowDefinitions="Auto,Auto"
                           RowSpacing="10">
                         <Label Grid.Row="0"
                                Text="Утренняя практика"
@@ -80,18 +80,9 @@
                                Style="{StaticResource SubtitleLabelStyle}" />
 
                         <Label Grid.Row="1"
-                               Text="Цитата дня"
+                               Text="Челлендж дня"
                                Style="{StaticResource BodyLabelStyle}" />
                         <Label Grid.Row="1"
-                               Grid.Column="1"
-                               x:Name="QuoteValueLabel"
-                               Text="0"
-                               Style="{StaticResource SubtitleLabelStyle}" />
-
-                        <Label Grid.Row="2"
-                               Text="Социальный вызов"
-                               Style="{StaticResource BodyLabelStyle}" />
-                        <Label Grid.Row="2"
                                Grid.Column="1"
                                x:Name="SocialValueLabel"
                                Text="0"
