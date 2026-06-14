@@ -1,0 +1,7 @@
+<Solution>
+  <Project Path="ImproveYourself.Backend.Api/ImproveYourself.Backend.Api.csproj" />
+  <Project Path="ImproveYourself.Backend.Application/ImproveYourself.Backend.Application.csproj" />
+  <Project Path="ImproveYourself.Backend.Domain/ImproveYourself.Backend.Domain.csproj" />
+  <Project Path="ImproveYourself.Backend.Infrastructure/ImproveYourself.Backend.Infrastructure.csproj" />
+  <Project Path="ImproveYourself.Backend.Tests/ImproveYourself.Backend.Tests.csproj" />
+</Solution>

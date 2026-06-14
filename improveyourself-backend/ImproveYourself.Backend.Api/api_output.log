@@ -1,0 +1,89 @@
+Using launch settings from /app/improveyourself-backend/ImproveYourself.Backend.Api/Properties/launchSettings.json...
+Building...
+info: Microsoft.Hosting.Lifetime[14]
+      Now listening on: http://localhost:5000
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Development
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: /app/improveyourself-backend/ImproveYourself.Backend.Api
+warn: Microsoft.AspNetCore.HttpsPolicy.HttpsRedirectionMiddleware[3]
+      Failed to determine the https port for redirect.
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (15ms) [Parameters=[@dto_Id='?' (DbType = Guid)], CommandType='Text', CommandTimeout='30']
+      SELECT "d0"."Id", "d0"."CreatedAt", "d0"."Date", "d0"."QuoteAuthor", "d0"."QuoteText", "d0"."Status", "d0"."Title", "d0"."UpdatedAt", "c"."Id", "c"."CompletedAt", "c"."DailyChallengeId", "c"."Description", "c"."DurationSeconds", "c"."QuoteAuthor", "c"."QuoteText", "c"."SortOrder", "c"."Status", "c"."Subtitle", "c"."Tip", "c"."Title", "c"."Type", "c"."UpdatedAt"
+      FROM (
+          SELECT "d"."Id", "d"."CreatedAt", "d"."Date", "d"."QuoteAuthor", "d"."QuoteText", "d"."Status", "d"."Title", "d"."UpdatedAt"
+          FROM "DailyChallenges" AS "d"
+          WHERE "d"."Id" = @dto_Id
+          LIMIT 1
+      ) AS "d0"
+      LEFT JOIN "ChallengeSteps" AS "c" ON "d0"."Id" = "c"."DailyChallengeId"
+      ORDER BY "d0"."Id"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (7ms) [Parameters=[@p0='?' (DbType = Guid), @p1='?' (DbType = DateTimeOffset), @p2='?' (Size = 10), @p3='?', @p4='?', @p5='?' (DbType = Int32), @p6='?' (Size = 14), @p7='?' (DbType = DateTimeOffset)], CommandType='Text', CommandTimeout='30']
+      INSERT INTO "DailyChallenges" ("Id", "CreatedAt", "Date", "QuoteAuthor", "QuoteText", "Status", "Title", "UpdatedAt")
+      VALUES (@p0, @p1, @p2, @p3, @p4, @p5, @p6, @p7);
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@dto_Id='?' (DbType = Guid)], CommandType='Text', CommandTimeout='30']
+      SELECT "d0"."Id", "d0"."CreatedAt", "d0"."Date", "d0"."QuoteAuthor", "d0"."QuoteText", "d0"."Status", "d0"."Title", "d0"."UpdatedAt", "c"."Id", "c"."CompletedAt", "c"."DailyChallengeId", "c"."Description", "c"."DurationSeconds", "c"."QuoteAuthor", "c"."QuoteText", "c"."SortOrder", "c"."Status", "c"."Subtitle", "c"."Tip", "c"."Title", "c"."Type", "c"."UpdatedAt"
+      FROM (
+          SELECT "d"."Id", "d"."CreatedAt", "d"."Date", "d"."QuoteAuthor", "d"."QuoteText", "d"."Status", "d"."Title", "d"."UpdatedAt"
+          FROM "DailyChallenges" AS "d"
+          WHERE "d"."Id" = @dto_Id
+          LIMIT 1
+      ) AS "d0"
+      LEFT JOIN "ChallengeSteps" AS "c" ON "d0"."Id" = "c"."DailyChallengeId"
+      ORDER BY "d0"."Id"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[@p13='?' (DbType = Guid), @p0='?' (DbType = DateTimeOffset), @p1='?' (DbType = Guid), @p2='?' (Size = 4), @p3='?' (DbType = Int32), @p4='?', @p5='?', @p6='?' (DbType = Int32), @p7='?' (DbType = Int32), @p8='?', @p9='?', @p10='?' (Size = 8), @p11='?' (DbType = Int32), @p12='?' (DbType = DateTimeOffset)], CommandType='Text', CommandTimeout='30']
+      UPDATE "ChallengeSteps" SET "CompletedAt" = @p0, "DailyChallengeId" = @p1, "Description" = @p2, "DurationSeconds" = @p3, "QuoteAuthor" = @p4, "QuoteText" = @p5, "SortOrder" = @p6, "Status" = @p7, "Subtitle" = @p8, "Tip" = @p9, "Title" = @p10, "Type" = @p11, "UpdatedAt" = @p12
+      WHERE "Id" = @p13
+      RETURNING 1;
+fail: ImproveYourself.Backend.Api.Middleware.ExceptionHandlingMiddleware[0]
+      An unhandled exception has occurred.
+      Microsoft.EntityFrameworkCore.DbUpdateConcurrencyException: The database operation was expected to affect 1 row(s), but actually affected 0 row(s); data may have been modified or deleted since entities were loaded. See https://go.microsoft.com/fwlink/?LinkId=527962 for information on understanding and handling optimistic concurrency exceptions.
+         at Microsoft.EntityFrameworkCore.Update.AffectedCountModificationCommandBatch.ThrowAggregateUpdateConcurrencyExceptionAsync(RelationalDataReader reader, Int32 commandIndex, Int32 expectedRowsAffected, Int32 rowsAffected, CancellationToken cancellationToken)
+         at Microsoft.EntityFrameworkCore.Update.AffectedCountModificationCommandBatch.ConsumeResultSetWithRowsAffectedOnlyAsync(Int32 commandIndex, RelationalDataReader reader, CancellationToken cancellationToken)
+         at Microsoft.EntityFrameworkCore.Update.AffectedCountModificationCommandBatch.ConsumeAsync(RelationalDataReader reader, CancellationToken cancellationToken)
+         at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+         at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+         at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+         at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+         at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+         at Microsoft.EntityFrameworkCore.Storage.RelationalDatabase.SaveChangesAsync(IList`1 entries, CancellationToken cancellationToken)
+         at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(IList`1 entriesToSave, CancellationToken cancellationToken)
+         at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(StateManager stateManager, Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+         at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+         at ImproveYourself.Backend.Infrastructure.Persistence.ApplicationDbContext.SaveChangesAsync(CancellationToken cancellationToken) in /app/improveyourself-backend/ImproveYourself.Backend.Infrastructure/Persistence/ApplicationDbContext.cs:line 27
+         at ImproveYourself.Backend.Application.Challenges.ChallengeService.SyncChallengesAsync(List`1 challenges) in /app/improveyourself-backend/ImproveYourself.Backend.Application/Challenges/ChallengeService.cs:line 153
+         at ImproveYourself.Backend.Api.Controllers.ChallengesController.SyncChallenges(SyncChallengesCommand command) in /app/improveyourself-backend/ImproveYourself.Backend.Api/Controllers/ChallengesController.cs:line 29
+         at Microsoft.AspNetCore.Mvc.Infrastructure.ActionMethodExecutor.TaskOfIActionResultExecutor.Execute(ActionContext actionContext, IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)
+         at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeActionMethodAsync>g__Awaited|12_0(ControllerActionInvoker invoker, ValueTask`1 actionResultValueTask)
+         at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeNextActionFilterAsync>g__Awaited|10_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+         at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Rethrow(ActionExecutedContextSealed context)
+         at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+         at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.InvokeInnerFilterAsync()
+      --- End of stack trace from previous location ---
+         at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeFilterPipelineAsync>g__Awaited|20_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+         at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+         at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+         at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+         at ImproveYourself.Backend.Api.Middleware.ExceptionHandlingMiddleware.InvokeAsync(HttpContext context) in /app/improveyourself-backend/ImproveYourself.Backend.Api/Middleware/ExceptionHandlingMiddleware.cs:line 21
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "d"."Id", "d"."CreatedAt", "d"."Date", "d"."QuoteAuthor", "d"."QuoteText", "d"."Status", "d"."Title", "d"."UpdatedAt", "c"."Id", "c"."CompletedAt", "c"."DailyChallengeId", "c"."Description", "c"."DurationSeconds", "c"."QuoteAuthor", "c"."QuoteText", "c"."SortOrder", "c"."Status", "c"."Subtitle", "c"."Tip", "c"."Title", "c"."Type", "c"."UpdatedAt"
+      FROM "DailyChallenges" AS "d"
+      LEFT JOIN "ChallengeSteps" AS "c" ON "d"."Id" = "c"."DailyChallengeId"
+      ORDER BY "d"."Id"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT COUNT(*)
+      FROM "DailyChallenges" AS "d"
+      WHERE "d"."Status" = 2
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT COUNT(*)
+      FROM "ChallengeSteps" AS "c"
+      WHERE "c"."Status" = 2
