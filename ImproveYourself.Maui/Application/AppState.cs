@@ -21,6 +21,8 @@ public sealed class AppState : INotifyPropertyChanged
     private MonthlyProgress _monthlyProgress = MonthlyProgress.Empty;
     private WeeklyStats _weeklyStats = WeeklyStats.Empty;
     private List<string> _completedDates = [];
+    private SelfAssessmentSnapshot? _startSelfAssessment;
+    private SelfAssessmentSnapshot? _finalSelfAssessment;
 
     public AppState(
         IChallengeRepository challengeRepository,
@@ -90,6 +92,30 @@ public sealed class AppState : INotifyPropertyChanged
 
     public IReadOnlyList<string> CompletedDates => _completedDates;
 
+    public SelfAssessmentSnapshot? StartSelfAssessment
+    {
+        get => _startSelfAssessment;
+        private set => SetProperty(ref _startSelfAssessment, value);
+    }
+
+    public SelfAssessmentSnapshot? FinalSelfAssessment
+    {
+        get => _finalSelfAssessment;
+        private set => SetProperty(ref _finalSelfAssessment, value);
+    }
+
+    public bool HasStartSelfAssessment => StartSelfAssessment is not null;
+
+    public bool ShouldShowStartSelfAssessment =>
+        OnboardingCompleted
+        && StartSelfAssessment is null
+        && CompletedDates.Count == 0;
+
+    public bool ShouldShowFinalSelfAssessment =>
+        StartSelfAssessment is not null
+        && FinalSelfAssessment is null
+        && CompletedDates.Count >= DateHelpers.TargetMonthlyDays;
+
     public Task InitializeAsync()
     {
         _challengeRepository.Initialize();
@@ -97,6 +123,8 @@ public sealed class AppState : INotifyPropertyChanged
         OnboardingCompleted = _settingsService.ReadOnboardingCompleted();
         DisplayName = _settingsService.ReadDisplayName();
         NotificationsEnabled = _settingsService.ReadNotificationsEnabled();
+        StartSelfAssessment = _settingsService.ReadSelfAssessment(SelfAssessmentKind.Start);
+        FinalSelfAssessment = _settingsService.ReadSelfAssessment(SelfAssessmentKind.Final);
 
         SetCurrentChallengeDateInternal(ResolveCurrentChallengeDate());
 
@@ -208,6 +236,23 @@ public sealed class AppState : INotifyPropertyChanged
         DisplayName = nextName;
     }
 
+    public void SaveSelfAssessment(SelfAssessmentSnapshot snapshot)
+    {
+        _settingsService.WriteSelfAssessment(snapshot);
+
+        if (snapshot.Kind == SelfAssessmentKind.Start)
+        {
+            StartSelfAssessment = snapshot;
+            OnPropertyChanged(nameof(HasStartSelfAssessment));
+            OnPropertyChanged(nameof(ShouldShowStartSelfAssessment));
+            OnPropertyChanged(nameof(ShouldShowFinalSelfAssessment));
+            return;
+        }
+
+        FinalSelfAssessment = snapshot;
+        OnPropertyChanged(nameof(ShouldShowFinalSelfAssessment));
+    }
+
     private string ResolveCurrentChallengeDate()
     {
         var todayIsoDate = DateHelpers.ToIsoDate(DateTime.Now);
@@ -292,6 +337,8 @@ public sealed class AppState : INotifyPropertyChanged
 
         _completedDates = completedDates;
         OnPropertyChanged(nameof(CompletedDates));
+        OnPropertyChanged(nameof(ShouldShowStartSelfAssessment));
+        OnPropertyChanged(nameof(ShouldShowFinalSelfAssessment));
 
         StreakSnapshot = streakSnapshot;
         MonthlyProgress = monthlyProgress;

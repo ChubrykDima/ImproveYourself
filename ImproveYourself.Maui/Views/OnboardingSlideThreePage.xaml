@@ -28,6 +28,11 @@
                     StrokeThickness="0"
                     StrokeShape="RoundRectangle 999"
                     BackgroundColor="{StaticResource ColorAccent}" />
+            <Border WidthRequest="26"
+                    HeightRequest="6"
+                    StrokeThickness="0"
+                    StrokeShape="RoundRectangle 999"
+                    BackgroundColor="{StaticResource ColorSurfaceRaised}" />
         </HorizontalStackLayout>
 
         <VerticalStackLayout Grid.Row="1"
@@ -87,7 +92,7 @@
                     FontSize="15"
                     Clicked="OnBackClicked" />
             <Button Grid.Column="1"
-                    Text="Начать трансформацию"
+                    Text="Перейти к самооценке"
                     Style="{StaticResource PrimaryButtonStyle}"
                     Clicked="OnFinishClicked" />
         </Grid>

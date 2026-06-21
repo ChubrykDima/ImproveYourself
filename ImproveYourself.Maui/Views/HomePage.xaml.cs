@@ -6,6 +6,7 @@ namespace ImproveYourself.Maui.Views;
 public partial class HomePage : ContentPage
 {
     private readonly AppState _appState;
+    private bool _isOpeningFinalAssessment;
 
     public HomePage(AppState appState)
     {
@@ -13,11 +14,12 @@ public partial class HomePage : ContentPage
         _appState = appState;
     }
 
-    protected override void OnAppearing()
+    protected override async void OnAppearing()
     {
         base.OnAppearing();
         _appState.RefreshDerivedState();
         Render();
+        await TryOpenFinalAssessmentAsync();
     }
 
     private void Render()
@@ -89,6 +91,30 @@ public partial class HomePage : ContentPage
     private async void OnOpenSettingsClicked(object? sender, EventArgs e)
     {
         await Navigation.PushAsync(new SettingsPage(_appState));
+    }
+
+    private async Task TryOpenFinalAssessmentAsync()
+    {
+        if (_isOpeningFinalAssessment || !_appState.ShouldShowFinalSelfAssessment)
+        {
+            return;
+        }
+
+        _isOpeningFinalAssessment = true;
+
+        await Navigation.PushAsync(new SelfAssessmentPage(
+            _appState,
+            SelfAssessmentKind.Final,
+            async () =>
+            {
+                if (Navigation.NavigationStack.Count > 1)
+                {
+                    await Navigation.PopAsync();
+                }
+
+                _isOpeningFinalAssessment = false;
+                Render();
+            }));
     }
 
     private static string ShortName(string name)

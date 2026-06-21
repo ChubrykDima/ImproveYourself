@@ -1,3 +1,5 @@
+using ImproveYourself.Maui.Domain;
+
 namespace ImproveYourself.Maui.Persistence;
 
 public interface ISettingsService
@@ -17,4 +19,8 @@ public interface ISettingsService
     bool ReadNotificationsEnabled();
 
     void WriteNotificationsEnabled(bool value);
+
+    SelfAssessmentSnapshot? ReadSelfAssessment(SelfAssessmentKind kind);
+
+    void WriteSelfAssessment(SelfAssessmentSnapshot snapshot);
 }

@@ -1,4 +1,7 @@
 using Microsoft.Maui.Storage;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using ImproveYourself.Maui.Domain;
 
 namespace ImproveYourself.Maui.Persistence;
 
@@ -8,6 +11,13 @@ public sealed class PreferencesSettingsService : ISettingsService
     private const string CurrentChallengeDateKey = "currentChallengeDate";
     private const string DisplayNameKey = "displayName";
     private const string NotificationsEnabledKey = "notificationsEnabled";
+    private const string StartSelfAssessmentKey = "selfAssessment.start";
+    private const string FinalSelfAssessmentKey = "selfAssessment.final";
+
+    private static readonly JsonSerializerOptions JsonOptions = new()
+    {
+        Converters = { new JsonStringEnumConverter() },
+    };
 
     public bool ReadOnboardingCompleted() =>
         Preferences.Default.Get(OnboardingCompletedKey, false);
@@ -38,4 +48,36 @@ public sealed class PreferencesSettingsService : ISettingsService
 
     public void WriteNotificationsEnabled(bool value) =>
         Preferences.Default.Set(NotificationsEnabledKey, value);
+
+    public SelfAssessmentSnapshot? ReadSelfAssessment(SelfAssessmentKind kind)
+    {
+        var json = Preferences.Default.Get(GetSelfAssessmentKey(kind), string.Empty);
+
+        if (string.IsNullOrWhiteSpace(json))
+        {
+            return null;
+        }
+
+        try
+        {
+            return JsonSerializer.Deserialize<SelfAssessmentSnapshot>(json, JsonOptions);
+        }
+        catch
+        {
+            return null;
+        }
+    }
+
+    public void WriteSelfAssessment(SelfAssessmentSnapshot snapshot)
+    {
+        var json = JsonSerializer.Serialize(snapshot, JsonOptions);
+        Preferences.Default.Set(GetSelfAssessmentKey(snapshot.Kind), json);
+    }
+
+    private static string GetSelfAssessmentKey(SelfAssessmentKind kind) => kind switch
+    {
+        SelfAssessmentKind.Start => StartSelfAssessmentKey,
+        SelfAssessmentKind.Final => FinalSelfAssessmentKey,
+        _ => StartSelfAssessmentKey,
+    };
 }

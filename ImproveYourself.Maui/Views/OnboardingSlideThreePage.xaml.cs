@@ -1,4 +1,5 @@
 using ImproveYourself.Maui.Application;
+using ImproveYourself.Maui.Domain;
 
 namespace ImproveYourself.Maui.Views;
 
@@ -23,20 +24,17 @@ public partial class OnboardingSlideThreePage : ContentPage
 
     private async void OnFinishClicked(object? sender, EventArgs e)
     {
-        await _appState.CompleteOnboardingAsync(DisplayNameEntry.Text ?? string.Empty);
+        var displayName = DisplayNameEntry.Text ?? string.Empty;
+        _appState.UpdateDisplayName(displayName);
 
-        var choice = await DisplayActionSheetAsync("Напоминания", "Позже", null, "Включить");
-
-        if (choice == "Включить")
-        {
-            var enabled = await _appState.SetNotificationsEnabledAsync(true);
-
-            if (!enabled)
+        await Navigation.PushAsync(new SelfAssessmentPage(
+            _appState,
+            SelfAssessmentKind.Start,
+            async () =>
             {
-                await DisplayAlertAsync("Разрешение не выдано", "Уведомления можно включить позже в настройках.", "ОК");
-            }
-        }
-
-        await _navigateToHomeAsync();
+                await _appState.CompleteOnboardingAsync(displayName);
+                await _navigateToHomeAsync();
+            },
+            promptNotificationsOnCompletion: true));
     }
 }

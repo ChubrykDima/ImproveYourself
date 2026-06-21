@@ -73,6 +73,24 @@
                 </VerticalStackLayout>
             </Border>
 
+            <Border x:Name="SelfAssessmentSummaryBorder"
+                    Style="{StaticResource CardBorderStyle}"
+                    IsVisible="False">
+                <VerticalStackLayout Spacing="8">
+                    <Label Text="Самооценка"
+                           Style="{StaticResource SubtitleLabelStyle}" />
+                    <Label x:Name="SelfAssessmentSummaryLabel"
+                           Text=""
+                           Style="{StaticResource BodyLabelStyle}" />
+                    <Label x:Name="SelfAssessmentDeltaLabel"
+                           Text=""
+                           TextColor="{StaticResource ColorAccent}"
+                           FontFamily="OpenSansSemibold"
+                           FontSize="18"
+                           IsVisible="False" />
+                </VerticalStackLayout>
+            </Border>
+
             <Border Style="{StaticResource CardBorderStyle}">
                 <VerticalStackLayout Spacing="12">
                     <Label Text="Активность месяца"

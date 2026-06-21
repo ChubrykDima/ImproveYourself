@@ -9,6 +9,7 @@ public partial class ChallengeDetailPage : ContentPage
     private string _currentDate;
     private DailyChallenge? _challenge;
     private bool _isQuoteNoteVisible;
+    private bool _isOpeningFinalAssessment;
 
     public ChallengeDetailPage(AppState appState, string date)
     {
@@ -246,11 +247,11 @@ public partial class ChallengeDetailPage : ContentPage
         return card;
     }
 
-    private Task OnAdvanceStep(StepType stepType)
+    private async Task OnAdvanceStep(StepType stepType)
     {
         if (_challenge is null)
         {
-            return Task.CompletedTask;
+            return;
         }
 
         _challenge = _appState.AdvanceStep(_challenge.Date, stepType);
@@ -263,8 +264,9 @@ public partial class ChallengeDetailPage : ContentPage
 
         _currentDate = _challenge.Date;
         Render();
+        await TryOpenFinalAssessmentAsync();
 
-        return Task.CompletedTask;
+        return;
     }
 
     private void OnOpenNextDayClicked(object? sender, EventArgs e)
@@ -277,5 +279,28 @@ public partial class ChallengeDetailPage : ContentPage
         _challenge = _appState.AdvanceToNextDay();
         _currentDate = _challenge.Date;
         Render();
+    }
+
+    private async Task TryOpenFinalAssessmentAsync()
+    {
+        if (_isOpeningFinalAssessment || !_appState.ShouldShowFinalSelfAssessment)
+        {
+            return;
+        }
+
+        _isOpeningFinalAssessment = true;
+
+        await Navigation.PushAsync(new SelfAssessmentPage(
+            _appState,
+            SelfAssessmentKind.Final,
+            async () =>
+            {
+                if (Navigation.NavigationStack.Count > 1)
+                {
+                    await Navigation.PopToRootAsync();
+                }
+
+                _isOpeningFinalAssessment = false;
+            }));
     }
 }

@@ -28,6 +28,11 @@
                     StrokeThickness="0"
                     StrokeShape="RoundRectangle 999"
                     BackgroundColor="{StaticResource ColorSurfaceRaised}" />
+            <Border WidthRequest="26"
+                    HeightRequest="6"
+                    StrokeThickness="0"
+                    StrokeShape="RoundRectangle 999"
+                    BackgroundColor="{StaticResource ColorSurfaceRaised}" />
         </HorizontalStackLayout>
 
         <VerticalStackLayout Grid.Row="1"

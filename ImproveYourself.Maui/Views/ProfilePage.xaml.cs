@@ -31,7 +31,39 @@ public partial class ProfilePage : ContentPage
         TotalCompletedMetricLabel.Text = _appState.CompletedDates.Count.ToString();
         CompletionRateMetricLabel.Text = $"{ProgressCalculator.CalculateRollingCompletionRate(_appState.CompletedDates)}%";
 
+        RenderSelfAssessmentSummary();
         RenderCalendar();
+    }
+
+    private void RenderSelfAssessmentSummary()
+    {
+        var start = _appState.StartSelfAssessment;
+        var final = _appState.FinalSelfAssessment;
+
+        SelfAssessmentSummaryBorder.IsVisible = start is not null;
+
+        if (start is null)
+        {
+            SelfAssessmentSummaryLabel.Text = string.Empty;
+            SelfAssessmentDeltaLabel.Text = string.Empty;
+            SelfAssessmentDeltaLabel.IsVisible = false;
+            return;
+        }
+
+        if (final is null)
+        {
+            SelfAssessmentSummaryLabel.Text = $"Стартовый срез: {start.AverageScore:0.0}/10. Финальный срез появится после 30 выполненных дней.";
+            SelfAssessmentDeltaLabel.Text = string.Empty;
+            SelfAssessmentDeltaLabel.IsVisible = false;
+            return;
+        }
+
+        var delta = final.AverageScore - start.AverageScore;
+        var direction = delta >= 0 ? "+" : string.Empty;
+
+        SelfAssessmentSummaryLabel.Text = $"Старт: {start.AverageScore:0.0}/10 · Финиш: {final.AverageScore:0.0}/10";
+        SelfAssessmentDeltaLabel.Text = $"Сдвиг: {direction}{delta:0.0}";
+        SelfAssessmentDeltaLabel.IsVisible = true;
     }
 
     private void RenderCalendar()

@@ -1,4 +1,5 @@
 ﻿using ImproveYourself.Maui.Application;
+using ImproveYourself.Maui.Domain;
 using ImproveYourself.Maui.Theme;
 using ImproveYourself.Maui.Views;
 using Microsoft.Maui.ApplicationModel;
@@ -47,6 +48,15 @@ public partial class App : Microsoft.Maui.Controls.Application
 			{
 				if (_appState.OnboardingCompleted)
 				{
+					if (_appState.ShouldShowStartSelfAssessment)
+					{
+						SetRootPage(BuildNavigationPage(new SelfAssessmentPage(
+							_appState,
+							SelfAssessmentKind.Start,
+							NavigateToHomeAsync)));
+						return;
+					}
+
 					SetRootPage(BuildNavigationPage(new HomePage(_appState)));
 					return;
 				}

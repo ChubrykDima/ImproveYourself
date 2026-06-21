@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="ImproveYourself.Maui.Views.SelfAssessmentPage"
+             Title="Самооценка"
+             NavigationPage.HasNavigationBar="False"
+             BackgroundColor="{StaticResource ColorBackground}">
+    <ScrollView>
+        <VerticalStackLayout Padding="22,16,22,30"
+                             Spacing="16">
+            <HorizontalStackLayout x:Name="ProgressDots"
+                                   Spacing="6"
+                                   IsVisible="False">
+                <Border WidthRequest="26"
+                        HeightRequest="6"
+                        StrokeThickness="0"
+                        StrokeShape="RoundRectangle 999"
+                        BackgroundColor="{StaticResource ColorSurfaceRaised}" />
+                <Border WidthRequest="26"
+                        HeightRequest="6"
+                        StrokeThickness="0"
+                        StrokeShape="RoundRectangle 999"
+                        BackgroundColor="{StaticResource ColorSurfaceRaised}" />
+                <Border WidthRequest="26"
+                        HeightRequest="6"
+                        StrokeThickness="0"
+                        StrokeShape="RoundRectangle 999"
+                        BackgroundColor="{StaticResource ColorSurfaceRaised}" />
+                <Border WidthRequest="26"
+                        HeightRequest="6"
+                        StrokeThickness="0"
+                        StrokeShape="RoundRectangle 999"
+                        BackgroundColor="{StaticResource ColorAccent}" />
+            </HorizontalStackLayout>
+
+            <Border Style="{StaticResource CardBorderStyle}"
+                    Padding="22">
+                <VerticalStackLayout Spacing="10">
+                    <Label x:Name="EyebrowLabel"
+                           Text="Перед стартом"
+                           TextColor="{StaticResource ColorAccent}"
+                           FontFamily="OpenSansRegular"
+                           FontSize="15" />
+                    <Label x:Name="TitleLabel"
+                           Text="Короткий срез состояния"
+                           Style="{StaticResource TitleLabelStyle}" />
+                    <Label x:Name="DescriptionLabel"
+                           Text="Ответь по шкале от 1 до 10. Это займёт меньше минуты и поможет увидеть сдвиг после 30 дней."
+                           Style="{StaticResource BodyLabelStyle}" />
+                </VerticalStackLayout>
+            </Border>
+
+            <VerticalStackLayout x:Name="QuestionsContainer"
+                                 Spacing="12" />
+
+            <Button x:Name="SubmitButton"
+                    Text="Сохранить и начать"
+                    Style="{StaticResource PrimaryButtonStyle}"
+                    Clicked="OnSubmitClicked" />
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>
