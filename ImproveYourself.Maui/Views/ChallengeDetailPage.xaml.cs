@@ -8,6 +8,7 @@ public partial class ChallengeDetailPage : ContentPage
     private readonly AppState _appState;
     private string _currentDate;
     private DailyChallenge? _challenge;
+    private bool _isQuoteNoteVisible;
 
     public ChallengeDetailPage(AppState appState, string date)
     {
@@ -35,6 +36,7 @@ public partial class ChallengeDetailPage : ContentPage
             ChallengeProgressBar.Progress = 0;
             CompletedTextLabel.IsVisible = false;
             NextDayButton.IsVisible = false;
+            QuoteNoteBorder.IsVisible = false;
             QuoteSectionBorder.IsVisible = false;
             return;
         }
@@ -68,9 +70,14 @@ public partial class ChallengeDetailPage : ContentPage
 
         if (!hasQuote)
         {
+            _isQuoteNoteVisible = false;
+            QuoteNoteBorder.IsVisible = false;
+            QuoteNoteLabel.Text = string.Empty;
             QuoteTextLabel.Text = string.Empty;
             QuoteAuthorLabel.Text = string.Empty;
             QuoteAuthorLabel.IsVisible = false;
+            QuoteHintLabel.IsVisible = false;
+            QuoteSectionBorder.Stroke = (Color)Microsoft.Maui.Controls.Application.Current!.Resources["ColorBorder"];
             return;
         }
 
@@ -79,6 +86,65 @@ public partial class ChallengeDetailPage : ContentPage
         QuoteAuthorLabel.Text = QuoteAuthorLabel.IsVisible
             ? $"\u2014 {challenge.QuoteAuthor}"
             : string.Empty;
+
+        var hasQuoteNote = !string.IsNullOrWhiteSpace(challenge.QuoteNote);
+        QuoteHintLabel.IsVisible = hasQuoteNote;
+        QuoteHintLabel.Text = _isQuoteNoteVisible
+            ? "Нажми, чтобы скрыть пояснение"
+            : "Нажми, чтобы открыть пояснение";
+        QuoteSectionBorder.Stroke = hasQuoteNote
+            ? Color.FromArgb("#2C3648")
+            : (Color)Microsoft.Maui.Controls.Application.Current!.Resources["ColorBorder"];
+        UpdateQuoteNoteVisibility(challenge, hasQuoteNote);
+    }
+
+    private void UpdateQuoteNoteVisibility(DailyChallenge challenge, bool hasQuoteNote)
+    {
+        if (!hasQuoteNote)
+        {
+            _isQuoteNoteVisible = false;
+            QuoteNoteBorder.IsVisible = false;
+            QuoteNoteLabel.Text = string.Empty;
+            return;
+        }
+
+        QuoteNoteBorder.IsVisible = _isQuoteNoteVisible;
+        QuoteNoteLabel.Text = _isQuoteNoteVisible
+            ? challenge.QuoteNote
+            : string.Empty;
+    }
+
+    private void OnQuoteTapped(object? sender, TappedEventArgs e)
+    {
+        if (_challenge is null || string.IsNullOrWhiteSpace(_challenge.QuoteNote))
+        {
+            return;
+        }
+
+        _isQuoteNoteVisible = !_isQuoteNoteVisible;
+        RenderQuoteSection(_challenge);
+    }
+
+    private void OnScreenTapped(object? sender, TappedEventArgs e)
+    {
+        if (_challenge is null || !_isQuoteNoteVisible)
+        {
+            return;
+        }
+
+        var tapOnQuote = e.GetPosition(QuoteSectionBorder) is Point point
+            && point.X >= 0
+            && point.Y >= 0
+            && point.X <= QuoteSectionBorder.Width
+            && point.Y <= QuoteSectionBorder.Height;
+
+        if (tapOnQuote)
+        {
+            return;
+        }
+
+        _isQuoteNoteVisible = false;
+        RenderQuoteSection(_challenge);
     }
 
     private View BuildStepCard(ChallengeStep step)

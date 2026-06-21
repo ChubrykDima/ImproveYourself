@@ -5,6 +5,9 @@
              Title="Ежедневный вызов"
              BackgroundColor="{StaticResource ColorBackground}">
     <ScrollView>
+              <ScrollView.GestureRecognizers>
+                     <TapGestureRecognizer Tapped="OnScreenTapped" />
+              </ScrollView.GestureRecognizers>
         <VerticalStackLayout Padding="22,16,22,30"
                              Spacing="16">
             <Border Style="{StaticResource CardBorderStyle}"
@@ -43,7 +46,11 @@
 
                      <Border x:Name="QuoteSectionBorder"
                                    Style="{StaticResource CardBorderStyle}"
-                                   IsVisible="False">
+                                   IsVisible="False"
+                                   StrokeThickness="1.5">
+                            <Border.GestureRecognizers>
+                                   <TapGestureRecognizer Tapped="OnQuoteTapped" />
+                            </Border.GestureRecognizers>
                             <Grid ColumnDefinitions="4,*"
                                      ColumnSpacing="14">
                                    <BoxView Color="{StaticResource ColorAccent}"
@@ -66,8 +73,32 @@
                                                     Text=""
                                                     Style="{StaticResource BodyLabelStyle}"
                                                     IsVisible="False" />
+                                          <Label x:Name="QuoteHintLabel"
+                                                    Text="Нажми, чтобы открыть пояснение"
+                                                    FontFamily="OpenSansRegular"
+                                                    FontSize="13"
+                                                    TextColor="{StaticResource ColorTextSecondary}"
+                                                    IsVisible="False" />
                                    </VerticalStackLayout>
                             </Grid>
+                     </Border>
+
+                     <Border x:Name="QuoteNoteBorder"
+                                   Style="{StaticResource CardBorderStyle}"
+                                   IsVisible="False"
+                                   Padding="18,16"
+                                   Margin="20,-6,0,0">
+                            <VerticalStackLayout Spacing="8">
+                                   <Label Text="Пояснение"
+                                             TextColor="{StaticResource ColorAccent}"
+                                             FontFamily="OpenSansRegular"
+                                             FontSize="14" />
+                                   <Label x:Name="QuoteNoteLabel"
+                                             Text=""
+                                             Style="{StaticResource BodyLabelStyle}"
+                                             TextColor="{StaticResource ColorTextPrimary}"
+                                             LineBreakMode="WordWrap" />
+                            </VerticalStackLayout>
                      </Border>
 
             <VerticalStackLayout x:Name="StepsContainer" Spacing="12" />

@@ -43,6 +43,8 @@ public sealed class ChallengeStep
 
     public string? QuoteAuthor { get; set; }
 
+    public string? QuoteNote { get; set; }
+
     public int SortOrder { get; set; }
 
     public StepStatus Status { get; set; }
@@ -65,6 +67,8 @@ public sealed class DailyChallenge
     public string? QuoteText { get; set; }
 
     public string? QuoteAuthor { get; set; }
+
+    public string? QuoteNote { get; set; }
 
     public List<ChallengeStep> Steps { get; set; } = [];
 }

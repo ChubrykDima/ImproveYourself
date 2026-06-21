@@ -63,6 +63,9 @@ internal sealed class ChallengeStepRecord
     [Column("quote_author")]
     public string? QuoteAuthor { get; set; }
 
+    [Column("quote_note")]
+    public string? QuoteNote { get; set; }
+
     [Column("sort_order")]
     public int SortOrder { get; set; }
 
@@ -105,6 +108,7 @@ public sealed class SqliteChallengeRepository : IChallengeRepository
         _database.Execute("PRAGMA foreign_keys = ON;");
         _database.CreateTable<DailyChallengeRecord>();
         _database.CreateTable<ChallengeStepRecord>();
+        EnsureSchema();
 
         _database.Execute("CREATE INDEX IF NOT EXISTS idx_daily_challenges_date ON daily_challenges (date);");
         _database.Execute("CREATE INDEX IF NOT EXISTS idx_challenge_steps_challenge ON challenge_steps (daily_challenge_id, sort_order);");
@@ -221,9 +225,23 @@ public sealed class SqliteChallengeRepository : IChallengeRepository
             if (IsPristineChallenge(existing))
             {
                 ReplaceChallenge(existing, CloneChallenge(challenge));
+                continue;
             }
+
+            SyncQuoteMetadata(existing, challenge);
         }
     }
+
+    private void EnsureSchema()
+    {
+        if (!ColumnExists("challenge_steps", "quote_note"))
+        {
+            _database.Execute("ALTER TABLE challenge_steps ADD COLUMN quote_note TEXT;");
+        }
+    }
+
+    private bool ColumnExists(string tableName, string columnName) =>
+        _database.ExecuteScalar<int>($"SELECT COUNT(*) FROM pragma_table_info('{tableName}') WHERE name = ?", columnName) > 0;
 
     private DailyChallenge? TryGetStoredChallengeByDate(string date)
     {
@@ -235,6 +253,49 @@ public sealed class SqliteChallengeRepository : IChallengeRepository
     private static bool IsPristineChallenge(DailyChallenge challenge) =>
         challenge.Status == ChallengeStatus.NotStarted
         && challenge.Steps.All(step => step.Status == StepStatus.NotStarted);
+
+    private void SyncQuoteMetadata(DailyChallenge existingChallenge, DailyChallenge bundledChallenge)
+    {
+        var bundledQuoteStep = BuildQuoteStorageStep(bundledChallenge);
+
+        if (bundledQuoteStep is null)
+        {
+            return;
+        }
+
+        var updated = _database.Execute(
+            "UPDATE challenge_steps SET title = ?, description = ?, quote_text = ?, quote_author = ?, quote_note = ?, sort_order = ? WHERE daily_challenge_id = ? AND type = ?",
+            bundledQuoteStep.Title,
+            bundledQuoteStep.Description,
+            bundledQuoteStep.QuoteText,
+            bundledQuoteStep.QuoteAuthor,
+            bundledQuoteStep.QuoteNote,
+            bundledQuoteStep.SortOrder,
+            existingChallenge.Id,
+            StepType.Quote.ToStorage());
+
+        if (updated > 0)
+        {
+            return;
+        }
+
+        _database.Execute(
+            "INSERT OR IGNORE INTO challenge_steps (id, daily_challenge_id, type, title, subtitle, description, tip, duration_seconds, quote_text, quote_author, quote_note, sort_order, status, completed_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            bundledQuoteStep.Id,
+            bundledQuoteStep.DailyChallengeId,
+            bundledQuoteStep.Type.ToStorage(),
+            bundledQuoteStep.Title,
+            bundledQuoteStep.Subtitle,
+            bundledQuoteStep.Description,
+            bundledQuoteStep.Tip,
+            bundledQuoteStep.DurationSeconds,
+            bundledQuoteStep.QuoteText,
+            bundledQuoteStep.QuoteAuthor,
+            bundledQuoteStep.QuoteNote,
+            bundledQuoteStep.SortOrder,
+            bundledQuoteStep.Status.ToStorage(),
+            bundledQuoteStep.CompletedAt);
+    }
 
     private void ReplaceChallenge(DailyChallenge existingChallenge, DailyChallenge bundledChallenge)
     {
@@ -297,6 +358,9 @@ public sealed class SqliteChallengeRepository : IChallengeRepository
         var quoteAuthor = string.IsNullOrWhiteSpace(challenge.QuoteAuthor)
             ? quoteStep?.QuoteAuthor
             : challenge.QuoteAuthor;
+        var quoteNote = string.IsNullOrWhiteSpace(challenge.QuoteNote)
+            ? quoteStep?.QuoteNote
+            : challenge.QuoteNote;
 
         return new DailyChallenge
         {
@@ -309,6 +373,7 @@ public sealed class SqliteChallengeRepository : IChallengeRepository
                 : challenge.CreatedAt,
             QuoteText = string.IsNullOrWhiteSpace(quoteText) ? null : quoteText,
             QuoteAuthor = string.IsNullOrWhiteSpace(quoteAuthor) ? null : quoteAuthor,
+            QuoteNote = string.IsNullOrWhiteSpace(quoteNote) ? null : quoteNote,
             Steps = visibleSteps,
         };
     }
@@ -327,6 +392,7 @@ public sealed class SqliteChallengeRepository : IChallengeRepository
         DurationSeconds = step.DurationSeconds,
         QuoteText = step.QuoteText,
         QuoteAuthor = step.QuoteAuthor,
+        QuoteNote = step.QuoteNote,
         SortOrder = step.SortOrder <= 0 ? fallbackSortOrder : step.SortOrder,
         Status = step.Status,
         CompletedAt = step.CompletedAt,
@@ -349,6 +415,7 @@ public sealed class SqliteChallengeRepository : IChallengeRepository
         CreatedAt = challenge.CreatedAt,
         QuoteText = challenge.QuoteText,
         QuoteAuthor = challenge.QuoteAuthor,
+        QuoteNote = challenge.QuoteNote,
         Steps = challenge.Steps.Select(CloneStep).ToList(),
     };
 
@@ -364,6 +431,7 @@ public sealed class SqliteChallengeRepository : IChallengeRepository
         DurationSeconds = step.DurationSeconds,
         QuoteText = step.QuoteText,
         QuoteAuthor = step.QuoteAuthor,
+        QuoteNote = step.QuoteNote,
         SortOrder = step.SortOrder,
         Status = step.Status,
         CompletedAt = step.CompletedAt,
@@ -381,6 +449,7 @@ public sealed class SqliteChallengeRepository : IChallengeRepository
         DurationSeconds = row.DurationSeconds,
         QuoteText = row.QuoteText,
         QuoteAuthor = row.QuoteAuthor,
+        QuoteNote = row.QuoteNote,
         SortOrder = row.SortOrder,
         Status = row.Status.ToStepStatus(),
         CompletedAt = row.CompletedAt,
@@ -461,6 +530,7 @@ public sealed class SqliteChallengeRepository : IChallengeRepository
             Description = "Прочитай цитату дня.",
             QuoteText = challenge.QuoteText,
             QuoteAuthor = challenge.QuoteAuthor,
+            QuoteNote = challenge.QuoteNote,
             SortOrder = QuoteStorageSortOrder,
             Status = StepStatus.NotStarted,
             CompletedAt = null,
@@ -480,7 +550,7 @@ public sealed class SqliteChallengeRepository : IChallengeRepository
         foreach (var step in BuildStorageSteps(challenge))
         {
             _database.Execute(
-                "INSERT OR IGNORE INTO challenge_steps (id, daily_challenge_id, type, title, subtitle, description, tip, duration_seconds, quote_text, quote_author, sort_order, status, completed_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                "INSERT OR IGNORE INTO challenge_steps (id, daily_challenge_id, type, title, subtitle, description, tip, duration_seconds, quote_text, quote_author, quote_note, sort_order, status, completed_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
                 step.Id,
                 step.DailyChallengeId,
                 step.Type.ToStorage(),
@@ -491,6 +561,7 @@ public sealed class SqliteChallengeRepository : IChallengeRepository
                 step.DurationSeconds,
                 step.QuoteText,
                 step.QuoteAuthor,
+                step.QuoteNote,
                 step.SortOrder,
                 step.Status.ToStorage(),
                 step.CompletedAt);

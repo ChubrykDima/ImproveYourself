@@ -9,7 +9,7 @@ internal sealed record PracticeTemplate(
     int DurationSeconds,
     string Tip);
 
-internal sealed record QuoteTemplate(string Text, string Author);
+internal sealed record QuoteTemplate(string Text, string Author, string Note);
 
 internal sealed record SocialTemplate(string Title, string Description, string Tip);
 
@@ -51,11 +51,26 @@ public static class ChallengeFactory
 
     private static readonly IReadOnlyList<QuoteTemplate> QuoteTemplates =
     [
-        new("Сначала скажи себе, кем хочешь быть, а затем делай, что должен.", "Эпиктет"),
-        new("Нам мешают не сами вещи, а мнение о них.", "Эпиктет"),
-        new("Счастье твоей жизни зависит от качества твоих мыслей.", "Марк Аврелий"),
-        new("Трудности показывают, кто мы есть.", "Сенека"),
-        new("Пока ты жив, продолжай становиться лучше.", "Сенека"),
+        new(
+            "Сначала назови себе свою роль, потом подтверди её самым неудобным делом дня.",
+            "В духе Эпиктета",
+            "Идентичность становится реальной, когда подтверждается действием, а не намерением."),
+        new(
+            "Не каждую мысль нужно слушаться: иногда она просто усталая версия вчерашнего страха.",
+            "В духе Эпиктета",
+            "Отдели факт от автоматической мысли и проверь, что реально происходит сейчас."),
+        new(
+            "Мысли становятся средой жизни: отсеки шум, оставь одну честную мысль и поступок.",
+            "В духе Марка Аврелия",
+            "Сократи внутренний шум до одного ясного вывода и одного шага на сегодня."),
+        new(
+            "Трудность полезна не сама по себе, а тем, как она тренирует выдержку.",
+            "В духе Сенеки",
+            "Сложность не всегда благо, но она показывает, где можно укрепить устойчивость."),
+        new(
+            "Даже маленькое действие меняет день; особенно то, которое ты решил не откладывать.",
+            "В духе Уильяма Джеймса",
+            "Маленький завершённый шаг обычно лечит бессилие лучше долгих размышлений."),
     ];
 
     private static readonly IReadOnlyList<SocialTemplate> SocialTemplates =
@@ -99,6 +114,7 @@ public static class ChallengeFactory
             CreatedAt = DateTime.UtcNow.ToString("o", CultureInfo.InvariantCulture),
             QuoteText = quote.Text,
             QuoteAuthor = quote.Author,
+            QuoteNote = quote.Note,
             Steps =
             [
                 new ChallengeStep
