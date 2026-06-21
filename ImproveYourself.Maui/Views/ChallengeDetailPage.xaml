@@ -23,6 +23,14 @@
                            Text="Прогресс: 0/2"
                            Style="{StaticResource BodyLabelStyle}" />
 
+                    <Label x:Name="PersonalizationLabel"
+                           Text=""
+                           TextColor="{StaticResource ColorAccent}"
+                           FontFamily="OpenSansRegular"
+                           FontSize="14"
+                           LineBreakMode="WordWrap"
+                           IsVisible="False" />
+
                     <ProgressBar x:Name="ChallengeProgressBar"
                                  Progress="0"
                                  ProgressColor="{StaticResource ColorAccent}"

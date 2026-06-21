@@ -126,7 +126,7 @@ public sealed class SqliteChallengeRepository : IChallengeRepository
         return row is null ? null : MapChallengeRow(row);
     }
 
-    public DailyChallenge GetOrCreateChallenge(string date)
+    public DailyChallenge GetOrCreateChallenge(string date, SelfAssessmentSnapshot? personalizationSnapshot = null)
     {
         Initialize();
 
@@ -134,13 +134,28 @@ public sealed class SqliteChallengeRepository : IChallengeRepository
 
         if (existing is not null)
         {
-            return existing;
+            return PersonalizeExistingChallengeIfNeeded(existing, personalizationSnapshot);
         }
 
         var challenge = GetBundledChallenge(date) ?? ChallengeFactory.CreateDailyChallenge(date);
+        challenge = ChallengePersonalizer.Personalize(challenge, personalizationSnapshot);
         InsertChallenge(challenge);
 
         return GetChallengeByDate(date) ?? challenge;
+    }
+
+    public void ApplyPersonalization(SelfAssessmentSnapshot snapshot)
+    {
+        Initialize();
+
+        var rows = _database.Query<DailyChallengeRecord>(
+            "SELECT id, date, title, status, created_at FROM daily_challenges ORDER BY date ASC");
+
+        foreach (var row in rows)
+        {
+            var challenge = MapChallengeRow(row);
+            PersonalizeExistingChallengeIfNeeded(challenge, snapshot);
+        }
     }
 
     public DailyChallenge AdvanceChallengeStepStatus(string date, StepType stepType)
@@ -302,6 +317,57 @@ public sealed class SqliteChallengeRepository : IChallengeRepository
         _database.Execute("DELETE FROM challenge_steps WHERE daily_challenge_id = ?", existingChallenge.Id);
         _database.Execute("DELETE FROM daily_challenges WHERE id = ?", existingChallenge.Id);
         InsertChallenge(bundledChallenge);
+    }
+
+    private DailyChallenge PersonalizeExistingChallengeIfNeeded(
+        DailyChallenge challenge,
+        SelfAssessmentSnapshot? personalizationSnapshot)
+    {
+        if (personalizationSnapshot is null || !IsPristineChallenge(challenge))
+        {
+            return challenge;
+        }
+
+        var personalized = ChallengePersonalizer.Personalize(challenge, personalizationSnapshot);
+
+        if (!HasChallengeContentChanges(challenge, personalized))
+        {
+            return challenge;
+        }
+
+        ReplaceChallenge(challenge, personalized);
+
+        return GetChallengeByDate(challenge.Date) ?? personalized;
+    }
+
+    private static bool HasChallengeContentChanges(DailyChallenge current, DailyChallenge next)
+    {
+        if (current.Title != next.Title
+            || current.QuoteText != next.QuoteText
+            || current.QuoteAuthor != next.QuoteAuthor
+            || current.QuoteNote != next.QuoteNote
+            || current.Steps.Count != next.Steps.Count)
+        {
+            return true;
+        }
+
+        var nextStepsById = next.Steps.ToDictionary(step => step.Id, StringComparer.Ordinal);
+
+        foreach (var currentStep in current.Steps)
+        {
+            if (!nextStepsById.TryGetValue(currentStep.Id, out var nextStep)
+                || currentStep.Title != nextStep.Title
+                || currentStep.Subtitle != nextStep.Subtitle
+                || currentStep.Description != nextStep.Description
+                || currentStep.Tip != nextStep.Tip
+                || currentStep.DurationSeconds != nextStep.DurationSeconds
+                || currentStep.SortOrder != nextStep.SortOrder)
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private static IReadOnlyDictionary<string, DailyChallenge> LoadBundledChallenges()

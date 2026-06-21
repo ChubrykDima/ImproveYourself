@@ -8,7 +8,9 @@ public interface IChallengeRepository
 
     DailyChallenge? GetChallengeByDate(string date);
 
-    DailyChallenge GetOrCreateChallenge(string date);
+    DailyChallenge GetOrCreateChallenge(string date, SelfAssessmentSnapshot? personalizationSnapshot = null);
+
+    void ApplyPersonalization(SelfAssessmentSnapshot snapshot);
 
     DailyChallenge AdvanceChallengeStepStatus(string date, StepType stepType);
 

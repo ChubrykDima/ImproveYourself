@@ -34,6 +34,8 @@ public partial class ChallengeDetailPage : ContentPage
             DateLabel.Text = "Дата: --";
             ChallengeTitleLabel.Text = "Челлендж не найден";
             ProgressLabel.Text = "Прогресс: 0/2";
+            PersonalizationLabel.IsVisible = false;
+            PersonalizationLabel.Text = string.Empty;
             ChallengeProgressBar.Progress = 0;
             CompletedTextLabel.IsVisible = false;
             NextDayButton.IsVisible = false;
@@ -49,6 +51,7 @@ public partial class ChallengeDetailPage : ContentPage
         DateLabel.Text = $"Дата: {DateHelpers.ToDisplayDate(_challenge.Date)}";
         ChallengeTitleLabel.Text = _challenge.Title;
         ProgressLabel.Text = $"Прогресс: {completedSteps}/{totalSteps}";
+        RenderPersonalization();
         ChallengeProgressBar.Progress = completedSteps / (double)totalSteps;
         CompletedTextLabel.IsVisible = isCompleted;
         NextDayButton.IsVisible = isCompleted;
@@ -61,6 +64,14 @@ public partial class ChallengeDetailPage : ContentPage
         {
             StepsContainer.Children.Add(BuildStepCard(step));
         }
+    }
+
+    private void RenderPersonalization()
+    {
+        var profile = ChallengePersonalizer.CreateProfile(_appState.StartSelfAssessment);
+
+        PersonalizationLabel.IsVisible = profile is not null;
+        PersonalizationLabel.Text = profile?.DailyReason ?? string.Empty;
     }
 
     private void RenderQuoteSection(DailyChallenge challenge)

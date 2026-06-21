@@ -38,6 +38,8 @@ public partial class HomePage : ContentPage
             ChallengeLeadLabel.Text = "Главный фокус дня";
             ChallengeTitleLabel.Text = "Подготавливаем сегодняшний вызов...";
             ChallengeSubtitleLabel.Text = "Попробуй открыть экран через секунду.";
+            PersonalizationLabel.IsVisible = false;
+            PersonalizationLabel.Text = string.Empty;
             ChallengeProgressBar.Progress = 0;
             ChallengeButton.Text = "Подождите";
             ChallengeButton.IsEnabled = false;
@@ -54,11 +56,20 @@ public partial class HomePage : ContentPage
             : $"Фокус на {DateHelpers.ToDisplayDate(_appState.TodayChallenge.Date)}";
         ChallengeTitleLabel.Text = _appState.TodayChallenge.Title;
         ChallengeSubtitleLabel.Text = $"Дата: {DateHelpers.ToDisplayDate(_appState.TodayChallenge.Date)} · Шагов: {completedSteps}/{totalSteps}";
+        RenderPersonalization();
         ChallengeProgressBar.Progress = completedSteps / (double)totalSteps;
         ChallengeButton.Text = isCompleted
             ? "Перейти к следующему дню"
             : "Открыть ежедневный вызов";
         ChallengeButton.IsEnabled = true;
+    }
+
+    private void RenderPersonalization()
+    {
+        var profile = ChallengePersonalizer.CreateProfile(_appState.StartSelfAssessment);
+
+        PersonalizationLabel.IsVisible = profile is not null;
+        PersonalizationLabel.Text = profile?.DailyReason ?? string.Empty;
     }
 
     private async void OnOpenChallengeClicked(object? sender, EventArgs e)

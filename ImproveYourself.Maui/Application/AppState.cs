@@ -126,6 +126,11 @@ public sealed class AppState : INotifyPropertyChanged
         StartSelfAssessment = _settingsService.ReadSelfAssessment(SelfAssessmentKind.Start);
         FinalSelfAssessment = _settingsService.ReadSelfAssessment(SelfAssessmentKind.Final);
 
+        if (StartSelfAssessment is not null)
+        {
+            _challengeRepository.ApplyPersonalization(StartSelfAssessment);
+        }
+
         SetCurrentChallengeDateInternal(ResolveCurrentChallengeDate());
 
         IsHydrated = true;
@@ -148,7 +153,7 @@ public sealed class AppState : INotifyPropertyChanged
 
     public DailyChallenge EnsureChallengeForDate(string date)
     {
-        var challenge = _challengeRepository.GetOrCreateChallenge(date);
+        var challenge = _challengeRepository.GetOrCreateChallenge(date, StartSelfAssessment);
 
         if (date == CurrentChallengeDate)
         {
@@ -163,7 +168,7 @@ public sealed class AppState : INotifyPropertyChanged
         var nextDate = ResolveRequestedChallengeDate(date);
         SetCurrentChallengeDateInternal(nextDate);
 
-        return TodayChallenge ?? _challengeRepository.GetOrCreateChallenge(nextDate);
+        return TodayChallenge ?? _challengeRepository.GetOrCreateChallenge(nextDate, StartSelfAssessment);
     }
 
     public DailyChallenge AdvanceToNextDay()
@@ -208,7 +213,7 @@ public sealed class AppState : INotifyPropertyChanged
             ? updated
             : (TodayChallenge is not null && TodayChallenge.Date == referenceDate
                 ? TodayChallenge
-                : _challengeRepository.GetOrCreateChallenge(referenceDate));
+                : _challengeRepository.GetOrCreateChallenge(referenceDate, StartSelfAssessment));
 
         return updated;
     }
@@ -243,6 +248,13 @@ public sealed class AppState : INotifyPropertyChanged
         if (snapshot.Kind == SelfAssessmentKind.Start)
         {
             StartSelfAssessment = snapshot;
+            _challengeRepository.ApplyPersonalization(snapshot);
+
+            if (!string.IsNullOrWhiteSpace(CurrentChallengeDate))
+            {
+                TodayChallenge = _challengeRepository.GetOrCreateChallenge(CurrentChallengeDate, snapshot);
+            }
+
             OnPropertyChanged(nameof(HasStartSelfAssessment));
             OnPropertyChanged(nameof(ShouldShowStartSelfAssessment));
             OnPropertyChanged(nameof(ShouldShowFinalSelfAssessment));
@@ -319,7 +331,7 @@ public sealed class AppState : INotifyPropertyChanged
     {
         CurrentChallengeDate = date;
         _settingsService.WriteCurrentChallengeDate(date);
-        TodayChallenge = _challengeRepository.GetOrCreateChallenge(date);
+        TodayChallenge = _challengeRepository.GetOrCreateChallenge(date, StartSelfAssessment);
         LoadDerived(date);
     }
 
