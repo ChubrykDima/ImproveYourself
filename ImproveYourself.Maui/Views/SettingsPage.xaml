@@ -65,6 +65,51 @@
                            LineBreakMode="WordWrap" />
                 </VerticalStackLayout>
             </Border>
+
+            <Border Style="{StaticResource CardBorderStyle}">
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="Backend"
+                           Style="{StaticResource SubtitleLabelStyle}" />
+                    <Label Text="Подключение к Railway API для проверки деплоя и будущей синхронизации."
+                           Style="{StaticResource BodyLabelStyle}"
+                           LineBreakMode="WordWrap" />
+
+                    <Entry x:Name="BackendUrlEntry"
+                           Placeholder="https://your-service.up.railway.app"
+                           PlaceholderColor="{StaticResource ColorTextSecondary}"
+                           Keyboard="Url"
+                           FontFamily="OpenSansRegular"
+                           FontSize="15"
+                           TextColor="{StaticResource ColorTextPrimary}"
+                           BackgroundColor="{StaticResource ColorFrame}"
+                           HeightRequest="52" />
+
+                    <Entry x:Name="BackendApiKeyEntry"
+                           Placeholder="API key"
+                           PlaceholderColor="{StaticResource ColorTextSecondary}"
+                           IsPassword="True"
+                           FontFamily="OpenSansRegular"
+                           FontSize="15"
+                           TextColor="{StaticResource ColorTextPrimary}"
+                           BackgroundColor="{StaticResource ColorFrame}"
+                           HeightRequest="52" />
+
+                    <Grid ColumnDefinitions="*,*"
+                          ColumnSpacing="10">
+                        <Button Text="Сохранить"
+                                Clicked="OnSaveBackendClicked" />
+                        <Button Grid.Column="1"
+                                x:Name="CheckBackendButton"
+                                Text="Проверить"
+                                Style="{StaticResource PrimaryButtonStyle}"
+                                Clicked="OnCheckBackendClicked" />
+                    </Grid>
+
+                    <Label x:Name="BackendStatusLabel"
+                           Style="{StaticResource BodyLabelStyle}"
+                           LineBreakMode="WordWrap" />
+                </VerticalStackLayout>
+            </Border>
         </VerticalStackLayout>
     </ScrollView>
 </ContentPage>

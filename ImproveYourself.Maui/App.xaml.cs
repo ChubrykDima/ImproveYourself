@@ -9,13 +9,15 @@ namespace ImproveYourself.Maui;
 public partial class App : Microsoft.Maui.Controls.Application
 {
 	private readonly AppState _appState;
+	private readonly IBackendConnectionService _backendConnectionService;
 	private Page _rootPage;
 	private Window? _window;
 
-	public App(AppState appState)
+	public App(AppState appState, IBackendConnectionService backendConnectionService)
 	{
 		InitializeComponent();
 		_appState = appState;
+		_backendConnectionService = backendConnectionService;
 		_rootPage = BuildNavigationPage(new LoadingPage());
 
 		_ = BootstrapAsync();
@@ -57,7 +59,7 @@ public partial class App : Microsoft.Maui.Controls.Application
 						return;
 					}
 
-					SetRootPage(BuildNavigationPage(new HomePage(_appState)));
+					SetRootPage(BuildNavigationPage(new HomePage(_appState, _backendConnectionService)));
 					return;
 				}
 
@@ -75,7 +77,7 @@ public partial class App : Microsoft.Maui.Controls.Application
 
 	private Task NavigateToHomeAsync()
 	{
-		SetRootPage(BuildNavigationPage(new HomePage(_appState)));
+		SetRootPage(BuildNavigationPage(new HomePage(_appState, _backendConnectionService)));
 
 		return Task.CompletedTask;
 	}

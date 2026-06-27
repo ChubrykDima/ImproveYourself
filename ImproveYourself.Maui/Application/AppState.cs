@@ -15,6 +15,8 @@ public sealed class AppState : INotifyPropertyChanged
     private string _displayName = "Друг";
     private bool _onboardingCompleted;
     private bool _notificationsEnabled;
+    private string _backendBaseUrl = string.Empty;
+    private string _backendApiKey = string.Empty;
     private string _currentChallengeDate = string.Empty;
     private DailyChallenge? _todayChallenge;
     private StreakSnapshot _streakSnapshot = StreakSnapshot.Empty;
@@ -58,6 +60,18 @@ public sealed class AppState : INotifyPropertyChanged
     {
         get => _notificationsEnabled;
         private set => SetProperty(ref _notificationsEnabled, value);
+    }
+
+    public string BackendBaseUrl
+    {
+        get => _backendBaseUrl;
+        private set => SetProperty(ref _backendBaseUrl, value);
+    }
+
+    public string BackendApiKey
+    {
+        get => _backendApiKey;
+        private set => SetProperty(ref _backendApiKey, value);
     }
 
     public string CurrentChallengeDate
@@ -123,6 +137,8 @@ public sealed class AppState : INotifyPropertyChanged
         OnboardingCompleted = _settingsService.ReadOnboardingCompleted();
         DisplayName = _settingsService.ReadDisplayName();
         NotificationsEnabled = _settingsService.ReadNotificationsEnabled();
+        BackendBaseUrl = _settingsService.ReadBackendBaseUrl();
+        BackendApiKey = _settingsService.ReadBackendApiKey();
         StartSelfAssessment = _settingsService.ReadSelfAssessment(SelfAssessmentKind.Start);
         FinalSelfAssessment = _settingsService.ReadSelfAssessment(SelfAssessmentKind.Final);
 
@@ -239,6 +255,15 @@ public sealed class AppState : INotifyPropertyChanged
 
         _settingsService.WriteDisplayName(nextName);
         DisplayName = nextName;
+    }
+
+    public void UpdateBackendConnection(string baseUrl, string apiKey)
+    {
+        _settingsService.WriteBackendBaseUrl(baseUrl);
+        _settingsService.WriteBackendApiKey(apiKey);
+
+        BackendBaseUrl = _settingsService.ReadBackendBaseUrl();
+        BackendApiKey = _settingsService.ReadBackendApiKey();
     }
 
     public void SaveSelfAssessment(SelfAssessmentSnapshot snapshot)

@@ -6,12 +6,14 @@ namespace ImproveYourself.Maui.Views;
 public partial class HomePage : ContentPage
 {
     private readonly AppState _appState;
+    private readonly IBackendConnectionService _backendConnectionService;
     private bool _isOpeningFinalAssessment;
 
-    public HomePage(AppState appState)
+    public HomePage(AppState appState, IBackendConnectionService backendConnectionService)
     {
         InitializeComponent();
         _appState = appState;
+        _backendConnectionService = backendConnectionService;
     }
 
     protected override async void OnAppearing()
@@ -101,7 +103,7 @@ public partial class HomePage : ContentPage
 
     private async void OnOpenSettingsClicked(object? sender, EventArgs e)
     {
-        await Navigation.PushAsync(new SettingsPage(_appState));
+        await Navigation.PushAsync(new SettingsPage(_appState, _backendConnectionService));
     }
 
     private async Task TryOpenFinalAssessmentAsync()

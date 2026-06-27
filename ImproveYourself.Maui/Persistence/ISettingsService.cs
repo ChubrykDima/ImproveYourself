@@ -20,6 +20,14 @@ public interface ISettingsService
 
     void WriteNotificationsEnabled(bool value);
 
+    string ReadBackendBaseUrl();
+
+    void WriteBackendBaseUrl(string value);
+
+    string ReadBackendApiKey();
+
+    void WriteBackendApiKey(string value);
+
     SelfAssessmentSnapshot? ReadSelfAssessment(SelfAssessmentKind kind);
 
     void WriteSelfAssessment(SelfAssessmentSnapshot snapshot);

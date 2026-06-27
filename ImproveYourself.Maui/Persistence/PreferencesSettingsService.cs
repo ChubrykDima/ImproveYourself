@@ -11,6 +11,8 @@ public sealed class PreferencesSettingsService : ISettingsService
     private const string CurrentChallengeDateKey = "currentChallengeDate";
     private const string DisplayNameKey = "displayName";
     private const string NotificationsEnabledKey = "notificationsEnabled";
+    private const string BackendBaseUrlKey = "backend.baseUrl";
+    private const string BackendApiKeyKey = "backend.apiKey";
     private const string StartSelfAssessmentKey = "selfAssessment.start";
     private const string FinalSelfAssessmentKey = "selfAssessment.final";
 
@@ -48,6 +50,27 @@ public sealed class PreferencesSettingsService : ISettingsService
 
     public void WriteNotificationsEnabled(bool value) =>
         Preferences.Default.Set(NotificationsEnabledKey, value);
+
+    public string ReadBackendBaseUrl() =>
+        Preferences.Default.Get(BackendBaseUrlKey, string.Empty);
+
+    public void WriteBackendBaseUrl(string value)
+    {
+        var normalized = string.IsNullOrWhiteSpace(value)
+            ? string.Empty
+            : value.Trim().TrimEnd('/');
+
+        Preferences.Default.Set(BackendBaseUrlKey, normalized);
+    }
+
+    public string ReadBackendApiKey() =>
+        Preferences.Default.Get(BackendApiKeyKey, string.Empty);
+
+    public void WriteBackendApiKey(string value)
+    {
+        var normalized = string.IsNullOrWhiteSpace(value) ? string.Empty : value.Trim();
+        Preferences.Default.Set(BackendApiKeyKey, normalized);
+    }
 
     public SelfAssessmentSnapshot? ReadSelfAssessment(SelfAssessmentKind kind)
     {
