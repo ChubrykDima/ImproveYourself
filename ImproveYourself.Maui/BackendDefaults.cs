@@ -7,5 +7,15 @@ public static class BackendDefaults
     // Never embed shared secrets in a mobile app binary.
     public const string ProductionApiKey = "";
 
-    public static bool AllowManualBackendSettings => true;
+    public static bool AllowManualBackendSettings
+    {
+        get
+        {
+#if DEBUG
+            return true;
+#else
+            return false;
+#endif
+        }
+    }
 }
