@@ -15,10 +15,12 @@ public partial class StatisticsPage : ContentPage
         _appState = appState;
     }
 
-    protected override void OnAppearing()
+    protected override async void OnAppearing()
     {
         base.OnAppearing();
         _appState.RefreshDerivedState();
+        Render();
+        await _appState.SyncBackendAsync();
         Render();
     }
 
@@ -35,7 +37,25 @@ public partial class StatisticsPage : ContentPage
         PracticeValueLabel.Text = GetCategoryValue(stats, StepType.Practice).ToString();
         SocialValueLabel.Text = GetCategoryValue(stats, StepType.Social).ToString();
 
+        RenderBackendStats();
         RenderWeeklyBars(stats.Days);
+    }
+
+    private void RenderBackendStats()
+    {
+        var backendStats = _appState.BackendStats;
+        var hasMessage = !string.IsNullOrWhiteSpace(_appState.BackendSyncMessage);
+
+        BackendStatsBorder.IsVisible = backendStats is not null || hasMessage;
+
+        if (backendStats is null)
+        {
+            BackendStatsLabel.Text = hasMessage ? _appState.BackendSyncMessage : string.Empty;
+            return;
+        }
+
+        BackendStatsLabel.Text =
+            $"Сервер: {backendStats.TotalChallengesCompleted} дней, {backendStats.TotalStepsCompleted} шагов. {_appState.BackendSyncMessage}";
     }
 
     private void RenderWeeklyBars(IReadOnlyList<WeeklyDayStat> days)

@@ -195,6 +195,7 @@ public static class ChallengePersonalizer
             Title = challenge.Title,
             Status = challenge.Status,
             CreatedAt = challenge.CreatedAt,
+            UpdatedAt = challenge.UpdatedAt,
             QuoteText = challenge.QuoteText,
             QuoteAuthor = challenge.QuoteAuthor,
             QuoteNote = challenge.QuoteNote,
@@ -264,6 +265,7 @@ public static class ChallengePersonalizer
         Title = challenge.Title,
         Status = challenge.Status,
         CreatedAt = challenge.CreatedAt,
+        UpdatedAt = challenge.UpdatedAt,
         QuoteText = challenge.QuoteText,
         QuoteAuthor = challenge.QuoteAuthor,
         QuoteNote = challenge.QuoteNote,
@@ -286,6 +288,7 @@ public static class ChallengePersonalizer
         SortOrder = step.SortOrder,
         Status = step.Status,
         CompletedAt = step.CompletedAt,
+        UpdatedAt = step.UpdatedAt,
     };
 
     private sealed record FocusCandidate(SelfAssessmentFocus Focus, int Score, int Priority);

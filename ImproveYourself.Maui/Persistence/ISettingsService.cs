@@ -28,6 +28,8 @@ public interface ISettingsService
 
     void WriteBackendApiKey(string value);
 
+    string ReadBackendClientId();
+
     SelfAssessmentSnapshot? ReadSelfAssessment(SelfAssessmentKind kind);
 
     void WriteSelfAssessment(SelfAssessmentSnapshot snapshot);

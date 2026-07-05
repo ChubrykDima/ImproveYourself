@@ -26,7 +26,10 @@ public static class MauiProgram
 		{
 			Timeout = TimeSpan.FromSeconds(12),
 		});
-		builder.Services.AddSingleton<IBackendConnectionService, BackendConnectionService>();
+		builder.Services.AddSingleton<IAnalyticsClient, AnalyticsClient>();
+		builder.Services.AddSingleton<BackendConnectionService>();
+		builder.Services.AddSingleton<IBackendConnectionService>(services => services.GetRequiredService<BackendConnectionService>());
+		builder.Services.AddSingleton<IBackendSyncService>(services => services.GetRequiredService<BackendConnectionService>());
 		builder.Services.AddSingleton<AppState>();
 
 #if DEBUG

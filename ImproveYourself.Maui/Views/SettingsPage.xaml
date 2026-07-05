@@ -66,11 +66,12 @@
                 </VerticalStackLayout>
             </Border>
 
-            <Border Style="{StaticResource CardBorderStyle}">
+            <Border x:Name="BackendSettingsBorder"
+                    Style="{StaticResource CardBorderStyle}">
                 <VerticalStackLayout Spacing="10">
                     <Label Text="Backend"
                            Style="{StaticResource SubtitleLabelStyle}" />
-                    <Label Text="Подключение к Railway API для проверки деплоя и будущей синхронизации."
+                    <Label Text="Подключение к Railway API для проверки деплоя и синхронизации прогресса."
                            Style="{StaticResource BodyLabelStyle}"
                            LineBreakMode="WordWrap" />
 

@@ -1,6 +1,7 @@
 using Microsoft.Maui.Storage;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using ImproveYourself.Maui;
 using ImproveYourself.Maui.Domain;
 
 namespace ImproveYourself.Maui.Persistence;
@@ -13,6 +14,7 @@ public sealed class PreferencesSettingsService : ISettingsService
     private const string NotificationsEnabledKey = "notificationsEnabled";
     private const string BackendBaseUrlKey = "backend.baseUrl";
     private const string BackendApiKeyKey = "backend.apiKey";
+    private const string BackendClientIdKey = "backend.clientId";
     private const string StartSelfAssessmentKey = "selfAssessment.start";
     private const string FinalSelfAssessmentKey = "selfAssessment.final";
 
@@ -51,25 +53,70 @@ public sealed class PreferencesSettingsService : ISettingsService
     public void WriteNotificationsEnabled(bool value) =>
         Preferences.Default.Set(NotificationsEnabledKey, value);
 
-    public string ReadBackendBaseUrl() =>
-        Preferences.Default.Get(BackendBaseUrlKey, string.Empty);
+    public string ReadBackendBaseUrl()
+    {
+        if (BackendDefaults.AllowManualBackendSettings)
+        {
+            var savedBaseUrl = NormalizeBackendBaseUrl(Preferences.Default.Get(BackendBaseUrlKey, string.Empty));
+
+            if (!string.IsNullOrWhiteSpace(savedBaseUrl))
+            {
+                return savedBaseUrl;
+            }
+        }
+
+        return NormalizeBackendBaseUrl(BackendDefaults.ProductionBaseUrl);
+    }
 
     public void WriteBackendBaseUrl(string value)
     {
-        var normalized = string.IsNullOrWhiteSpace(value)
-            ? string.Empty
-            : value.Trim().TrimEnd('/');
+        if (!BackendDefaults.AllowManualBackendSettings)
+        {
+            return;
+        }
 
-        Preferences.Default.Set(BackendBaseUrlKey, normalized);
+        Preferences.Default.Set(BackendBaseUrlKey, NormalizeBackendBaseUrl(value));
     }
 
-    public string ReadBackendApiKey() =>
-        Preferences.Default.Get(BackendApiKeyKey, string.Empty);
+    public string ReadBackendApiKey()
+    {
+        if (BackendDefaults.AllowManualBackendSettings)
+        {
+            var savedApiKey = Preferences.Default.Get(BackendApiKeyKey, string.Empty);
+
+            if (!string.IsNullOrWhiteSpace(savedApiKey))
+            {
+                return savedApiKey.Trim();
+            }
+        }
+
+        return BackendDefaults.ProductionApiKey.Trim();
+    }
 
     public void WriteBackendApiKey(string value)
     {
+        if (!BackendDefaults.AllowManualBackendSettings)
+        {
+            return;
+        }
+
         var normalized = string.IsNullOrWhiteSpace(value) ? string.Empty : value.Trim();
         Preferences.Default.Set(BackendApiKeyKey, normalized);
+    }
+
+    public string ReadBackendClientId()
+    {
+        var clientId = Preferences.Default.Get(BackendClientIdKey, string.Empty);
+
+        if (!string.IsNullOrWhiteSpace(clientId))
+        {
+            return clientId;
+        }
+
+        clientId = Guid.NewGuid().ToString("D");
+        Preferences.Default.Set(BackendClientIdKey, clientId);
+
+        return clientId;
     }
 
     public SelfAssessmentSnapshot? ReadSelfAssessment(SelfAssessmentKind kind)
@@ -103,4 +150,9 @@ public sealed class PreferencesSettingsService : ISettingsService
         SelfAssessmentKind.Final => FinalSelfAssessmentKey,
         _ => StartSelfAssessmentKey,
     };
+
+    private static string NormalizeBackendBaseUrl(string value) =>
+        string.IsNullOrWhiteSpace(value)
+            ? string.Empty
+            : value.Trim().TrimEnd('/');
 }

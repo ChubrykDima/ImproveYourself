@@ -101,6 +101,7 @@ public static class ChallengeFactory
     {
         var seed = BuildSeed(date);
         var challengeId = $"challenge-{date}";
+        var createdAt = DateTime.UtcNow.ToString("o", CultureInfo.InvariantCulture);
         var practice = PickBySeed(PracticeTemplates, seed);
         var quote = PickBySeed(QuoteTemplates, seed, offset: 1);
         var social = PickBySeed(SocialTemplates, seed, offset: 2);
@@ -111,7 +112,8 @@ public static class ChallengeFactory
             Date = date,
             Title = "Твой ежедневный вызов",
             Status = ChallengeStatus.NotStarted,
-            CreatedAt = DateTime.UtcNow.ToString("o", CultureInfo.InvariantCulture),
+            CreatedAt = createdAt,
+            UpdatedAt = createdAt,
             QuoteText = quote.Text,
             QuoteAuthor = quote.Author,
             QuoteNote = quote.Note,
@@ -130,6 +132,7 @@ public static class ChallengeFactory
                     SortOrder = 1,
                     Status = StepStatus.NotStarted,
                     CompletedAt = null,
+                    UpdatedAt = createdAt,
                 },
                 new ChallengeStep
                 {
@@ -142,6 +145,7 @@ public static class ChallengeFactory
                     SortOrder = 2,
                     Status = StepStatus.NotStarted,
                     CompletedAt = null,
+                    UpdatedAt = createdAt,
                 },
             ],
         };
