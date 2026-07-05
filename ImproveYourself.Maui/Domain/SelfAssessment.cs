@@ -1,3 +1,5 @@
+using ImproveYourself.Maui.Resources.Strings;
+
 namespace ImproveYourself.Maui.Domain;
 
 public enum SelfAssessmentKind
@@ -38,13 +40,13 @@ public sealed class SelfAssessmentSnapshot
 
 public static class SelfAssessmentSurvey
 {
-    public static readonly IReadOnlyList<SelfAssessmentQuestion> Questions =
+    public static IReadOnlyList<SelfAssessmentQuestion> Questions =>
     [
-        new("conversation", "Насколько комфортно первым начать разговор?"),
-        new("opinion", "Насколько легко сказать своё мнение?"),
-        new("body", "Насколько тело ощущается спокойным в стрессе?"),
-        new("eyeContact", "Насколько легко удерживать спокойный зрительный контакт?"),
-        new("action", "Насколько ты готов сделать небольшой социальный шаг, даже если неловко?"),
+        new("conversation", AppStrings.Question_Conversation),
+        new("opinion", AppStrings.Question_Opinion),
+        new("body", AppStrings.Question_Body),
+        new("eyeContact", AppStrings.Question_EyeContact),
+        new("action", AppStrings.Question_Action),
     ];
 
     public static SelfAssessmentSnapshot Create(SelfAssessmentKind kind, IReadOnlyList<int> scores)

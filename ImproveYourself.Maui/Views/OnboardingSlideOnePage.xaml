@@ -60,9 +60,11 @@
                 </Border>
             </Border>
 
-            <Label Text="Меняй себя каждый день"
+            <Label x:Name="TitleLabel"
+                   Text=""
                    Style="{StaticResource HeroLabelStyle}" />
-            <Label Text="Одно осознанное действие сегодня делает тебя сильнее завтра."
+            <Label x:Name="BodyLabel"
+                   Text=""
                    Style="{StaticResource BodyLabelStyle}"
                    HorizontalTextAlignment="Center" />
         </VerticalStackLayout>
@@ -72,8 +74,9 @@
               ColumnSpacing="10"
               VerticalOptions="End">
             <Label />
-            <Button Grid.Column="1"
-                    Text="Дальше"
+            <Button x:Name="NextButton"
+                    Grid.Column="1"
+                    Text=""
                     Style="{StaticResource PrimaryButtonStyle}"
                     Clicked="OnNextClicked" />
         </Grid>

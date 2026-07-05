@@ -1,6 +1,7 @@
 using System.Net;
 using System.Net.Http.Headers;
 using ImproveYourself.Maui.Persistence;
+using ImproveYourself.Maui.Resources.Strings;
 
 namespace ImproveYourself.Maui.Application;
 
@@ -34,13 +35,13 @@ public sealed class BackendConnectionService : IBackendConnectionService
 
         if (string.IsNullOrWhiteSpace(baseUrl))
         {
-            return new BackendConnectionResult(false, false, false, false, "Укажите URL backend.");
+            return new BackendConnectionResult(false, false, false, false, AppStrings.BackendProvideUrl);
         }
 
         if (!Uri.TryCreate(baseUrl, UriKind.Absolute, out var baseUri)
             || (baseUri.Scheme != Uri.UriSchemeHttp && baseUri.Scheme != Uri.UriSchemeHttps))
         {
-            return new BackendConnectionResult(false, false, false, false, "URL backend должен начинаться с http:// или https://.");
+            return new BackendConnectionResult(false, false, false, false, AppStrings.BackendInvalidUrl);
         }
 
         try
@@ -52,22 +53,22 @@ public sealed class BackendConnectionService : IBackendConnectionService
 
             var message = (healthOk, readyOk, authorizationOk, authStatus) switch
             {
-                (true, true, true, _) => "Backend доступен, база готова, авторизация работает.",
-                (true, false, true, _) => "Backend отвечает, авторизация работает, но база пока не готова.",
-                (true, _, false, HttpStatusCode.Unauthorized) => "Backend отвечает, но API key не принят.",
-                (true, _, false, _) => $"Backend отвечает, но защищенный API вернул {(int)authStatus}.",
-                _ => "Backend недоступен по указанному URL.",
+                (true, true, true, _) => AppStrings.BackendAllOk,
+                (true, false, true, _) => AppStrings.BackendNoDb,
+                (true, _, false, HttpStatusCode.Unauthorized) => AppStrings.BackendBadApiKey,
+                (true, _, false, _) => string.Format(AppStrings.BackendBadStatusFormat, (int)authStatus),
+                _ => AppStrings.BackendUnavailable,
             };
 
             return new BackendConnectionResult(true, healthOk, readyOk, authorizationOk, message);
         }
         catch (TaskCanceledException)
         {
-            return new BackendConnectionResult(true, false, false, false, "Проверка backend заняла слишком много времени.");
+            return new BackendConnectionResult(true, false, false, false, AppStrings.BackendTimeout);
         }
         catch (Exception ex)
         {
-            return new BackendConnectionResult(true, false, false, false, $"Не удалось подключиться: {ex.Message}");
+            return new BackendConnectionResult(true, false, false, false, string.Format(AppStrings.BackendConnectionFailedFormat, ex.Message));
         }
     }
 

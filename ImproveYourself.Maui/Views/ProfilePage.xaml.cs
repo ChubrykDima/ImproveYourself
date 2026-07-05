@@ -1,5 +1,6 @@
 using ImproveYourself.Maui.Application;
 using ImproveYourself.Maui.Domain;
+using ImproveYourself.Maui.Resources.Strings;
 
 namespace ImproveYourself.Maui.Views;
 
@@ -11,18 +12,39 @@ public partial class ProfilePage : ContentPage
     {
         InitializeComponent();
         _appState = appState;
+
+        Title = AppStrings.ProfileCalendar_Title;
     }
 
     protected override void OnAppearing()
     {
         base.OnAppearing();
         _appState.RefreshDerivedState();
+        RenderStaticLabels();
         Render();
+    }
+
+    private void RenderStaticLabels()
+    {
+        CurrentStreakMetricTitleLabel.Text = AppStrings.CurrentStreak;
+        AllChallengesLabel.Text = AppStrings.AllChallenges;
+        CompletionRateTitleLabel.Text = AppStrings.CompletionRateLabel;
+        SelfAssessmentTitleLabel.Text = AppStrings.SelfAssessmentLabel;
+        MonthActivityTitleLabel.Text = AppStrings.MonthActivity;
+        DayMonLabel.Text = AppStrings.DayMon;
+        DayTueLabel.Text = AppStrings.DayTue;
+        DayWedLabel.Text = AppStrings.DayWed;
+        DayThuLabel.Text = AppStrings.DayThu;
+        DayFriLabel.Text = AppStrings.DayFri;
+        DaySatLabel.Text = AppStrings.DaySat;
+        DaySunLabel.Text = AppStrings.DaySun;
     }
 
     private void Render()
     {
-        var name = string.IsNullOrWhiteSpace(_appState.DisplayName) ? "Друг" : _appState.DisplayName.Trim();
+        var name = string.IsNullOrWhiteSpace(_appState.DisplayName)
+            ? AppStrings.DefaultDisplayName
+            : _appState.DisplayName.Trim();
 
         DisplayNameLabel.Text = name;
         AvatarLabel.Text = name[..1].ToUpperInvariant();
@@ -52,7 +74,7 @@ public partial class ProfilePage : ContentPage
 
         if (final is null)
         {
-            SelfAssessmentSummaryLabel.Text = $"Стартовый срез: {start.AverageScore:0.0}/10. Финальный срез появится после 30 выполненных дней.";
+            SelfAssessmentSummaryLabel.Text = string.Format(AppStrings.StartCutFormat, start.AverageScore);
             SelfAssessmentDeltaLabel.Text = string.Empty;
             SelfAssessmentDeltaLabel.IsVisible = false;
             return;
@@ -61,8 +83,8 @@ public partial class ProfilePage : ContentPage
         var delta = final.AverageScore - start.AverageScore;
         var direction = delta >= 0 ? "+" : string.Empty;
 
-        SelfAssessmentSummaryLabel.Text = $"Старт: {start.AverageScore:0.0}/10 · Финиш: {final.AverageScore:0.0}/10";
-        SelfAssessmentDeltaLabel.Text = $"Сдвиг: {direction}{delta:0.0}";
+        SelfAssessmentSummaryLabel.Text = string.Format(AppStrings.StartFinishFormat, start.AverageScore, final.AverageScore);
+        SelfAssessmentDeltaLabel.Text = string.Format(AppStrings.ShiftFormat, direction, delta);
         SelfAssessmentDeltaLabel.IsVisible = true;
     }
 

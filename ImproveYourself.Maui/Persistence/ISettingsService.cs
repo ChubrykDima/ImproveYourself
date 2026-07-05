@@ -28,6 +28,10 @@ public interface ISettingsService
 
     void WriteBackendApiKey(string value);
 
+    string ReadLanguage();
+
+    void WriteLanguage(string value);
+
     SelfAssessmentSnapshot? ReadSelfAssessment(SelfAssessmentKind kind);
 
     void WriteSelfAssessment(SelfAssessmentSnapshot snapshot);

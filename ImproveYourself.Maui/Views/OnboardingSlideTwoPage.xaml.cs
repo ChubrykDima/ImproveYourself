@@ -1,4 +1,5 @@
 using ImproveYourself.Maui.Application;
+using ImproveYourself.Maui.Resources.Strings;
 
 namespace ImproveYourself.Maui.Views;
 
@@ -12,6 +13,11 @@ public partial class OnboardingSlideTwoPage : ContentPage
         InitializeComponent();
         _appState = appState;
         _navigateToHomeAsync = navigateToHomeAsync;
+
+        TitleLabel.Text = AppStrings.Onboarding2_Title;
+        BodyLabel.Text = AppStrings.Onboarding2_Body;
+        BackButton.Text = AppStrings.Back;
+        NextButton.Text = AppStrings.Next;
     }
 
     private async void OnBackClicked(object? sender, EventArgs e)

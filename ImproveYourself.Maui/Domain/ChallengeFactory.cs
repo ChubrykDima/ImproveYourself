@@ -1,4 +1,5 @@
 using System.Globalization;
+using ImproveYourself.Maui.Resources.Strings;
 
 namespace ImproveYourself.Maui.Domain;
 
@@ -15,6 +16,10 @@ internal sealed record SocialTemplate(string Title, string Description, string T
 
 public static class ChallengeFactory
 {
+    // TODO: Translate template content to English and German.
+    // These templates are only used as a fallback when the JSON content file
+    // does not cover the requested date. Primary localized content is loaded
+    // from Resources/Raw/daily-challenges.{lang}.json.
     private static readonly IReadOnlyList<PracticeTemplate> PracticeTemplates =
     [
         new(
@@ -109,7 +114,7 @@ public static class ChallengeFactory
         {
             Id = challengeId,
             Date = date,
-            Title = "Твой ежедневный вызов",
+            Title = AppStrings.DailyChallenge_DefaultTitle,
             Status = ChallengeStatus.NotStarted,
             CreatedAt = DateTime.UtcNow.ToString("o", CultureInfo.InvariantCulture),
             QuoteText = quote.Text,
@@ -122,7 +127,7 @@ public static class ChallengeFactory
                     Id = $"{challengeId}-practice",
                     DailyChallengeId = challengeId,
                     Type = StepType.Practice,
-                    Title = practice.Title,
+                    Title = AppStrings.PracticeStep_Title,
                     Subtitle = practice.Subtitle,
                     Description = practice.Description,
                     Tip = practice.Tip,
@@ -136,7 +141,7 @@ public static class ChallengeFactory
                     Id = $"{challengeId}-social",
                     DailyChallengeId = challengeId,
                     Type = StepType.Social,
-                    Title = social.Title,
+                    Title = AppStrings.SocialStep_Title,
                     Description = social.Description,
                     Tip = social.Tip,
                     SortOrder = 2,

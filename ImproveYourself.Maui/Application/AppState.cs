@@ -12,7 +12,7 @@ public sealed class AppState : INotifyPropertyChanged
     private readonly INotificationPreferenceService _notificationPreferenceService;
 
     private bool _isHydrated;
-    private string _displayName = "Друг";
+    private string _displayName = string.Empty;
     private bool _onboardingCompleted;
     private bool _notificationsEnabled;
     private string _backendBaseUrl = string.Empty;
@@ -156,7 +156,7 @@ public sealed class AppState : INotifyPropertyChanged
 
     public Task CompleteOnboardingAsync(string name)
     {
-        var nextName = string.IsNullOrWhiteSpace(name) ? "Друг" : name.Trim();
+        var nextName = name?.Trim() ?? string.Empty;
 
         _settingsService.WriteDisplayName(nextName);
         _settingsService.WriteOnboardingCompleted(true);
@@ -251,7 +251,7 @@ public sealed class AppState : INotifyPropertyChanged
 
     public void UpdateDisplayName(string name)
     {
-        var nextName = string.IsNullOrWhiteSpace(name) ? "Друг" : name.Trim();
+        var nextName = name?.Trim() ?? string.Empty;
 
         _settingsService.WriteDisplayName(nextName);
         DisplayName = nextName;

@@ -1,3 +1,5 @@
+using ImproveYourself.Maui.Resources.Strings;
+
 namespace ImproveYourself.Maui.Domain;
 
 public enum SelfAssessmentFocus
@@ -172,7 +174,7 @@ public static class ChallengePersonalizer
             weakest.Focus,
             weakest.Score,
             title,
-            $"Фокус дня: {title.ToLowerInvariant()}");
+            string.Format(AppStrings.FocusDayReasonFormat, title.ToLowerInvariant()));
     }
 
     public static DailyChallenge Personalize(DailyChallenge challenge, SelfAssessmentSnapshot? snapshot)
@@ -214,7 +216,7 @@ public static class ChallengePersonalizer
 
         if (next.Type == StepType.Practice)
         {
-            next.Title = "Утренняя практика";
+            next.Title = AppStrings.PracticeStep_Title;
             next.Subtitle = practice.Subtitle;
             next.Description = practice.Description;
             next.Tip = practice.Tip;
@@ -223,7 +225,7 @@ public static class ChallengePersonalizer
 
         if (next.Type == StepType.Social)
         {
-            next.Title = "Челлендж дня";
+            next.Title = AppStrings.SocialStep_Title;
             next.Description = social.Description;
             next.Tip = social.Tip;
         }
@@ -233,12 +235,12 @@ public static class ChallengePersonalizer
 
     private static string GetFocusTitle(SelfAssessmentFocus focus) => focus switch
     {
-        SelfAssessmentFocus.ConversationStart => "первый короткий разговор",
-        SelfAssessmentFocus.OpinionExpression => "спокойно обозначить мнение",
-        SelfAssessmentFocus.BodyCalm => "успокоить тело перед действием",
-        SelfAssessmentFocus.EyeContact => "мягкий зрительный контакт",
-        SelfAssessmentFocus.SocialAction => "маленький социальный шаг",
-        _ => "маленький социальный шаг",
+        SelfAssessmentFocus.ConversationStart => AppStrings.Focus_ConversationStart,
+        SelfAssessmentFocus.OpinionExpression => AppStrings.Focus_OpinionExpression,
+        SelfAssessmentFocus.BodyCalm => AppStrings.Focus_BodyCalm,
+        SelfAssessmentFocus.EyeContact => AppStrings.Focus_EyeContact,
+        SelfAssessmentFocus.SocialAction => AppStrings.Focus_SocialAction,
+        _ => AppStrings.Focus_SocialAction,
     };
 
     private static int BuildSeed(string date)

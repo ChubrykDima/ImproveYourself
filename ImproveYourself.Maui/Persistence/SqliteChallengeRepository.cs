@@ -1,7 +1,9 @@
 using System.Globalization;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using ImproveYourself.Maui.Application;
 using ImproveYourself.Maui.Domain;
+using ImproveYourself.Maui.Resources.Strings;
 using Microsoft.Maui.Storage;
 using SQLite;
 
@@ -78,7 +80,6 @@ internal sealed class ChallengeStepRecord
 
 public sealed class SqliteChallengeRepository : IChallengeRepository
 {
-    private const string BundledChallengeFileName = "daily-challenges.ru.json";
     private const int QuoteStorageSortOrder = 0;
 
     private static readonly JsonSerializerOptions BundledChallengeJsonOptions = new()
@@ -88,15 +89,20 @@ public sealed class SqliteChallengeRepository : IChallengeRepository
     };
 
     private readonly SQLiteConnection _database;
+    private readonly ILocalizationService _localizationService;
     private readonly Lazy<IReadOnlyDictionary<string, DailyChallenge>> _bundledChallenges;
     private bool _initialized;
 
-    public SqliteChallengeRepository()
+    public SqliteChallengeRepository(ILocalizationService localizationService)
     {
+        _localizationService = localizationService;
         var databasePath = Path.Combine(FileSystem.AppDataDirectory, "improveyourself.db");
         _database = new SQLiteConnection(databasePath, SQLiteOpenFlags.ReadWrite | SQLiteOpenFlags.Create | SQLiteOpenFlags.FullMutex);
-        _bundledChallenges = new Lazy<IReadOnlyDictionary<string, DailyChallenge>>(LoadBundledChallenges);
+        _bundledChallenges = new Lazy<IReadOnlyDictionary<string, DailyChallenge>>(() => LoadBundledChallenges(BundledChallengeFileName));
     }
+
+    private string BundledChallengeFileName =>
+        $"daily-challenges.{_localizationService.CurrentLanguage}.json";
 
     public void Initialize()
     {
@@ -370,11 +376,11 @@ public sealed class SqliteChallengeRepository : IChallengeRepository
         return false;
     }
 
-    private static IReadOnlyDictionary<string, DailyChallenge> LoadBundledChallenges()
+    private static IReadOnlyDictionary<string, DailyChallenge> LoadBundledChallenges(string fileName)
     {
         try
         {
-            using var stream = FileSystem.OpenAppPackageFileAsync(BundledChallengeFileName).GetAwaiter().GetResult();
+            using var stream = FileSystem.OpenAppPackageFileAsync(fileName).GetAwaiter().GetResult();
             var parsedChallenges = JsonSerializer.Deserialize<List<DailyChallenge>>(stream, BundledChallengeJsonOptions) ?? [];
             var bundledChallenges = new Dictionary<string, DailyChallenge>(StringComparer.Ordinal);
 
@@ -432,7 +438,7 @@ public sealed class SqliteChallengeRepository : IChallengeRepository
         {
             Id = challengeId,
             Date = challenge.Date,
-            Title = string.IsNullOrWhiteSpace(challenge.Title) ? "Твой ежедневный вызов" : challenge.Title,
+            Title = string.IsNullOrWhiteSpace(challenge.Title) ? AppStrings.DailyChallenge_DefaultTitle : challenge.Title,
             Status = ProgressCalculator.GetChallengeStatus(visibleSteps),
             CreatedAt = string.IsNullOrWhiteSpace(challenge.CreatedAt)
                 ? DateTime.UtcNow.ToString("o", CultureInfo.InvariantCulture)
@@ -466,10 +472,10 @@ public sealed class SqliteChallengeRepository : IChallengeRepository
 
     private static string NormalizeStepTitle(StepType stepType, string? title) => stepType switch
     {
-        StepType.Practice => string.IsNullOrWhiteSpace(title) ? "Утренняя практика" : title,
-        StepType.Social => "Челлендж дня",
-        StepType.Quote => "Цитата дня",
-        _ => string.IsNullOrWhiteSpace(title) ? "Шаг дня" : title,
+        StepType.Practice => string.IsNullOrWhiteSpace(title) ? AppStrings.PracticeStep_Title : title,
+        StepType.Social => AppStrings.SocialStep_Title,
+        StepType.Quote => AppStrings.QuoteStep_Title,
+        _ => string.IsNullOrWhiteSpace(title) ? AppStrings.StepOfDay : title,
     };
 
     private static DailyChallenge CloneChallenge(DailyChallenge challenge) => new()
@@ -592,8 +598,8 @@ public sealed class SqliteChallengeRepository : IChallengeRepository
             Id = $"{challenge.Id}-quote",
             DailyChallengeId = challenge.Id,
             Type = StepType.Quote,
-            Title = "Цитата дня",
-            Description = "Прочитай цитату дня.",
+            Title = AppStrings.QuoteStep_Title,
+            Description = AppStrings.QuoteStep_Description,
             QuoteText = challenge.QuoteText,
             QuoteAuthor = challenge.QuoteAuthor,
             QuoteNote = challenge.QuoteNote,

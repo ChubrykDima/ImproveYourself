@@ -60,18 +60,21 @@
                 </Border>
             </Border>
 
-            <Label Text="Стань лучшей версией себя"
+            <Label x:Name="TitleLabel"
+                   Text=""
                    Style="{StaticResource HeroLabelStyle}" />
-            <Label Text="Задай имя для приветствия и начни ежедневную трансформацию."
+            <Label x:Name="BodyLabel"
+                   Text=""
                    Style="{StaticResource BodyLabelStyle}"
                    HorizontalTextAlignment="Center" />
 
-            <Label Text="Как к тебе обращаться?"
+            <Label x:Name="HowToAddressLabel"
+                   Text=""
                    Style="{StaticResource BodyLabelStyle}"
                    HorizontalTextAlignment="Center" />
             <Entry x:Name="DisplayNameEntry"
                    MaxLength="24"
-                   Placeholder="Введите имя"
+                   Placeholder=""
                    PlaceholderColor="{StaticResource ColorTextSecondary}"
                    TextColor="{StaticResource ColorTextPrimary}"
                    HorizontalTextAlignment="Center"
@@ -85,14 +88,16 @@
               ColumnDefinitions="70,*"
               ColumnSpacing="10"
               VerticalOptions="End">
-            <Button Text="Назад"
+            <Button x:Name="BackButton"
+                    Text=""
                     BackgroundColor="Transparent"
                     TextColor="{StaticResource ColorTextSecondary}"
                     FontFamily="OpenSansRegular"
                     FontSize="15"
                     Clicked="OnBackClicked" />
-            <Button Grid.Column="1"
-                    Text="Перейти к самооценке"
+            <Button x:Name="FinishButton"
+                    Grid.Column="1"
+                    Text=""
                     Style="{StaticResource PrimaryButtonStyle}"
                     Clicked="OnFinishClicked" />
         </Grid>

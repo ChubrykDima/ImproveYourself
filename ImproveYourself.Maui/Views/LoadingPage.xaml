@@ -13,7 +13,7 @@
                                WidthRequest="48"
                                HeightRequest="48" />
             <Label x:Name="MessageLabel"
-                   Text="Подготовка приложения..."
+                   Text=""
                    Style="{StaticResource BodyLabelStyle}"
                    HorizontalTextAlignment="Center" />
         </VerticalStackLayout>
