@@ -1,5 +1,6 @@
 using ImproveYourself.Maui.Application;
 using ImproveYourself.Maui.Domain;
+using ImproveYourself.Maui.Resources.Strings;
 
 namespace ImproveYourself.Maui.Views;
 
@@ -7,22 +8,37 @@ public partial class HomePage : ContentPage
 {
     private readonly AppState _appState;
     private readonly IBackendConnectionService _backendConnectionService;
+    private readonly ILocalizationService _localizationService;
     private bool _isOpeningFinalAssessment;
 
-    public HomePage(AppState appState, IBackendConnectionService backendConnectionService)
+    public HomePage(AppState appState, IBackendConnectionService backendConnectionService, ILocalizationService localizationService)
     {
         InitializeComponent();
         _appState = appState;
         _backendConnectionService = backendConnectionService;
+        _localizationService = localizationService;
     }
 
     protected override async void OnAppearing()
     {
         base.OnAppearing();
         _appState.RefreshDerivedState();
+        RenderStaticLabels();
         Render();
         _ = SyncBackendAndRenderAsync();
         await TryOpenFinalAssessmentAsync();
+    }
+
+    private void RenderStaticLabels()
+    {
+        Title = AppStrings.HomePage_Title;
+        WelcomeLabel.Text = AppStrings.Welcome;
+        CurrentStreakLabel.Text = AppStrings.CurrentStreak;
+        DaysInRowLabel.Text = AppStrings.DaysInRow;
+        MonthProgressLabel.Text = AppStrings.MonthProgress;
+        StatisticsButton.Text = $"{AppStrings.StatisticsButtonTitle}\n{AppStrings.StatisticsButtonSubtitle}";
+        CalendarButton.Text = $"{AppStrings.CalendarButtonTitle}\n{AppStrings.CalendarButtonSubtitle}";
+        SettingsButton.Text = AppStrings.OpenSettings;
     }
 
     private void Render()
@@ -33,18 +49,18 @@ public partial class HomePage : ContentPage
 
         StreakValueLabel.Text = _appState.StreakSnapshot.CurrentStreakDays.ToString();
         MonthPercentLabel.Text = $"{_appState.MonthlyProgress.Percent}%";
-        MonthHintLabel.Text = $"{_appState.MonthlyProgress.CompletedDays}/{_appState.MonthlyProgress.TargetDays} дней";
-        RemainingDaysLabel.Text = $"Осталось дней до цели: {_appState.MonthlyProgress.RemainingDays}";
+        MonthHintLabel.Text = string.Format(AppStrings.MonthProgressFormat, _appState.MonthlyProgress.CompletedDays, _appState.MonthlyProgress.TargetDays);
+        RemainingDaysLabel.Text = string.Format(AppStrings.RemainingDaysGoal, _appState.MonthlyProgress.RemainingDays);
 
         if (_appState.TodayChallenge is null)
         {
-            ChallengeLeadLabel.Text = "Главный фокус дня";
-            ChallengeTitleLabel.Text = "Подготавливаем сегодняшний вызов...";
-            ChallengeSubtitleLabel.Text = "Попробуй открыть экран через секунду.";
+            ChallengeLeadLabel.Text = AppStrings.MainFocusOfDay;
+            ChallengeTitleLabel.Text = AppStrings.PreparingChallenge;
+            ChallengeSubtitleLabel.Text = AppStrings.TryOpenInSecond;
             PersonalizationLabel.IsVisible = false;
             PersonalizationLabel.Text = string.Empty;
             ChallengeProgressBar.Progress = 0;
-            ChallengeButton.Text = "Подождите";
+            ChallengeButton.Text = AppStrings.PleaseWait;
             ChallengeButton.IsEnabled = false;
             return;
         }
@@ -55,15 +71,15 @@ public partial class HomePage : ContentPage
         var isToday = _appState.TodayChallenge.Date == DateHelpers.ToIsoDate(DateTime.Now);
 
         ChallengeLeadLabel.Text = isToday
-            ? "Главный фокус дня"
-            : $"Фокус на {DateHelpers.ToDisplayDate(_appState.TodayChallenge.Date)}";
+            ? AppStrings.MainFocusOfDay
+            : string.Format(AppStrings.FocusOnDate, DateHelpers.ToDisplayDate(_appState.TodayChallenge.Date));
         ChallengeTitleLabel.Text = _appState.TodayChallenge.Title;
-        ChallengeSubtitleLabel.Text = $"Дата: {DateHelpers.ToDisplayDate(_appState.TodayChallenge.Date)} · Шагов: {completedSteps}/{totalSteps}";
+        ChallengeSubtitleLabel.Text = string.Format(AppStrings.DateStepsFormat, DateHelpers.ToDisplayDate(_appState.TodayChallenge.Date), completedSteps, totalSteps);
         RenderPersonalization();
         ChallengeProgressBar.Progress = completedSteps / (double)totalSteps;
         ChallengeButton.Text = isCompleted
-            ? "Перейти к следующему дню"
-            : "Открыть ежедневный вызов";
+            ? AppStrings.GoToNextDay
+            : AppStrings.OpenDailyChallenge;
         ChallengeButton.IsEnabled = true;
     }
 
@@ -106,7 +122,7 @@ public partial class HomePage : ContentPage
 
     private async void OnOpenSettingsClicked(object? sender, EventArgs e)
     {
-        await Navigation.PushAsync(new SettingsPage(_appState, _backendConnectionService));
+        await Navigation.PushAsync(new SettingsPage(_appState, _backendConnectionService, _localizationService));
     }
 
     private async Task SyncBackendAndRenderAsync()
@@ -143,10 +159,10 @@ public partial class HomePage : ContentPage
             }));
     }
 
-    private static string ShortName(string name)
+    private string ShortName(string name)
     {
         var trimmed = name.Trim();
 
-        return trimmed.Length > 0 ? trimmed : "Друг";
+        return trimmed.Length > 0 ? trimmed : AppStrings.DefaultDisplayName;
     }
 }

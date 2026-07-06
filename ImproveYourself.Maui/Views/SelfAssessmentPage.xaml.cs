@@ -1,5 +1,6 @@
 using ImproveYourself.Maui.Application;
 using ImproveYourself.Maui.Domain;
+using ImproveYourself.Maui.Resources.Strings;
 
 namespace ImproveYourself.Maui.Views;
 
@@ -25,6 +26,7 @@ public partial class SelfAssessmentPage : ContentPage
         _promptNotificationsOnCompletion = promptNotificationsOnCompletion;
         _scores = Enumerable.Repeat(5, SelfAssessmentSurvey.Questions.Count).ToList();
 
+        Title = AppStrings.SelfAssessment_Title;
         RenderHeader();
         RenderQuestions();
     }
@@ -34,18 +36,18 @@ public partial class SelfAssessmentPage : ContentPage
         if (_kind == SelfAssessmentKind.Start)
         {
             ProgressDots.IsVisible = true;
-            EyebrowLabel.Text = "Перед стартом";
-            TitleLabel.Text = "Короткий срез состояния";
-            DescriptionLabel.Text = "Ответь по шкале от 1 до 10. Это займёт меньше минуты и поможет увидеть сдвиг после 30 дней.";
-            SubmitButton.Text = "Сохранить и начать";
+            EyebrowLabel.Text = AppStrings.BeforeStart;
+            TitleLabel.Text = AppStrings.QuickStateCheck;
+            DescriptionLabel.Text = AppStrings.SelfAssessmentStartDesc;
+            SubmitButton.Text = AppStrings.SaveAndStart;
             return;
         }
 
         ProgressDots.IsVisible = false;
-        EyebrowLabel.Text = "Финальный срез";
-        TitleLabel.Text = "Что изменилось за 30 дней";
-        DescriptionLabel.Text = "Ответь на те же вопросы. После сохранения покажем разницу со стартом.";
-        SubmitButton.Text = "Показать результат";
+        EyebrowLabel.Text = AppStrings.FinalAssessment;
+        TitleLabel.Text = AppStrings.WhatChangedIn30Days;
+        DescriptionLabel.Text = AppStrings.SelfAssessmentFinalDesc;
+        SubmitButton.Text = AppStrings.ShowResult;
     }
 
     private void RenderQuestions()
@@ -175,16 +177,16 @@ public partial class SelfAssessmentPage : ContentPage
     {
         var delta = final.AverageScore - start.AverageScore;
         var direction = delta >= 0 ? "+" : string.Empty;
-        var message = $"Старт: {start.AverageScore:0.0}/10\nФиниш: {final.AverageScore:0.0}/10\nСдвиг: {direction}{delta:0.0}";
+        var message = string.Format(AppStrings.FinalComparisonFormat, start.AverageScore, final.AverageScore, direction, delta);
 
-        return DisplayAlertAsync("Твой результат", message, "Готово");
+        return DisplayAlertAsync(AppStrings.YourResult, message, AppStrings.Done);
     }
 
     private async Task PromptNotificationsAsync()
     {
-        var choice = await DisplayActionSheetAsync("Напоминания", "Позже", null, "Включить");
+        var choice = await DisplayActionSheetAsync(AppStrings.Notifications_Title, AppStrings.Later, null, AppStrings.Enable);
 
-        if (choice != "Включить")
+        if (choice != AppStrings.Enable)
         {
             return;
         }
@@ -193,7 +195,7 @@ public partial class SelfAssessmentPage : ContentPage
 
         if (!enabled)
         {
-            await DisplayAlertAsync("Разрешение не выдано", "Уведомления можно включить позже в настройках.", "ОК");
+            await DisplayAlertAsync(AppStrings.PermissionNotGranted, AppStrings.EnableNotificationsLater, AppStrings.OK);
         }
     }
 }

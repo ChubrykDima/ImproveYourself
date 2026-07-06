@@ -2,7 +2,6 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="ImproveYourself.Maui.Views.ChallengeDetailPage"
-             Title="Ежедневный вызов"
              BackgroundColor="{StaticResource ColorBackground}">
     <ScrollView>
               <ScrollView.GestureRecognizers>
@@ -14,13 +13,13 @@
                     Padding="22">
                 <VerticalStackLayout Spacing="10">
                     <Label x:Name="DateLabel"
-                           Text="Дата: --"
+                           Text=""
                            Style="{StaticResource BodyLabelStyle}" />
                     <Label x:Name="ChallengeTitleLabel"
-                           Text="Твой ежедневный вызов"
+                           Text=""
                            Style="{StaticResource TitleLabelStyle}" />
                     <Label x:Name="ProgressLabel"
-                           Text="Прогресс: 0/2"
+                           Text=""
                            Style="{StaticResource BodyLabelStyle}" />
 
                     <Label x:Name="PersonalizationLabel"
@@ -38,14 +37,14 @@
                                  HeightRequest="10" />
 
                     <Label x:Name="CompletedTextLabel"
-                           Text="Вызов дня закрыт. Можно переходить к следующему дню."
+                           Text=""
                            TextColor="{StaticResource ColorSuccess}"
                            FontFamily="OpenSansRegular"
                            FontSize="15"
                            IsVisible="False" />
 
                     <Button x:Name="NextDayButton"
-                            Text="Перейти к следующему дню"
+                            Text=""
                             Style="{StaticResource PrimaryButtonStyle}"
                             IsVisible="False"
                             Clicked="OnOpenNextDayClicked" />
@@ -69,7 +68,8 @@
 
                                    <VerticalStackLayout Grid.Column="1"
                                                                        Spacing="8">
-                                          <Label Text="Цитата дня"
+                                          <Label x:Name="QuoteOfDayLabel"
+                                                    Text=""
                                                     TextColor="{StaticResource ColorAccent}"
                                                     FontFamily="OpenSansRegular"
                                                     FontSize="15" />
@@ -82,7 +82,7 @@
                                                     Style="{StaticResource BodyLabelStyle}"
                                                     IsVisible="False" />
                                           <Label x:Name="QuoteHintLabel"
-                                                    Text="Нажми, чтобы открыть пояснение"
+                                                    Text=""
                                                     FontFamily="OpenSansRegular"
                                                     FontSize="13"
                                                     TextColor="{StaticResource ColorTextSecondary}"
@@ -97,7 +97,8 @@
                                    Padding="18,16"
                                    Margin="20,-6,0,0">
                             <VerticalStackLayout Spacing="8">
-                                   <Label Text="Пояснение"
+                                   <Label x:Name="NoteTitleLabel"
+                                             Text=""
                                              TextColor="{StaticResource ColorAccent}"
                                              FontFamily="OpenSansRegular"
                                              FontSize="14" />

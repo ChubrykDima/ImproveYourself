@@ -2,21 +2,22 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="ImproveYourself.Maui.Views.SettingsPage"
-             Title="Настройки"
              BackgroundColor="{StaticResource ColorBackground}">
     <ScrollView>
         <VerticalStackLayout Padding="22,16,22,30"
                              Spacing="16">
             <Border Style="{StaticResource CardBorderStyle}">
                 <VerticalStackLayout Spacing="10">
-                    <Label Text="Профиль"
+                    <Label x:Name="ProfileSectionLabel"
+                           Text=""
                            Style="{StaticResource SubtitleLabelStyle}" />
-                    <Label Text="Имя в приветствии"
+                    <Label x:Name="GreetingNameLabel"
+                           Text=""
                            Style="{StaticResource BodyLabelStyle}" />
 
                     <Entry x:Name="NameEntry"
                            MaxLength="24"
-                           Placeholder="Введите имя"
+                           Placeholder=""
                            PlaceholderColor="{StaticResource ColorTextSecondary}"
                            FontFamily="OpenSansSemibold"
                            FontSize="18"
@@ -24,7 +25,8 @@
                            BackgroundColor="{StaticResource ColorFrame}"
                            HeightRequest="52" />
 
-                    <Button Text="Сохранить имя"
+                    <Button x:Name="SaveNameButton"
+                            Text=""
                             Style="{StaticResource PrimaryButtonStyle}"
                             Clicked="OnSaveNameClicked" />
                 </VerticalStackLayout>
@@ -32,15 +34,41 @@
 
             <Border Style="{StaticResource CardBorderStyle}">
                 <VerticalStackLayout Spacing="10">
-                    <Label Text="Напоминания"
+                    <Label x:Name="LanguageSectionLabel"
+                           Text=""
                            Style="{StaticResource SubtitleLabelStyle}" />
-                    <Label Text="Ежедневное утреннее и вечернее напоминание поддерживают ритм привычки."
+
+                    <Grid ColumnDefinitions="*,Auto"
+                          VerticalOptions="Center">
+                        <Label x:Name="LanguageCurrentLabel"
+                               Text=""
+                               FontFamily="OpenSansRegular"
+                               FontSize="15"
+                               TextColor="{StaticResource ColorTextPrimary}"
+                               VerticalTextAlignment="Center" />
+                        <Button Grid.Column="1"
+                                x:Name="LanguagePickerButton"
+                                Text=""
+                                Style="{StaticResource PrimaryButtonStyle}"
+                                Clicked="OnLanguagePickerClicked" />
+                    </Grid>
+                </VerticalStackLayout>
+            </Border>
+
+            <Border Style="{StaticResource CardBorderStyle}">
+                <VerticalStackLayout Spacing="10">
+                    <Label x:Name="RemindersSectionLabel"
+                           Text=""
+                           Style="{StaticResource SubtitleLabelStyle}" />
+                    <Label x:Name="ReminderDescLabel"
+                           Text=""
                            Style="{StaticResource BodyLabelStyle}"
                            LineBreakMode="WordWrap" />
 
                     <Grid ColumnDefinitions="*,Auto"
                           VerticalOptions="Center">
-                        <Label Text="Включить уведомления"
+                        <Label x:Name="EnableNotificationsLabel"
+                               Text=""
                                FontFamily="OpenSansRegular"
                                FontSize="15"
                                TextColor="{StaticResource ColorTextPrimary}"
@@ -56,11 +84,12 @@
 
             <Border Style="{StaticResource CardBorderStyle}">
                 <VerticalStackLayout Spacing="6">
-                    <Label Text="Offline-first"
+                    <Label x:Name="OfflineFirstTitleLabel"
                            FontFamily="OpenSansSemibold"
                            FontSize="18"
                            TextColor="{StaticResource ColorAccent}" />
-                    <Label Text="Все данные прогресса, стриков и календаря сохраняются локально и работают без сети."
+                    <Label x:Name="OfflineFirstDescLabel"
+                           Text=""
                            Style="{StaticResource BodyLabelStyle}"
                            LineBreakMode="WordWrap" />
                 </VerticalStackLayout>
@@ -69,9 +98,11 @@
             <Border x:Name="BackendSettingsBorder"
                     Style="{StaticResource CardBorderStyle}">
                 <VerticalStackLayout Spacing="10">
-                    <Label Text="Backend"
+                    <Label x:Name="BackendSectionLabel"
+                           Text=""
                            Style="{StaticResource SubtitleLabelStyle}" />
-                    <Label Text="Подключение к Railway API для проверки деплоя и синхронизации прогресса."
+                    <Label x:Name="BackendDescLabel"
+                           Text=""
                            Style="{StaticResource BodyLabelStyle}"
                            LineBreakMode="WordWrap" />
 
@@ -97,11 +128,12 @@
 
                     <Grid ColumnDefinitions="*,*"
                           ColumnSpacing="10">
-                        <Button Text="Сохранить"
+                        <Button x:Name="SaveBackendButton"
+                                Text=""
                                 Clicked="OnSaveBackendClicked" />
                         <Button Grid.Column="1"
                                 x:Name="CheckBackendButton"
-                                Text="Проверить"
+                                Text=""
                                 Style="{StaticResource PrimaryButtonStyle}"
                                 Clicked="OnCheckBackendClicked" />
                     </Grid>

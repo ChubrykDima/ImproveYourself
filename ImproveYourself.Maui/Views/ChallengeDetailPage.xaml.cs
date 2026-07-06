@@ -1,5 +1,6 @@
 using ImproveYourself.Maui.Application;
 using ImproveYourself.Maui.Domain;
+using ImproveYourself.Maui.Resources.Strings;
 
 namespace ImproveYourself.Maui.Views;
 
@@ -16,6 +17,12 @@ public partial class ChallengeDetailPage : ContentPage
         InitializeComponent();
         _appState = appState;
         _currentDate = date;
+
+        Title = AppStrings.ChallengeDetail_Title;
+        CompletedTextLabel.Text = AppStrings.ChallengeCompleted;
+        NextDayButton.Text = AppStrings.GoToNextDay;
+        QuoteOfDayLabel.Text = AppStrings.QuoteOfDay;
+        NoteTitleLabel.Text = AppStrings.NoteLabel;
     }
 
     protected override void OnAppearing()
@@ -31,9 +38,9 @@ public partial class ChallengeDetailPage : ContentPage
 
         if (_challenge is null)
         {
-            DateLabel.Text = "Дата: --";
-            ChallengeTitleLabel.Text = "Челлендж не найден";
-            ProgressLabel.Text = "Прогресс: 0/2";
+            DateLabel.Text = AppStrings.DatePlaceholder;
+            ChallengeTitleLabel.Text = AppStrings.ChallengeNotFound;
+            ProgressLabel.Text = string.Format(AppStrings.ProgressFormat, 0, 2);
             PersonalizationLabel.IsVisible = false;
             PersonalizationLabel.Text = string.Empty;
             ChallengeProgressBar.Progress = 0;
@@ -48,9 +55,9 @@ public partial class ChallengeDetailPage : ContentPage
         var totalSteps = Math.Max(_challenge.Steps.Count, 1);
         var isCompleted = _challenge.Status == ChallengeStatus.Completed;
 
-        DateLabel.Text = $"Дата: {DateHelpers.ToDisplayDate(_challenge.Date)}";
+        DateLabel.Text = string.Format(AppStrings.DateFormat, DateHelpers.ToDisplayDate(_challenge.Date));
         ChallengeTitleLabel.Text = _challenge.Title;
-        ProgressLabel.Text = $"Прогресс: {completedSteps}/{totalSteps}";
+        ProgressLabel.Text = string.Format(AppStrings.ProgressFormat, completedSteps, totalSteps);
         RenderPersonalization();
         ChallengeProgressBar.Progress = completedSteps / (double)totalSteps;
         CompletedTextLabel.IsVisible = isCompleted;
@@ -102,8 +109,8 @@ public partial class ChallengeDetailPage : ContentPage
         var hasQuoteNote = !string.IsNullOrWhiteSpace(challenge.QuoteNote);
         QuoteHintLabel.IsVisible = hasQuoteNote;
         QuoteHintLabel.Text = _isQuoteNoteVisible
-            ? "Нажми, чтобы скрыть пояснение"
-            : "Нажми, чтобы открыть пояснение";
+            ? AppStrings.TapToCloseNote
+            : AppStrings.TapToOpenNote;
         QuoteSectionBorder.Stroke = hasQuoteNote
             ? Color.FromArgb("#2C3648")
             : (Color)Microsoft.Maui.Controls.Application.Current!.Resources["ColorBorder"];
@@ -235,7 +242,7 @@ public partial class ChallengeDetailPage : ContentPage
         {
             stack.Children.Add(new Label
             {
-                Text = $"Совет: {step.Tip}",
+                Text = string.Format(AppStrings.TipFormat, step.Tip),
                 FontFamily = "OpenSansRegular",
                 FontSize = 15,
                 TextColor = Color.FromArgb("#9EA8BD"),
@@ -267,7 +274,6 @@ public partial class ChallengeDetailPage : ContentPage
 
         _challenge = _appState.AdvanceStep(_challenge.Date, stepType);
 
-        // If the challenge is completed but AdvanceStep didn't auto-advance, trigger it now.
         if (_challenge.Status == ChallengeStatus.Completed)
         {
             _challenge = _appState.AdvanceToNextDay();

@@ -60,9 +60,11 @@
                 </Border>
             </Border>
 
-            <Label Text="Уверенность начинается с действий"
+            <Label x:Name="TitleLabel"
+                   Text=""
                    Style="{StaticResource HeroLabelStyle}" />
-            <Label Text="Три простых шага в день укрепляют дисциплину и внутренний стержень."
+            <Label x:Name="BodyLabel"
+                   Text=""
                    Style="{StaticResource BodyLabelStyle}"
                    HorizontalTextAlignment="Center" />
         </VerticalStackLayout>
@@ -71,14 +73,16 @@
               ColumnDefinitions="70,*"
               ColumnSpacing="10"
               VerticalOptions="End">
-            <Button Text="Назад"
+            <Button x:Name="BackButton"
+                    Text=""
                     BackgroundColor="Transparent"
                     TextColor="{StaticResource ColorTextSecondary}"
                     FontFamily="OpenSansRegular"
                     FontSize="15"
                     Clicked="OnBackClicked" />
-            <Button Grid.Column="1"
-                    Text="Дальше"
+            <Button x:Name="NextButton"
+                    Grid.Column="1"
+                    Text=""
                     Style="{StaticResource PrimaryButtonStyle}"
                     Clicked="OnNextClicked" />
         </Grid>
