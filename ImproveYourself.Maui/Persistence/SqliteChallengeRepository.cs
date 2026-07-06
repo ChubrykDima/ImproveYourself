@@ -497,7 +497,7 @@ public sealed class SqliteChallengeRepository : IChallengeRepository
             CreatedAt = createdAt,
             UpdatedAt = updatedAt,
             QuoteText = string.IsNullOrWhiteSpace(quoteText) ? null : quoteText,
-            QuoteAuthor = string.IsNullOrWhiteSpace(quoteAuthor) ? null : quoteAuthor,
+            QuoteAuthor = NormalizeQuoteAuthor(quoteAuthor),
             QuoteNote = string.IsNullOrWhiteSpace(quoteNote) ? null : quoteNote,
             Steps = visibleSteps,
         };
@@ -516,7 +516,7 @@ public sealed class SqliteChallengeRepository : IChallengeRepository
         Tip = step.Tip,
         DurationSeconds = step.DurationSeconds,
         QuoteText = step.QuoteText,
-        QuoteAuthor = step.QuoteAuthor,
+        QuoteAuthor = NormalizeQuoteAuthor(step.QuoteAuthor),
         QuoteNote = step.QuoteNote,
         SortOrder = step.SortOrder <= 0 ? fallbackSortOrder : step.SortOrder,
         Status = step.Status,
@@ -533,6 +533,39 @@ public sealed class SqliteChallengeRepository : IChallengeRepository
         StepType.Quote => "Цитата дня",
         _ => string.IsNullOrWhiteSpace(title) ? "Шаг дня" : title,
     };
+
+    private static string? NormalizeQuoteAuthor(string? author)
+    {
+        if (string.IsNullOrWhiteSpace(author))
+        {
+            return null;
+        }
+
+        var trimmed = author.Trim();
+
+        return trimmed switch
+        {
+            "Современная интерпретация" => null,
+            "В духе Брюса Ли" => "Брюс Ли",
+            "В духе Брене Браун" => "Брене Браун",
+            "В духе Конфуция" => "Конфуций",
+            "В духе Майи Энджелоу" => "Майя Энджелоу",
+            "В духе Марка Аврелия" => "Марк Аврелий",
+            "В духе Марка Твена" => "Марк Твен",
+            "В духе Нельсона Манделы" => "Нельсон Мандела",
+            "В духе Роберта Фроста" => "Роберт Фрост",
+            "В духе Сенеки" => "Сенека",
+            "В духе Теодора Рузвельта" => "Теодор Рузвельт",
+            "В духе Тима Ферриса" => "Тим Феррис",
+            "В духе Уильяма Джеймса" => "Уильям Джеймс",
+            "В духе Уэйна Гретцки" => "Уэйн Гретцки",
+            "В духе Франклина Рузвельта" => "Франклин Рузвельт",
+            "В духе Фридриха Ницше" => "Фридрих Ницше",
+            "В духе Элеоноры Рузвельт" => "Элеонора Рузвельт",
+            "В духе Эпиктета" => "Эпиктет",
+            _ => trimmed.StartsWith("В духе ", StringComparison.OrdinalIgnoreCase) ? null : trimmed,
+        };
+    }
 
     private static DailyChallenge CloneChallenge(DailyChallenge challenge) => new()
     {
