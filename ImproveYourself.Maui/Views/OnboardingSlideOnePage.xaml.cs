@@ -1,4 +1,5 @@
 using ImproveYourself.Maui.Application;
+using ImproveYourself.Maui.Resources.Strings;
 
 namespace ImproveYourself.Maui.Views;
 
@@ -12,6 +13,10 @@ public partial class OnboardingSlideOnePage : ContentPage
         InitializeComponent();
         _appState = appState;
         _navigateToHomeAsync = navigateToHomeAsync;
+
+        TitleLabel.Text = AppStrings.Onboarding1_Title;
+        BodyLabel.Text = AppStrings.Onboarding1_Body;
+        NextButton.Text = AppStrings.Next;
     }
 
     private async void OnNextClicked(object? sender, EventArgs e)

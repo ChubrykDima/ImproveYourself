@@ -18,7 +18,7 @@ public sealed class AppState : INotifyPropertyChanged
 
     private bool _isHydrated;
     private bool _isBackendSyncing;
-    private string _displayName = "Друг";
+    private string _displayName = string.Empty;
     private bool _onboardingCompleted;
     private bool _notificationsEnabled;
     private string _backendBaseUrl = string.Empty;
@@ -189,7 +189,7 @@ public sealed class AppState : INotifyPropertyChanged
 
     public Task CompleteOnboardingAsync(string name)
     {
-        var nextName = string.IsNullOrWhiteSpace(name) ? "Друг" : name.Trim();
+        var nextName = name?.Trim() ?? string.Empty;
 
         _settingsService.WriteDisplayName(nextName);
         _settingsService.WriteOnboardingCompleted(true);
@@ -291,6 +291,18 @@ public sealed class AppState : INotifyPropertyChanged
         SetCurrentChallengeDateInternal(ResolveCurrentChallengeDate());
     }
 
+    public void ReloadAfterLanguageChange()
+    {
+        _challengeRepository.ReloadBundledContent();
+
+        if (StartSelfAssessment is not null)
+        {
+            _challengeRepository.ApplyPersonalization(StartSelfAssessment);
+        }
+
+        RefreshDerivedState();
+    }
+
     public async Task<bool> SetNotificationsEnabledAsync(bool enabled)
     {
         var applied = await _notificationPreferenceService.ApplyPreferenceAsync(enabled);
@@ -313,7 +325,7 @@ public sealed class AppState : INotifyPropertyChanged
 
     public void UpdateDisplayName(string name)
     {
-        var nextName = string.IsNullOrWhiteSpace(name) ? "Друг" : name.Trim();
+        var nextName = name?.Trim() ?? string.Empty;
 
         _settingsService.WriteDisplayName(nextName);
         DisplayName = nextName;

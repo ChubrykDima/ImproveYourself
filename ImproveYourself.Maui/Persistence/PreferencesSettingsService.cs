@@ -14,6 +14,7 @@ public sealed class PreferencesSettingsService : ISettingsService
     private const string NotificationsEnabledKey = "notificationsEnabled";
     private const string BackendBaseUrlKey = "backend.baseUrl";
     private const string BackendApiKeyKey = "backend.apiKey";
+    private const string LanguageKey = "language";
     private const string BackendClientIdKey = "backend.clientId";
     private const string StartSelfAssessmentKey = "selfAssessment.start";
     private const string FinalSelfAssessmentKey = "selfAssessment.final";
@@ -39,11 +40,11 @@ public sealed class PreferencesSettingsService : ISettingsService
     }
 
     public string ReadDisplayName() =>
-        Preferences.Default.Get(DisplayNameKey, "Друг");
+        Preferences.Default.Get(DisplayNameKey, string.Empty);
 
     public void WriteDisplayName(string value)
     {
-        var normalized = string.IsNullOrWhiteSpace(value) ? "Друг" : value.Trim();
+        var normalized = string.IsNullOrWhiteSpace(value) ? string.Empty : value.Trim();
         Preferences.Default.Set(DisplayNameKey, normalized);
     }
 
@@ -103,6 +104,12 @@ public sealed class PreferencesSettingsService : ISettingsService
         var normalized = string.IsNullOrWhiteSpace(value) ? string.Empty : value.Trim();
         Preferences.Default.Set(BackendApiKeyKey, normalized);
     }
+
+    public string ReadLanguage() =>
+        Preferences.Default.Get(LanguageKey, string.Empty);
+
+    public void WriteLanguage(string value) =>
+        Preferences.Default.Set(LanguageKey, value?.Trim() ?? string.Empty);
 
     public string ReadBackendClientId()
     {

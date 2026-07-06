@@ -5,7 +5,6 @@ namespace ImproveYourself.Maui.Domain;
 public static class DateHelpers
 {
     public const int TargetMonthlyDays = 30;
-    private static readonly CultureInfo RussianCulture = CultureInfo.GetCultureInfo("ru-RU");
 
     public static string ToIsoDate(DateTime date) => date.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
 
@@ -13,7 +12,7 @@ public static class DateHelpers
         ParseIsoDate(isoDate).AddDays(days).ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
 
     public static string ToDisplayDate(string isoDate) =>
-        ParseIsoDate(isoDate).ToString("d MMMM", RussianCulture);
+        ParseIsoDate(isoDate).ToString("d MMMM", CultureInfo.CurrentCulture);
 
     public static DateOnly ParseIsoDate(string isoDate) =>
         DateOnly.ParseExact(isoDate, "yyyy-MM-dd", CultureInfo.InvariantCulture);

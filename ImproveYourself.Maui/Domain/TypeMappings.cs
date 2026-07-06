@@ -1,3 +1,5 @@
+using ImproveYourself.Maui.Resources.Strings;
+
 namespace ImproveYourself.Maui.Domain;
 
 public static class TypeMappings
@@ -49,18 +51,18 @@ public static class TypeMappings
 
     public static string ToDisplayTitle(this StepStatus status) => status switch
     {
-        StepStatus.NotStarted => "Не начато",
-        StepStatus.InProgress => "В процессе",
-        StepStatus.Completed => "Завершено",
-        _ => "Не начато",
+        StepStatus.NotStarted => AppStrings.StatusNotStarted,
+        StepStatus.InProgress => AppStrings.StatusInProgress,
+        StepStatus.Completed => AppStrings.StatusCompleted,
+        _ => AppStrings.StatusNotStarted,
     };
 
     public static string ToActionTitle(this StepStatus status) => status switch
     {
-        StepStatus.NotStarted => "Начать",
-        StepStatus.InProgress => "Отметить выполненным",
-        StepStatus.Completed => "Выполнено",
-        _ => "Начать",
+        StepStatus.NotStarted => AppStrings.ActionStart,
+        StepStatus.InProgress => AppStrings.ActionMarkCompleted,
+        StepStatus.Completed => AppStrings.ActionCompleted,
+        _ => AppStrings.ActionStart,
     };
 
     private static string NormalizeStorageValue(string value) =>

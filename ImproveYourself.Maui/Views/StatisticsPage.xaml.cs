@@ -1,27 +1,42 @@
 using ImproveYourself.Maui.Application;
 using ImproveYourself.Maui.Domain;
+using ImproveYourself.Maui.Resources.Strings;
 
 namespace ImproveYourself.Maui.Views;
 
 public partial class StatisticsPage : ContentPage
 {
-    private static readonly string[] DayLabels = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"];
-
     private readonly AppState _appState;
 
     public StatisticsPage(AppState appState)
     {
         InitializeComponent();
         _appState = appState;
+
+        Title = AppStrings.Statistics_Title;
     }
 
     protected override async void OnAppearing()
     {
         base.OnAppearing();
         _appState.RefreshDerivedState();
+        RenderStaticLabels();
         Render();
         await _appState.SyncBackendAsync();
         Render();
+    }
+
+    private void RenderStaticLabels()
+    {
+        CurrentStreakTitleLabel.Text = AppStrings.CurrentStreak;
+        DaysLabel1.Text = AppStrings.Days;
+        BestStreakTitleLabel.Text = AppStrings.BestStreak;
+        DaysLabel2.Text = AppStrings.Days;
+        WeekCompletionTitleLabel.Text = AppStrings.WeekCompletion;
+        WeeklyActivityTitleLabel.Text = AppStrings.WeeklyActivity;
+        TaskCategoriesTitleLabel.Text = AppStrings.TaskCategories;
+        MorningPracticeLabel.Text = AppStrings.MorningPractice;
+        DailyChallengeLabel.Text = AppStrings.DailyChallengeName;
     }
 
     private void Render()
@@ -31,8 +46,8 @@ public partial class StatisticsPage : ContentPage
 
         var stats = _appState.WeeklyStats;
 
-        WeekCompletedLabel.Text = $"Закрыто дней: {stats.TotalCompletedDays}/7";
-        WeeklyCompletionRateLabel.Text = $"Общий completion rate: {stats.CompletionRate}%";
+        WeekCompletedLabel.Text = string.Format(AppStrings.DaysClosedFormat, stats.TotalCompletedDays);
+        WeeklyCompletionRateLabel.Text = string.Format(AppStrings.CompletionRateFormat, stats.CompletionRate);
 
         PracticeValueLabel.Text = GetCategoryValue(stats, StepType.Practice).ToString();
         SocialValueLabel.Text = GetCategoryValue(stats, StepType.Social).ToString();
@@ -61,6 +76,12 @@ public partial class StatisticsPage : ContentPage
     private void RenderWeeklyBars(IReadOnlyList<WeeklyDayStat> days)
     {
         WeeklyBarsContainer.Children.Clear();
+
+        string[] dayLabels =
+        [
+            AppStrings.DayMon, AppStrings.DayTue, AppStrings.DayWed, AppStrings.DayThu,
+            AppStrings.DayFri, AppStrings.DaySat, AppStrings.DaySun,
+        ];
 
         for (var index = 0; index < Math.Min(7, days.Count); index += 1)
         {
@@ -95,7 +116,7 @@ public partial class StatisticsPage : ContentPage
             dayColumn.Children.Add(barHost);
             dayColumn.Children.Add(new Label
             {
-                Text = DayLabels[index],
+                Text = dayLabels[index],
                 FontFamily = "OpenSansSemibold",
                 FontSize = 12,
                 TextColor = Color.FromArgb("#9EA8BD"),

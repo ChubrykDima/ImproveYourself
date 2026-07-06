@@ -1,0 +1,1352 @@
+[
+  {
+    "id": "challenge-2026-05-17",
+    "date": "2026-05-17",
+    "title": "Deine tägliche Herausforderung",
+    "status": "NotStarted",
+    "createdAt": "2026-05-17T06:00:00.000Z",
+    "steps": [
+      {
+        "id": "challenge-2026-05-17-practice",
+        "dailyChallengeId": "challenge-2026-05-17",
+        "type": "Practice",
+        "title": "Morgenübung",
+        "subtitle": "Ruhige Atmung",
+        "description": "Setz dich aufrecht hin und mache 6 langsame Atemzyklen: 4 Sekunden einatmen und 6 Sekunden ausatmen. Beende mit 30 Sekunden, in denen du einfach die Unterstützung unter deinen Füßen wahrnimmst.",
+        "tip": "Mache das Ausatmen länger als das Einatmen.",
+        "durationSeconds": 180,
+        "sortOrder": 1,
+        "status": "NotStarted",
+        "completedAt": null
+      },
+      {
+        "id": "challenge-2026-05-17-quote",
+        "dailyChallengeId": "challenge-2026-05-17",
+        "type": "Quote",
+        "title": "Zitat des Tages",
+        "description": "Lies das Zitat und markiere den Schritt als abgeschlossen.",
+        "quoteText": "Du hast Macht über deinen Geist, nicht über äußere Ereignisse. Erkenne dies, und du wirst Stärke finden.",
+        "quoteAuthor": "Marcus Aurelius",
+        "sortOrder": 2,
+        "status": "NotStarted",
+        "completedAt": null
+      },
+      {
+        "id": "challenge-2026-05-17-social",
+        "dailyChallengeId": "challenge-2026-05-17",
+        "type": "Social",
+        "title": "Soziale Herausforderung",
+        "description": "Grüße heute als Erstes eine Person und halte 1–2 Sekunden Blickkontakt.",
+        "tip": "Ein einfaches Hallo oder Guten Morgen reicht.",
+        "sortOrder": 3,
+        "status": "NotStarted",
+        "completedAt": null
+      }
+    ]
+  },
+  {
+    "id": "challenge-2026-05-18",
+    "date": "2026-05-18",
+    "title": "Deine tägliche Herausforderung",
+    "status": "NotStarted",
+    "createdAt": "2026-05-18T06:00:00.000Z",
+    "steps": [
+      {
+        "id": "challenge-2026-05-18-practice",
+        "dailyChallengeId": "challenge-2026-05-18",
+        "type": "Practice",
+        "title": "Morgenübung",
+        "subtitle": "Offene Haltung",
+        "description": "Stehe oder sitze 2 Minuten mit offenen Schultern und entspanntem Kiefer. Halte deinen Blick leicht über dem Horizont und atme ruhig.",
+        "tip": "Schau während der Übung nicht auf dein Handy.",
+        "durationSeconds": 120,
+        "sortOrder": 1,
+        "status": "NotStarted",
+        "completedAt": null
+      },
+      {
+        "id": "challenge-2026-05-18-quote",
+        "dailyChallengeId": "challenge-2026-05-18",
+        "type": "Quote",
+        "title": "Zitat des Tages",
+        "description": "Lies das Zitat und markiere den Schritt als abgeschlossen.",
+        "quoteText": "Wir leiden öfter in der Vorstellung als in der Wirklichkeit.",
+        "quoteAuthor": "Seneca",
+        "sortOrder": 2,
+        "status": "NotStarted",
+        "completedAt": null
+      },
+      {
+        "id": "challenge-2026-05-18-social",
+        "dailyChallengeId": "challenge-2026-05-18",
+        "type": "Social",
+        "title": "Soziale Herausforderung",
+        "description": "Sag einer Person kurz und laut Danke, statt eine Nachricht zu schicken.",
+        "tip": "Ein konkreter Grund klingt selbstbewusster.",
+        "sortOrder": 3,
+        "status": "NotStarted",
+        "completedAt": null
+      }
+    ]
+  },
+  {
+    "id": "challenge-2026-05-19",
+    "date": "2026-05-19",
+    "title": "Deine tägliche Herausforderung",
+    "status": "NotStarted",
+    "createdAt": "2026-05-19T06:00:00.000Z",
+    "steps": [
+      {
+        "id": "challenge-2026-05-19-practice",
+        "dailyChallengeId": "challenge-2026-05-19",
+        "type": "Practice",
+        "title": "Morgenübung",
+        "subtitle": "Morgenspaziergang",
+        "description": "Gehe 5 Minuten in gleichmäßigem Tempo ohne Musik. Nimm deine Schritte wahr und halte deine Wirbelsäule lang.",
+        "tip": "Schau nach vorn, nicht auf den Boden.",
+        "durationSeconds": 300,
+        "sortOrder": 1,
+        "status": "NotStarted",
+        "completedAt": null
+      },
+      {
+        "id": "challenge-2026-05-19-quote",
+        "dailyChallengeId": "challenge-2026-05-19",
+        "type": "Quote",
+        "title": "Zitat des Tages",
+        "description": "Lies das Zitat und markiere den Schritt als abgeschlossen.",
+        "quoteText": "Nicht das, was dir geschieht, ist entscheidend, sondern wie du darauf reagierst.",
+        "quoteAuthor": "Epictetus",
+        "sortOrder": 2,
+        "status": "NotStarted",
+        "completedAt": null
+      },
+      {
+        "id": "challenge-2026-05-19-social",
+        "dailyChallengeId": "challenge-2026-05-19",
+        "type": "Social",
+        "title": "Soziale Herausforderung",
+        "description": "Stelle einer Person, die du kennst, eine neutrale Frage dazu, wie ihr Tag, ihr Weg oder ihre Arbeit verläuft.",
+        "tip": "Wähle eine einfache Frage, die zur Situation passt.",
+        "sortOrder": 3,
+        "status": "NotStarted",
+        "completedAt": null
+      }
+    ]
+  },
+  {
+    "id": "challenge-2026-05-20",
+    "date": "2026-05-20",
+    "title": "Deine tägliche Herausforderung",
+    "status": "NotStarted",
+    "createdAt": "2026-05-20T06:00:00.000Z",
+    "steps": [
+      {
+        "id": "challenge-2026-05-20-practice",
+        "dailyChallengeId": "challenge-2026-05-20",
+        "type": "Practice",
+        "title": "Morgenübung",
+        "subtitle": "Box-Atmung",
+        "description": "Mache 4 ruhige Zyklen: 4 einatmen, 4 halten, 4 ausatmen, 4 halten. Entspanne nach jedem Zyklus sanft deine Schultern.",
+        "tip": "Zähle leise für dich, ohne Eile.",
+        "durationSeconds": 240,
+        "sortOrder": 1,
+        "status": "NotStarted",
+        "completedAt": null
+      },
+      {
+        "id": "challenge-2026-05-20-quote",
+        "dailyChallengeId": "challenge-2026-05-20",
+        "type": "Quote",
+        "title": "Zitat des Tages",
+        "description": "Lies das Zitat und markiere den Schritt als abgeschlossen.",
+        "quoteText": "Das Glück deines Lebens hängt von der Qualität deiner Gedanken ab.",
+        "quoteAuthor": "Marcus Aurelius",
+        "sortOrder": 2,
+        "status": "NotStarted",
+        "completedAt": null
+      },
+      {
+        "id": "challenge-2026-05-20-social",
+        "dailyChallengeId": "challenge-2026-05-20",
+        "type": "Social",
+        "title": "Soziale Herausforderung",
+        "description": "Mache ein aufrichtiges Kompliment zu Aussehen, Idee oder Arbeit einer Person.",
+        "tip": "Je konkreter, desto natürlicher klingt es.",
+        "sortOrder": 3,
+        "status": "NotStarted",
+        "completedAt": null
+      }
+    ]
+  },
+  {
+    "id": "challenge-2026-05-21",
+    "date": "2026-05-21",
+    "title": "Deine tägliche Herausforderung",
+    "status": "NotStarted",
+    "createdAt": "2026-05-21T06:00:00.000Z",
+    "steps": [
+      {
+        "id": "challenge-2026-05-21-practice",
+        "dailyChallengeId": "challenge-2026-05-21",
+        "type": "Practice",
+        "title": "Morgenübung",
+        "subtitle": "Mikro-Dehnung",
+        "description": "Mache Schulterkreisen, dehne sanft deinen Nacken und schüttle deine Hände aus. Beende mit 10 ruhigen Kniebeugen.",
+        "tip": "Bewege dich ohne Ruck.",
+        "durationSeconds": 240,
+        "sortOrder": 1,
+        "status": "NotStarted",
+        "completedAt": null
+      },
+      {
+        "id": "challenge-2026-05-21-quote",
+        "dailyChallengeId": "challenge-2026-05-21",
+        "type": "Quote",
+        "title": "Zitat des Tages",
+        "description": "Lies das Zitat und markiere den Schritt als abgeschlossen.",
+        "quoteText": "Verschwende keine Zeit mehr damit zu streiten, wie ein guter Mensch sein sollte. Sei einer.",
+        "quoteAuthor": "Marcus Aurelius",
+        "sortOrder": 2,
+        "status": "NotStarted",
+        "completedAt": null
+      },
+      {
+        "id": "challenge-2026-05-21-social",
+        "dailyChallengeId": "challenge-2026-05-21",
+        "type": "Social",
+        "title": "Soziale Herausforderung",
+        "description": "Sag deine Meinung zu einer kleinen Entscheidung, statt dass es dir egal ist.",
+        "tip": "Eine kurze Antwort wie „Ich würde wählen“ reicht bereits.",
+        "sortOrder": 3,
+        "status": "NotStarted",
+        "completedAt": null
+      }
+    ]
+  },
+  {
+    "id": "challenge-2026-05-22",
+    "date": "2026-05-22",
+    "title": "Deine tägliche Herausforderung",
+    "status": "NotStarted",
+    "createdAt": "2026-05-22T06:00:00.000Z",
+    "steps": [
+      {
+        "id": "challenge-2026-05-22-practice",
+        "dailyChallengeId": "challenge-2026-05-22",
+        "type": "Practice",
+        "title": "Morgenübung",
+        "subtitle": "Fokuspunkt",
+        "description": "Wähle einen Punkt an der Wand und halte deine Aufmerksamkeit 3 Minuten darauf. Wenn dein Geist abschweift, kehre ruhig zu deinem Blick und deiner Atmung zurück.",
+        "tip": "Versuche nicht, Gedanken wegzudrängen.",
+        "durationSeconds": 180,
+        "sortOrder": 1,
+        "status": "NotStarted",
+        "completedAt": null
+      },
+      {
+        "id": "challenge-2026-05-22-quote",
+        "dailyChallengeId": "challenge-2026-05-22",
+        "type": "Quote",
+        "title": "Zitat des Tages",
+        "description": "Lies das Zitat und markiere den Schritt als abgeschlossen.",
+        "quoteText": "Sage dir zuerst, wer du sein willst; und tu dann, was du tun musst.",
+        "quoteAuthor": "Epictetus",
+        "sortOrder": 2,
+        "status": "NotStarted",
+        "completedAt": null
+      },
+      {
+        "id": "challenge-2026-05-22-social",
+        "dailyChallengeId": "challenge-2026-05-22",
+        "type": "Social",
+        "title": "Soziale Herausforderung",
+        "description": "Führe ein kurzes Gespräch mit einem Satz weiter, statt es sofort zu beenden.",
+        "tip": "Nutze eine einfache Nachfrage wie „Und wie war das für dich?“.",
+        "sortOrder": 3,
+        "status": "NotStarted",
+        "completedAt": null
+      }
+    ]
+  },
+  {
+    "id": "challenge-2026-05-23",
+    "date": "2026-05-23",
+    "title": "Deine tägliche Herausforderung",
+    "status": "NotStarted",
+    "createdAt": "2026-05-23T06:00:00.000Z",
+    "steps": [
+      {
+        "id": "challenge-2026-05-23-practice",
+        "dailyChallengeId": "challenge-2026-05-23",
+        "type": "Practice",
+        "title": "Morgenübung",
+        "subtitle": "Körper-Check",
+        "description": "Verbringe 5 Minuten damit, deine Aufmerksamkeit von den Füßen bis zu den Schultern zu führen. Nimm Spannung in jedem Bereich wahr und löse sie beim Ausatmen.",
+        "tip": "Sanfte Aufmerksamkeit reicht.",
+        "durationSeconds": 300,
+        "sortOrder": 1,
+        "status": "NotStarted",
+        "completedAt": null
+      },
+      {
+        "id": "challenge-2026-05-23-quote",
+        "dailyChallengeId": "challenge-2026-05-23",
+        "type": "Quote",
+        "title": "Zitat des Tages",
+        "description": "Lies das Zitat und markiere den Schritt als abgeschlossen.",
+        "quoteText": "Glück ist das, was passiert, wenn Vorbereitung auf Gelegenheit trifft.",
+        "quoteAuthor": "Seneca",
+        "sortOrder": 2,
+        "status": "NotStarted",
+        "completedAt": null
+      },
+      {
+        "id": "challenge-2026-05-23-social",
+        "dailyChallengeId": "challenge-2026-05-23",
+        "type": "Social",
+        "title": "Soziale Herausforderung",
+        "description": "Lächle und grüße tagsüber zwei Personen.",
+        "tip": "Schau direkt nach dem Grüßen nicht sofort weg.",
+        "sortOrder": 3,
+        "status": "NotStarted",
+        "completedAt": null
+      }
+    ]
+  },
+  {
+    "id": "challenge-2026-05-24",
+    "date": "2026-05-24",
+    "title": "Deine tägliche Herausforderung",
+    "status": "NotStarted",
+    "createdAt": "2026-05-24T06:00:00.000Z",
+    "steps": [
+      {
+        "id": "challenge-2026-05-24-practice",
+        "dailyChallengeId": "challenge-2026-05-24",
+        "type": "Practice",
+        "title": "Morgenübung",
+        "subtitle": "Kraftvoller Spaziergang",
+        "description": "Gehe 6 Minuten etwas schneller als sonst und halte eine aufrechte Haltung. Wiederhole bei jedem Ausatmen leise: ruhig und beständig.",
+        "tip": "Dein Tempo soll sich weiterhin natürlich anfühlen.",
+        "durationSeconds": 360,
+        "sortOrder": 1,
+        "status": "NotStarted",
+        "completedAt": null
+      },
+      {
+        "id": "challenge-2026-05-24-quote",
+        "dailyChallengeId": "challenge-2026-05-24",
+        "type": "Quote",
+        "title": "Zitat des Tages",
+        "description": "Lies das Zitat und markiere den Schritt als abgeschlossen.",
+        "quoteText": "Niemand kann dich ohne deine Zustimmung minderwertig fühlen lassen.",
+        "quoteAuthor": "Eleanor Roosevelt",
+        "sortOrder": 2,
+        "status": "NotStarted",
+        "completedAt": null
+      },
+      {
+        "id": "challenge-2026-05-24-social",
+        "dailyChallengeId": "challenge-2026-05-24",
+        "type": "Social",
+        "title": "Soziale Herausforderung",
+        "description": "Bitte um einen kleinen Gefallen oder eine Klärung, auch wenn du es wahrscheinlich selbst herausfinden könntest.",
+        "tip": "Eine einfache Bitte trainiert auch Selbstvertrauen.",
+        "sortOrder": 3,
+        "status": "NotStarted",
+        "completedAt": null
+      }
+    ]
+  },
+  {
+    "id": "challenge-2026-05-25",
+    "date": "2026-05-25",
+    "title": "Deine tägliche Herausforderung",
+    "status": "NotStarted",
+    "createdAt": "2026-05-25T06:00:00.000Z",
+    "steps": [
+      {
+        "id": "challenge-2026-05-25-practice",
+        "dailyChallengeId": "challenge-2026-05-25",
+        "type": "Practice",
+        "title": "Morgenübung",
+        "subtitle": "Atem-Reset",
+        "description": "Mache 10 Atemzyklen: 4 Sekunden einatmen und 6 Sekunden ausatmen. Setze dich dann eine Minute ruhig hin und nimm deinen Zustand wahr.",
+        "tip": "Mache das Ausatmen weicher und länger als das Einatmen.",
+        "durationSeconds": 300,
+        "sortOrder": 1,
+        "status": "NotStarted",
+        "completedAt": null
+      },
+      {
+        "id": "challenge-2026-05-25-quote",
+        "dailyChallengeId": "challenge-2026-05-25",
+        "type": "Quote",
+        "title": "Zitat des Tages",
+        "description": "Lies das Zitat und markiere den Schritt als abgeschlossen.",
+        "quoteText": "Mut ist Widerstand gegen die Angst, Beherrschung der Angst, nicht Abwesenheit der Angst.",
+        "quoteAuthor": "Mark Twain",
+        "sortOrder": 2,
+        "status": "NotStarted",
+        "completedAt": null
+      },
+      {
+        "id": "challenge-2026-05-25-social",
+        "dailyChallengeId": "challenge-2026-05-25",
+        "type": "Social",
+        "title": "Soziale Herausforderung",
+        "description": "Sag eine kleine Präferenz laut: einen Ort, ein Getränk, eine Zeit oder eine Route.",
+        "tip": "Ein Satz wie „Ich würde wählen“ klingt ruhig und klar.",
+        "sortOrder": 3,
+        "status": "NotStarted",
+        "completedAt": null
+      }
+    ]
+  },
+  {
+    "id": "challenge-2026-05-26",
+    "date": "2026-05-26",
+    "title": "Deine tägliche Herausforderung",
+    "status": "NotStarted",
+    "createdAt": "2026-05-26T06:00:00.000Z",
+    "steps": [
+      {
+        "id": "challenge-2026-05-26-practice",
+        "dailyChallengeId": "challenge-2026-05-26",
+        "type": "Practice",
+        "title": "Morgenübung",
+        "subtitle": "Wandhaltung",
+        "description": "Stelle dich 2 Minuten mit dem Rücken an eine Wand, gehe dann 2 weitere Minuten und behalte dieselbe Ausrichtung. Spüre offene Schultern und einen ruhigen Nacken.",
+        "tip": "Spanne deinen unteren Rücken nicht zu stark an.",
+        "durationSeconds": 240,
+        "sortOrder": 1,
+        "status": "NotStarted",
+        "completedAt": null
+      },
+      {
+        "id": "challenge-2026-05-26-quote",
+        "dailyChallengeId": "challenge-2026-05-26",
+        "type": "Quote",
+        "title": "Zitat des Tages",
+        "description": "Lies das Zitat und markiere den Schritt als abgeschlossen.",
+        "quoteText": "Wer ein Warum zum Leben hat, erträgt fast jedes Wie.",
+        "quoteAuthor": "Friedrich Nietzsche",
+        "sortOrder": 2,
+        "status": "NotStarted",
+        "completedAt": null
+      },
+      {
+        "id": "challenge-2026-05-26-social",
+        "dailyChallengeId": "challenge-2026-05-26",
+        "type": "Social",
+        "title": "Soziale Herausforderung",
+        "description": "Führe ein kurzes Gespräch von 2–3 Sätzen mit einer Servicekraft oder einem Nachbarn.",
+        "tip": "Eine Frage zur aktuellen Situation reicht.",
+        "sortOrder": 3,
+        "status": "NotStarted",
+        "completedAt": null
+      }
+    ]
+  },
+  {
+    "id": "challenge-2026-05-27",
+    "date": "2026-05-27",
+    "title": "Deine tägliche Herausforderung",
+    "status": "NotStarted",
+    "createdAt": "2026-05-27T06:00:00.000Z",
+    "steps": [
+      {
+        "id": "challenge-2026-05-27-practice",
+        "dailyChallengeId": "challenge-2026-05-27",
+        "type": "Practice",
+        "title": "Morgenübung",
+        "subtitle": "Achtsames Training",
+        "description": "Mache 2 Runden mit je 8 Liegestützen an der Wand oder am Boden und 12 Kniebeugen. Erhole zwischen den Runden 30 Sekunden lang deine Atmung.",
+        "tip": "Hör auf, bevor es anstrengend wird.",
+        "durationSeconds": 300,
+        "sortOrder": 1,
+        "status": "NotStarted",
+        "completedAt": null
+      },
+      {
+        "id": "challenge-2026-05-27-quote",
+        "dailyChallengeId": "challenge-2026-05-27",
+        "type": "Quote",
+        "title": "Zitat des Tages",
+        "description": "Lies das Zitat und markiere den Schritt als abgeschlossen.",
+        "quoteText": "Unser größter Ruhm liegt nicht darin, nie zu fallen, sondern jedes Mal wieder aufzustehen.",
+        "quoteAuthor": "Confucius",
+        "sortOrder": 2,
+        "status": "NotStarted",
+        "completedAt": null
+      },
+      {
+        "id": "challenge-2026-05-27-social",
+        "dailyChallengeId": "challenge-2026-05-27",
+        "type": "Social",
+        "title": "Soziale Herausforderung",
+        "description": "Wenn dich jemand etwas fragt, antworte mit mehr als einem Wort.",
+        "tip": "Füge eine Tatsache und einen kurzen Kommentar hinzu.",
+        "sortOrder": 3,
+        "status": "NotStarted",
+        "completedAt": null
+      }
+    ]
+  },
+  {
+    "id": "challenge-2026-05-28",
+    "date": "2026-05-28",
+    "title": "Deine tägliche Herausforderung",
+    "status": "NotStarted",
+    "createdAt": "2026-05-28T06:00:00.000Z",
+    "steps": [
+      {
+        "id": "challenge-2026-05-28-practice",
+        "dailyChallengeId": "challenge-2026-05-28",
+        "type": "Practice",
+        "title": "Morgenübung",
+        "subtitle": "Benenne deine Stärke",
+        "description": "Setz dich 3 Minuten aufrecht hin und nenne dir drei deiner Stärken – auf Deutsch. Füge zu jeder ein echtes Beispiel aus deinem Leben hinzu.",
+        "tip": "Wähle Fakten, keine vagen Etiketten.",
+        "durationSeconds": 180,
+        "sortOrder": 1,
+        "status": "NotStarted",
+        "completedAt": null
+      },
+      {
+        "id": "challenge-2026-05-28-quote",
+        "dailyChallengeId": "challenge-2026-05-28",
+        "type": "Quote",
+        "title": "Zitat des Tages",
+        "description": "Lies das Zitat und markiere den Schritt als abgeschlossen.",
+        "quoteText": "Der einzige Mensch, der nie einen Fehler macht, ist der, der nie etwas tut.",
+        "quoteAuthor": "Theodore Roosevelt",
+        "sortOrder": 2,
+        "status": "NotStarted",
+        "completedAt": null
+      },
+      {
+        "id": "challenge-2026-05-28-social",
+        "dailyChallengeId": "challenge-2026-05-28",
+        "type": "Social",
+        "title": "Soziale Herausforderung",
+        "description": "Bitte eine vertraute Person um Feedback zu einer deiner Handlungen.",
+        "tip": "Hör bis zum Ende und verteidige dich nicht sofort.",
+        "sortOrder": 3,
+        "status": "NotStarted",
+        "completedAt": null
+      }
+    ]
+  },
+  {
+    "id": "challenge-2026-05-29",
+    "date": "2026-05-29",
+    "title": "Deine tägliche Herausforderung",
+    "status": "NotStarted",
+    "createdAt": "2026-05-29T06:00:00.000Z",
+    "steps": [
+      {
+        "id": "challenge-2026-05-29-practice",
+        "dailyChallengeId": "challenge-2026-05-29",
+        "type": "Practice",
+        "title": "Morgenübung",
+        "subtitle": "Stiller Tee",
+        "description": "Trinke Wasser, Tee oder Kaffee, ohne zu scrollen oder Nachrichten zu lesen. Nimm in den ersten 5 Minuten einfach Geschmack, Atmung und Haltung wahr.",
+        "tip": "Lass deinen Morgen ohne Hast beginnen.",
+        "durationSeconds": 300,
+        "sortOrder": 1,
+        "status": "NotStarted",
+        "completedAt": null
+      },
+      {
+        "id": "challenge-2026-05-29-quote",
+        "dailyChallengeId": "challenge-2026-05-29",
+        "type": "Quote",
+        "title": "Zitat des Tages",
+        "description": "Lies das Zitat und markiere den Schritt als abgeschlossen.",
+        "quoteText": "Nicht die Dinge selbst stören uns, sondern unsere Vorstellungen von ihnen.",
+        "quoteAuthor": "Epictetus",
+        "sortOrder": 2,
+        "status": "NotStarted",
+        "completedAt": null
+      },
+      {
+        "id": "challenge-2026-05-29-social",
+        "dailyChallengeId": "challenge-2026-05-29",
+        "type": "Social",
+        "title": "Soziale Herausforderung",
+        "description": "Lehne eine kleine Sache höflich ab, wenn sie für dich wirklich nicht passt.",
+        "tip": "Ein kurzer Satz wirkt besser als eine lange Erklärung.",
+        "sortOrder": 3,
+        "status": "NotStarted",
+        "completedAt": null
+      }
+    ]
+  },
+  {
+    "id": "challenge-2026-05-30",
+    "date": "2026-05-30",
+    "title": "Deine tägliche Herausforderung",
+    "status": "NotStarted",
+    "createdAt": "2026-05-30T06:00:00.000Z",
+    "steps": [
+      {
+        "id": "challenge-2026-05-30-practice",
+        "dailyChallengeId": "challenge-2026-05-30",
+        "type": "Practice",
+        "title": "Morgenübung",
+        "subtitle": "Fünf Minuten Ruhe",
+        "description": "Stelle einen Timer auf 5 Minuten und beobachte deinen Atem an der Nase. Kehre jedes Mal sanft zurück, wenn deine Aufmerksamkeit abschweift.",
+        "tip": "Das Ziel ist nicht Perfektion, sondern zurückzukehren.",
+        "durationSeconds": 300,
+        "sortOrder": 1,
+        "status": "NotStarted",
+        "completedAt": null
+      },
+      {
+        "id": "challenge-2026-05-30-quote",
+        "dailyChallengeId": "challenge-2026-05-30",
+        "type": "Quote",
+        "title": "Zitat des Tages",
+        "description": "Lies das Zitat und markiere den Schritt als abgeschlossen.",
+        "quoteText": "Schwierigkeiten stärken den Geist, wie Arbeit den Körper.",
+        "quoteAuthor": "Seneca",
+        "sortOrder": 2,
+        "status": "NotStarted",
+        "completedAt": null
+      },
+      {
+        "id": "challenge-2026-05-30-social",
+        "dailyChallengeId": "challenge-2026-05-30",
+        "type": "Social",
+        "title": "Soziale Herausforderung",
+        "description": "Schreib jemandem, mit dem du länger nicht gesprochen hast, und beginne mit einer einfachen, menschlichen Eröffnung.",
+        "tip": "Strebe nicht den perfekten Text an; zwei Sätze reichen.",
+        "sortOrder": 3,
+        "status": "NotStarted",
+        "completedAt": null
+      }
+    ]
+  },
+  {
+    "id": "challenge-2026-05-31",
+    "date": "2026-05-31",
+    "title": "Deine tägliche Herausforderung",
+    "status": "NotStarted",
+    "createdAt": "2026-05-31T06:00:00.000Z",
+    "steps": [
+      {
+        "id": "challenge-2026-05-31-practice",
+        "dailyChallengeId": "challenge-2026-05-31",
+        "type": "Practice",
+        "title": "Morgenübung",
+        "subtitle": "Selbstbewusste Haltung",
+        "description": "Stehe 2 Minuten mit geradem Rücken und festen Füßen, gehe dann 2 weitere Minuten langsam und behalte diesen Zustand. Nimm wahr, wie sich deine innere Haltung verändert.",
+        "tip": "Halte die Schultern unten und das Kinn neutral.",
+        "durationSeconds": 240,
+        "sortOrder": 1,
+        "status": "NotStarted",
+        "completedAt": null
+      },
+      {
+        "id": "challenge-2026-05-31-quote",
+        "dailyChallengeId": "challenge-2026-05-31",
+        "type": "Quote",
+        "title": "Zitat des Tages",
+        "description": "Lies das Zitat und markiere den Schritt als abgeschlossen.",
+        "quoteText": "Wenn es nicht richtig ist, tu es nicht; wenn es nicht wahr ist, sag es nicht.",
+        "quoteAuthor": "Marcus Aurelius",
+        "sortOrder": 2,
+        "status": "NotStarted",
+        "completedAt": null
+      },
+      {
+        "id": "challenge-2026-05-31-social",
+        "dailyChallengeId": "challenge-2026-05-31",
+        "type": "Social",
+        "title": "Soziale Herausforderung",
+        "description": "Bringe eine kleine Initiative ein: einen Treffpunkt, eine Anrufzeit oder den nächsten Schritt bei einer Aufgabe.",
+        "tip": "Ein klarer Vorschlag zählt bereits.",
+        "sortOrder": 3,
+        "status": "NotStarted",
+        "completedAt": null
+      }
+    ]
+  },
+  {
+    "id": "challenge-2026-06-01",
+    "date": "2026-06-01",
+    "title": "Deine tägliche Herausforderung",
+    "status": "NotStarted",
+    "createdAt": "2026-06-01T06:00:00.000Z",
+    "steps": [
+      {
+        "id": "challenge-2026-06-01-practice",
+        "dailyChallengeId": "challenge-2026-06-01",
+        "type": "Practice",
+        "title": "Morgenübung",
+        "subtitle": "Ein klarer Gedanke",
+        "description": "Nimm dir 5 Minuten, um einen Gedanken aufzuschreiben, der dein Selbstvertrauen meist schwächt, und daneben eine genauere Version. Beende mit einem Handlungssatz für heute.",
+        "tip": "Schreibe kurz und ehrlich.",
+        "durationSeconds": 300,
+        "sortOrder": 1,
+        "status": "NotStarted",
+        "completedAt": null
+      },
+      {
+        "id": "challenge-2026-06-01-quote",
+        "dailyChallengeId": "challenge-2026-06-01",
+        "type": "Quote",
+        "title": "Zitat des Tages",
+        "description": "Lies das Zitat und markiere den Schritt als abgeschlossen.",
+        "quoteText": "Was wir am meisten fürchten zu tun, ist meist das, was wir am meisten tun müssen.",
+        "quoteAuthor": "Tim Ferriss",
+        "sortOrder": 2,
+        "status": "NotStarted",
+        "completedAt": null
+      },
+      {
+        "id": "challenge-2026-06-01-social",
+        "dailyChallengeId": "challenge-2026-06-01",
+        "type": "Social",
+        "title": "Soziale Herausforderung",
+        "description": "Stelle in einem Gespräch eine tiefergehende Frage als sonst: Was war für dich am nützlichsten oder interessantesten?",
+        "tip": "Hör die Antwort vollständig und eile nicht zu deiner eigenen Geschichte.",
+        "sortOrder": 3,
+        "status": "NotStarted",
+        "completedAt": null
+      }
+    ]
+  },
+  {
+    "id": "challenge-2026-06-02",
+    "date": "2026-06-02",
+    "title": "Deine tägliche Herausforderung",
+    "status": "NotStarted",
+    "createdAt": "2026-06-02T06:00:00.000Z",
+    "steps": [
+      {
+        "id": "challenge-2026-06-02-practice",
+        "dailyChallengeId": "challenge-2026-06-02",
+        "type": "Practice",
+        "title": "Morgenübung",
+        "subtitle": "Fünf-Fünf-Rhythmus",
+        "description": "Mache 12 Atemzyklen mit 5 Sekunden Einatmen und 5 Sekunden Ausatmen. Sitze in der letzten Minute ruhig und spüre deine Beständigkeit.",
+        "tip": "Atme durch die Nase, wenn es sich angenehm anfühlt.",
+        "durationSeconds": 300,
+        "sortOrder": 1,
+        "status": "NotStarted",
+        "completedAt": null
+      },
+      {
+        "id": "challenge-2026-06-02-quote",
+        "dailyChallengeId": "challenge-2026-06-02",
+        "type": "Quote",
+        "title": "Zitat des Tages",
+        "description": "Lies das Zitat und markiere den Schritt als abgeschlossen.",
+        "quoteText": "Handle so, als ob das, was du tust, einen Unterschied macht. Das tut es.",
+        "quoteAuthor": "William James",
+        "sortOrder": 2,
+        "status": "NotStarted",
+        "completedAt": null
+      },
+      {
+        "id": "challenge-2026-06-02-social",
+        "dailyChallengeId": "challenge-2026-06-02",
+        "type": "Social",
+        "title": "Soziale Herausforderung",
+        "description": "Stelle dich kurz vor, wenn der Moment passt: wer du bist und worauf du gerade fokussiert bist.",
+        "tip": "Halte es bei 1–2 Sätzen.",
+        "sortOrder": 3,
+        "status": "NotStarted",
+        "completedAt": null
+      }
+    ]
+  },
+  {
+    "id": "challenge-2026-06-03",
+    "date": "2026-06-03",
+    "title": "Deine tägliche Herausforderung",
+    "status": "NotStarted",
+    "createdAt": "2026-06-03T06:00:00.000Z",
+    "steps": [
+      {
+        "id": "challenge-2026-06-03-practice",
+        "dailyChallengeId": "challenge-2026-06-03",
+        "type": "Practice",
+        "title": "Morgenübung",
+        "subtitle": "Beweglichkeits-Flow",
+        "description": "Wechsle 7 Minuten lang zwischen Vorbeugen, Schulterkreisen, sanften Ausfallschritten und Brustöffnungen. Bewege dich fließend und halte deine Atmung gleichmäßig.",
+        "tip": "Fluss ist wichtiger als die Bewegungsweite.",
+        "durationSeconds": 420,
+        "sortOrder": 1,
+        "status": "NotStarted",
+        "completedAt": null
+      },
+      {
+        "id": "challenge-2026-06-03-quote",
+        "dailyChallengeId": "challenge-2026-06-03",
+        "type": "Quote",
+        "title": "Zitat des Tages",
+        "description": "Lies das Zitat und markiere den Schritt als abgeschlossen.",
+        "quoteText": "Es scheint immer unmöglich, bis es getan ist.",
+        "quoteAuthor": "Nelson Mandela",
+        "sortOrder": 2,
+        "status": "NotStarted",
+        "completedAt": null
+      },
+      {
+        "id": "challenge-2026-06-03-social",
+        "dailyChallengeId": "challenge-2026-06-03",
+        "type": "Social",
+        "title": "Soziale Herausforderung",
+        "description": "Drücke eine kleine Meinungsverschiedenheit respektvoll und ruhig aus.",
+        "tip": "Beginne mit einem Satz wie „Ich sehe das etwas anders.“.",
+        "sortOrder": 3,
+        "status": "NotStarted",
+        "completedAt": null
+      }
+    ]
+  },
+  {
+    "id": "challenge-2026-06-04",
+    "date": "2026-06-04",
+    "title": "Deine tägliche Herausforderung",
+    "status": "NotStarted",
+    "createdAt": "2026-06-04T06:00:00.000Z",
+    "steps": [
+      {
+        "id": "challenge-2026-06-04-practice",
+        "dailyChallengeId": "challenge-2026-06-04",
+        "type": "Practice",
+        "title": "Morgenübung",
+        "subtitle": "Fokus auf eine Aufgabe",
+        "description": "Wähle eine wichtige Aufgabe für heute und visualisiere 4 Minuten lang ruhig den ersten Schritt. Sage dann laut, wann du beginnen wirst.",
+        "tip": "Der erste Schritt sollte weniger als 10 Minuten dauern.",
+        "durationSeconds": 240,
+        "sortOrder": 1,
+        "status": "NotStarted",
+        "completedAt": null
+      },
+      {
+        "id": "challenge-2026-06-04-quote",
+        "dailyChallengeId": "challenge-2026-06-04",
+        "type": "Quote",
+        "title": "Zitat des Tages",
+        "description": "Lies das Zitat und markiere den Schritt als abgeschlossen.",
+        "quoteText": "Beten nicht für ein leichtes Leben, bete für die Stärke, ein schweres zu ertragen.",
+        "quoteAuthor": "Bruce Lee",
+        "sortOrder": 2,
+        "status": "NotStarted",
+        "completedAt": null
+      },
+      {
+        "id": "challenge-2026-06-04-social",
+        "dailyChallengeId": "challenge-2026-06-04",
+        "type": "Social",
+        "title": "Soziale Herausforderung",
+        "description": "Bitte um einen kleinen Gefallen, der deinen Tag wirklich leichter machen würde.",
+        "tip": "Eine klare Bitte wirkt besser als ein Hinweis.",
+        "sortOrder": 3,
+        "status": "NotStarted",
+        "completedAt": null
+      }
+    ]
+  },
+  {
+    "id": "challenge-2026-06-05",
+    "date": "2026-06-05",
+    "title": "Deine tägliche Herausforderung",
+    "status": "NotStarted",
+    "createdAt": "2026-06-05T06:00:00.000Z",
+    "steps": [
+      {
+        "id": "challenge-2026-06-05-practice",
+        "dailyChallengeId": "challenge-2026-06-05",
+        "type": "Practice",
+        "title": "Morgenübung",
+        "subtitle": "Augenhöhe",
+        "description": "Gehe 3 Minuten durch einen Raum oder draußen und halte deinen Blick auf Augenhöhe statt nach unten. Nimm bei jedem Schritt Halt und ruhige Atmung wahr.",
+        "tip": "Lass dein Gesicht entspannt.",
+        "durationSeconds": 180,
+        "sortOrder": 1,
+        "status": "NotStarted",
+        "completedAt": null
+      },
+      {
+        "id": "challenge-2026-06-05-quote",
+        "dailyChallengeId": "challenge-2026-06-05",
+        "type": "Quote",
+        "title": "Zitat des Tages",
+        "description": "Lies das Zitat und markiere den Schritt als abgeschlossen.",
+        "quoteText": "Das Hindernis für das Handeln fördert das Handeln. Was im Weg steht, wird zum Weg.",
+        "quoteAuthor": "Marcus Aurelius",
+        "sortOrder": 2,
+        "status": "NotStarted",
+        "completedAt": null
+      },
+      {
+        "id": "challenge-2026-06-05-social",
+        "dailyChallengeId": "challenge-2026-06-05",
+        "type": "Social",
+        "title": "Soziale Herausforderung",
+        "description": "Halte dein Handy mindestens 5 Minuten lang weg, während du ein Gespräch führst.",
+        "tip": "Volle Aufmerksamkeit stärkt selbst das Selbstvertrauen.",
+        "sortOrder": 3,
+        "status": "NotStarted",
+        "completedAt": null
+      }
+    ]
+  },
+  {
+    "id": "challenge-2026-06-06",
+    "date": "2026-06-06",
+    "title": "Deine tägliche Herausforderung",
+    "status": "NotStarted",
+    "createdAt": "2026-06-06T06:00:00.000Z",
+    "steps": [
+      {
+        "id": "challenge-2026-06-06-practice",
+        "dailyChallengeId": "challenge-2026-06-06",
+        "type": "Practice",
+        "title": "Morgenübung",
+        "subtitle": "Pause der Selbstachtung",
+        "description": "Sitze 6 Minuten ruhig und erinnere dich an drei Momente, in denen du würdevoll gehandelt hast, auch wenn es nicht perfekt war. Merke dir bei jedem Ausatmen: Das reicht bereits, um weiterzumachen.",
+        "tip": "Suche ehrliche, kleine Beispiele.",
+        "durationSeconds": 360,
+        "sortOrder": 1,
+        "status": "NotStarted",
+        "completedAt": null
+      },
+      {
+        "id": "challenge-2026-06-06-quote",
+        "dailyChallengeId": "challenge-2026-06-06",
+        "type": "Quote",
+        "title": "Zitat des Tages",
+        "description": "Lies das Zitat und markiere den Schritt als abgeschlossen.",
+        "quoteText": "Du verpasst 100 % der Schüsse, die du nicht abgibst.",
+        "quoteAuthor": "Wayne Gretzky",
+        "sortOrder": 2,
+        "status": "NotStarted",
+        "completedAt": null
+      },
+      {
+        "id": "challenge-2026-06-06-social",
+        "dailyChallengeId": "challenge-2026-06-06",
+        "type": "Social",
+        "title": "Soziale Herausforderung",
+        "description": "Lade jemanden, den du kennst, diese Woche zu einem kurzen Kaffee, Spaziergang oder Anruf ein.",
+        "tip": "Schlage ein klares Format und eine Zeit vor.",
+        "sortOrder": 3,
+        "status": "NotStarted",
+        "completedAt": null
+      }
+    ]
+  },
+  {
+    "id": "challenge-2026-06-07",
+    "date": "2026-06-07",
+    "title": "Deine tägliche Herausforderung",
+    "status": "NotStarted",
+    "createdAt": "2026-06-07T06:00:00.000Z",
+    "steps": [
+      {
+        "id": "challenge-2026-06-07-practice",
+        "dailyChallengeId": "challenge-2026-06-07",
+        "type": "Practice",
+        "title": "Morgenübung",
+        "subtitle": "Atemleiter",
+        "description": "Mache 2 Zyklen 4-4-Atmung, dann 2 Zyklen 4-6 und danach 2 Zyklen 5-6. Beende mit einer Minute ruhigem Sitzen.",
+        "tip": "Wenn das Tempo unangenehm ist, verlängere das Einatmen nicht.",
+        "durationSeconds": 360,
+        "sortOrder": 1,
+        "status": "NotStarted",
+        "completedAt": null
+      },
+      {
+        "id": "challenge-2026-06-07-quote",
+        "dailyChallengeId": "challenge-2026-06-07",
+        "type": "Quote",
+        "title": "Zitat des Tages",
+        "description": "Lies das Zitat und markiere den Schritt als abgeschlossen.",
+        "quoteText": "Wer mutig ist, ist frei.",
+        "quoteAuthor": "Seneca",
+        "sortOrder": 2,
+        "status": "NotStarted",
+        "completedAt": null
+      },
+      {
+        "id": "challenge-2026-06-07-social",
+        "dailyChallengeId": "challenge-2026-06-07",
+        "type": "Social",
+        "title": "Soziale Herausforderung",
+        "description": "Formuliere eine Grenze klar: Zeit, Tempo, Kommunikationsform oder Priorität.",
+        "tip": "Sprich über deine Wahl, ohne die andere Person zu beschuldigen.",
+        "sortOrder": 3,
+        "status": "NotStarted",
+        "completedAt": null
+      }
+    ]
+  },
+  {
+    "id": "challenge-2026-06-08",
+    "date": "2026-06-08",
+    "title": "Deine tägliche Herausforderung",
+    "status": "NotStarted",
+    "createdAt": "2026-06-08T06:00:00.000Z",
+    "steps": [
+      {
+        "id": "challenge-2026-06-08-practice",
+        "dailyChallengeId": "challenge-2026-06-08",
+        "type": "Practice",
+        "title": "Morgenübung",
+        "subtitle": "Erdender Spaziergang",
+        "description": "Gehe 8 Minuten ohne Eile und nimm den Kontakt deiner Füße mit dem Boden wahr. Richte jede Minute sanft deinen Rücken auf und entspanne deine Schultern.",
+        "tip": "Kein Multitasking beim Gehen.",
+        "durationSeconds": 480,
+        "sortOrder": 1,
+        "status": "NotStarted",
+        "completedAt": null
+      },
+      {
+        "id": "challenge-2026-06-08-quote",
+        "dailyChallengeId": "challenge-2026-06-08",
+        "type": "Quote",
+        "title": "Zitat des Tages",
+        "description": "Lies das Zitat und markiere den Schritt als abgeschlossen.",
+        "quoteText": "Du gewinnst Stärke, Mut und Selbstvertrauen durch jede Erfahrung, in der du der Angst wirklich ins Gesicht siehst.",
+        "quoteAuthor": "Eleanor Roosevelt",
+        "sortOrder": 2,
+        "status": "NotStarted",
+        "completedAt": null
+      },
+      {
+        "id": "challenge-2026-06-08-social",
+        "dailyChallengeId": "challenge-2026-06-08",
+        "type": "Social",
+        "title": "Soziale Herausforderung",
+        "description": "Bitte jemanden um eine Empfehlung: ein Buch, einen Ort, eine Gewohnheit oder eine hilfreiche Ressource.",
+        "tip": "Menschen teilen gern, was ihnen geholfen hat.",
+        "sortOrder": 3,
+        "status": "NotStarted",
+        "completedAt": null
+      }
+    ]
+  },
+  {
+    "id": "challenge-2026-06-09",
+    "date": "2026-06-09",
+    "title": "Deine tägliche Herausforderung",
+    "status": "NotStarted",
+    "createdAt": "2026-06-09T06:00:00.000Z",
+    "steps": [
+      {
+        "id": "challenge-2026-06-09-practice",
+        "dailyChallengeId": "challenge-2026-06-09",
+        "type": "Practice",
+        "title": "Morgenübung",
+        "subtitle": "Stimm-Aufwärmung",
+        "description": "Atme 6 Mal langsam aus, sage dann 2 Minuten lang kurze Sätze klar und ruhig laut. Höre deiner Stimme zu, ohne sie zu kritisieren.",
+        "tip": "Sprich etwas langsamer als sonst.",
+        "durationSeconds": 180,
+        "sortOrder": 1,
+        "status": "NotStarted",
+        "completedAt": null
+      },
+      {
+        "id": "challenge-2026-06-09-quote",
+        "dailyChallengeId": "challenge-2026-06-09",
+        "type": "Quote",
+        "title": "Zitat des Tages",
+        "description": "Lies das Zitat und markiere den Schritt als abgeschlossen.",
+        "quoteText": "Tu, was du kannst, mit dem, was du hast, wo du bist.",
+        "quoteAuthor": "Theodore Roosevelt",
+        "sortOrder": 2,
+        "status": "NotStarted",
+        "completedAt": null
+      },
+      {
+        "id": "challenge-2026-06-09-social",
+        "dailyChallengeId": "challenge-2026-06-09",
+        "type": "Social",
+        "title": "Soziale Herausforderung",
+        "description": "Teile einen kleinen Erfolg von dir, ohne ihn herunterzuspielen.",
+        "tip": "Eine Tatsache ohne Entschuldigung reicht.",
+        "sortOrder": 3,
+        "status": "NotStarted",
+        "completedAt": null
+      }
+    ]
+  },
+  {
+    "id": "challenge-2026-06-10",
+    "date": "2026-06-10",
+    "title": "Deine tägliche Herausforderung",
+    "status": "NotStarted",
+    "createdAt": "2026-06-10T06:00:00.000Z",
+    "steps": [
+      {
+        "id": "challenge-2026-06-10-practice",
+        "dailyChallengeId": "challenge-2026-06-10",
+        "type": "Practice",
+        "title": "Morgenübung",
+        "subtitle": "Morgendlicher Reset-Flow",
+        "description": "Wechsle 7 Minuten lang zwischen 1 Minute Atmen, 3 Minuten leichter Bewegung und 3 Minuten ruhigem Gehen. Wechsle ohne Hast.",
+        "tip": "Bewerte dich nicht, mach einfach weiter.",
+        "durationSeconds": 420,
+        "sortOrder": 1,
+        "status": "NotStarted",
+        "completedAt": null
+      },
+      {
+        "id": "challenge-2026-06-10-quote",
+        "dailyChallengeId": "challenge-2026-06-10",
+        "type": "Quote",
+        "title": "Zitat des Tages",
+        "description": "Lies das Zitat und markiere den Schritt als abgeschlossen.",
+        "quoteText": "Die einzige Grenze für unsere Verwirklichung von morgen sind unsere Zweifel von heute.",
+        "quoteAuthor": "Franklin D. Roosevelt",
+        "sortOrder": 2,
+        "status": "NotStarted",
+        "completedAt": null
+      },
+      {
+        "id": "challenge-2026-06-10-social",
+        "dailyChallengeId": "challenge-2026-06-10",
+        "type": "Social",
+        "title": "Soziale Herausforderung",
+        "description": "Beginne mit einer offenen Frage ein Gespräch mit einer neuen Person und halte es 3–4 Wechsel lang.",
+        "tip": "Hör die Antwort und baue auf einem Detail auf.",
+        "sortOrder": 3,
+        "status": "NotStarted",
+        "completedAt": null
+      }
+    ]
+  },
+  {
+    "id": "challenge-2026-06-11",
+    "date": "2026-06-11",
+    "title": "Deine tägliche Herausforderung",
+    "status": "NotStarted",
+    "createdAt": "2026-06-11T06:00:00.000Z",
+    "steps": [
+      {
+        "id": "challenge-2026-06-11-practice",
+        "dailyChallengeId": "challenge-2026-06-11",
+        "type": "Practice",
+        "title": "Morgenübung",
+        "subtitle": "Stille-Übung",
+        "description": "Sitze 4 Minuten ohne Handy und ohne unnötige Bewegung. Nimm den Drang zur Ablenkung wahr und kehre sanft zu deinem Atem zurück.",
+        "tip": "Stille trainiert auch Selbstvertrauen.",
+        "durationSeconds": 240,
+        "sortOrder": 1,
+        "status": "NotStarted",
+        "completedAt": null
+      },
+      {
+        "id": "challenge-2026-06-11-quote",
+        "dailyChallengeId": "challenge-2026-06-11",
+        "type": "Quote",
+        "title": "Zitat des Tages",
+        "description": "Lies das Zitat und markiere den Schritt als abgeschlossen.",
+        "quoteText": "Mut beginnt damit, aufzutauchen und uns selbst gesehen zu werden.",
+        "quoteAuthor": "Brene Brown",
+        "sortOrder": 2,
+        "status": "NotStarted",
+        "completedAt": null
+      },
+      {
+        "id": "challenge-2026-06-11-social",
+        "dailyChallengeId": "challenge-2026-06-11",
+        "type": "Social",
+        "title": "Soziale Herausforderung",
+        "description": "Sag in einem Arbeits- oder Alltagsgespräch deinen Gedanken zuerst, statt auf die perfekte Formulierung zu warten.",
+        "tip": "Erst Sinn, dann Feinschliff.",
+        "sortOrder": 3,
+        "status": "NotStarted",
+        "completedAt": null
+      }
+    ]
+  },
+  {
+    "id": "challenge-2026-06-12",
+    "date": "2026-06-12",
+    "title": "Deine tägliche Herausforderung",
+    "status": "NotStarted",
+    "createdAt": "2026-06-12T06:00:00.000Z",
+    "steps": [
+      {
+        "id": "challenge-2026-06-12-practice",
+        "dailyChallengeId": "challenge-2026-06-12",
+        "type": "Practice",
+        "title": "Morgenübung",
+        "subtitle": "Bewusster Start",
+        "description": "Schreibe 5 Minuten lang diesen Gedanken: Heute möchte ich jemand sein, der ruhig und direkt handelt. Beende mit einem konkreten Verhalten für einen schwierigen Moment.",
+        "tip": "Der Satz soll Verhalten beschreiben, nicht Stimmung.",
+        "durationSeconds": 300,
+        "sortOrder": 1,
+        "status": "NotStarted",
+        "completedAt": null
+      },
+      {
+        "id": "challenge-2026-06-12-quote",
+        "dailyChallengeId": "challenge-2026-06-12",
+        "type": "Quote",
+        "title": "Zitat des Tages",
+        "description": "Lies das Zitat und markiere den Schritt als abgeschlossen.",
+        "quoteText": "Das größte Hindernis für das Leben ist die Erwartung, die an morgen hängt.",
+        "quoteAuthor": "Seneca",
+        "sortOrder": 2,
+        "status": "NotStarted",
+        "completedAt": null
+      },
+      {
+        "id": "challenge-2026-06-12-social",
+        "dailyChallengeId": "challenge-2026-06-12",
+        "type": "Social",
+        "title": "Soziale Herausforderung",
+        "description": "Schick eine Sprachnachricht statt Text, wenn es passt.",
+        "tip": "Nimm einmal auf und wiederhole es nicht fünfmal.",
+        "sortOrder": 3,
+        "status": "NotStarted",
+        "completedAt": null
+      }
+    ]
+  },
+  {
+    "id": "challenge-2026-06-13",
+    "date": "2026-06-13",
+    "title": "Deine tägliche Herausforderung",
+    "status": "NotStarted",
+    "createdAt": "2026-06-13T06:00:00.000Z",
+    "steps": [
+      {
+        "id": "challenge-2026-06-13-practice",
+        "dailyChallengeId": "challenge-2026-06-13",
+        "type": "Practice",
+        "title": "Morgenübung",
+        "subtitle": "Starke Rückenlinie",
+        "description": "Mache 2 Sätze mit je 12 Kniebeugen und 20 Sekunden Plank, erhole dann eine Minute lang deine Atmung. Beende mit 1 Minute offener Haltung.",
+        "tip": "Halte den Körper aktiv, ohne ihn zu verkrampfen.",
+        "durationSeconds": 300,
+        "sortOrder": 1,
+        "status": "NotStarted",
+        "completedAt": null
+      },
+      {
+        "id": "challenge-2026-06-13-quote",
+        "dailyChallengeId": "challenge-2026-06-13",
+        "type": "Quote",
+        "title": "Zitat des Tages",
+        "description": "Lies das Zitat und markiere den Schritt als abgeschlossen.",
+        "quoteText": "Der beste Ausweg führt immer hindurch.",
+        "quoteAuthor": "Robert Frost",
+        "sortOrder": 2,
+        "status": "NotStarted",
+        "completedAt": null
+      },
+      {
+        "id": "challenge-2026-06-13-social",
+        "dailyChallengeId": "challenge-2026-06-13",
+        "type": "Social",
+        "title": "Soziale Herausforderung",
+        "description": "Bitte jemanden, das zu klären, was du nicht verstanden hast, statt still zuzustimmen.",
+        "tip": "Ein Satz wie „Bitte klär das“ klingt ruhig und selbstbewusst.",
+        "sortOrder": 3,
+        "status": "NotStarted",
+        "completedAt": null
+      }
+    ]
+  },
+  {
+    "id": "challenge-2026-06-14",
+    "date": "2026-06-14",
+    "title": "Deine tägliche Herausforderung",
+    "status": "NotStarted",
+    "createdAt": "2026-06-14T06:00:00.000Z",
+    "steps": [
+      {
+        "id": "challenge-2026-06-14-practice",
+        "dailyChallengeId": "challenge-2026-06-14",
+        "type": "Practice",
+        "title": "Morgenübung",
+        "subtitle": "Aufmerksamkeitstraining",
+        "description": "Wechsle 6 Minuten lang zwischen einer Minute Atem, einer Minute Geräuschen und einer Minute Körperempfindungen, und wiederhole den Zyklus. Das hilft dir, den Tag präsent zu bleiben.",
+        "tip": "Nimm nur wahr, versuche nichts zu reparieren.",
+        "durationSeconds": 360,
+        "sortOrder": 1,
+        "status": "NotStarted",
+        "completedAt": null
+      },
+      {
+        "id": "challenge-2026-06-14-quote",
+        "dailyChallengeId": "challenge-2026-06-14",
+        "type": "Quote",
+        "title": "Zitat des Tages",
+        "description": "Lies das Zitat und markiere den Schritt als abgeschlossen.",
+        "quoteText": "Sei nachsichtig mit anderen und streng mit dir selbst.",
+        "quoteAuthor": "Marcus Aurelius",
+        "sortOrder": 2,
+        "status": "NotStarted",
+        "completedAt": null
+      },
+      {
+        "id": "challenge-2026-06-14-social",
+        "dailyChallengeId": "challenge-2026-06-14",
+        "type": "Social",
+        "title": "Soziale Herausforderung",
+        "description": "Sprich jemandem warme Worte der Unterstützung aus – im Blickkontakt oder ehrlich in einer Nachricht.",
+        "tip": "Kurze Aufrichtigkeit wirkt besser als große Worte.",
+        "sortOrder": 3,
+        "status": "NotStarted",
+        "completedAt": null
+      }
+    ]
+  },
+  {
+    "id": "challenge-2026-06-15",
+    "date": "2026-06-15",
+    "title": "Deine tägliche Herausforderung",
+    "status": "NotStarted",
+    "createdAt": "2026-06-15T06:00:00.000Z",
+    "steps": [
+      {
+        "id": "challenge-2026-06-15-practice",
+        "dailyChallengeId": "challenge-2026-06-15",
+        "type": "Practice",
+        "title": "Morgenübung",
+        "subtitle": "Ruhige Reflexion",
+        "description": "Nimm dir 7 Minuten, um zu reflektieren, was sich diesen Monat in Körper, Gedanken und Kommunikation leichter angefühlt hat. Schreibe drei Beobachtungen und einen Schritt auf, den du als Gewohnheit behalten möchtest.",
+        "tip": "Schau auf Fortschritt, nicht auf Perfektion.",
+        "durationSeconds": 420,
+        "sortOrder": 1,
+        "status": "NotStarted",
+        "completedAt": null
+      },
+      {
+        "id": "challenge-2026-06-15-quote",
+        "dailyChallengeId": "challenge-2026-06-15",
+        "type": "Quote",
+        "title": "Zitat des Tages",
+        "description": "Lies das Zitat und markiere den Schritt als abgeschlossen.",
+        "quoteText": "Nichts kann das Licht dimmen, das von innen scheint.",
+        "quoteAuthor": "Maya Angelou",
+        "sortOrder": 2,
+        "status": "NotStarted",
+        "completedAt": null
+      },
+      {
+        "id": "challenge-2026-06-15-social",
+        "dailyChallengeId": "challenge-2026-06-15",
+        "type": "Social",
+        "title": "Soziale Herausforderung",
+        "description": "Schließe den Monat sozial ab: Erzähle einer Person, was du über Kommunikation gelernt hast, oder nimm es als Sprachnotiz für dich auf.",
+        "tip": "Konzentriere dich auf eine echte Veränderung.",
+        "sortOrder": 3,
+        "status": "NotStarted",
+        "completedAt": null
+      }
+    ]
+  }
+]
