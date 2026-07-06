@@ -1,3 +1,4 @@
+using ImproveYourself.Maui;
 using ImproveYourself.Maui.Application;
 using ImproveYourself.Maui.Resources.Strings;
 
@@ -57,17 +58,21 @@ public partial class SettingsPage : ContentPage
     private void SyncFromState()
     {
         _isSyncing = true;
+        BackendSettingsBorder.IsVisible = BackendDefaults.AllowManualBackendSettings;
         NameEntry.Text = _appState.DisplayName;
         NotificationSwitch.IsToggled = _appState.NotificationsEnabled;
         BackendUrlEntry.Text = _appState.BackendBaseUrl;
-        BackendApiKeyEntry.Text = _appState.BackendApiKey;
-        BackendStatusLabel.Text = string.IsNullOrWhiteSpace(_appState.BackendBaseUrl)
-            ? AppStrings.BackendNotConfigured
-            : AppStrings.BackendSaved;
+        BackendApiKeyEntry.Text = BackendDefaults.AllowManualBackendSettings
+            ? _appState.BackendApiKey
+            : string.Empty;
+        BackendStatusLabel.Text = !string.IsNullOrWhiteSpace(_appState.BackendSyncMessage)
+            ? _appState.BackendSyncMessage
+            : string.IsNullOrWhiteSpace(_appState.BackendBaseUrl)
+                ? AppStrings.BackendNotConfigured
+                : AppStrings.BackendSaved;
 
         var currentLanguage = LanguageOptions.FirstOrDefault(l => l.Code == _localizationService.CurrentLanguage);
         LanguageCurrentLabel.Text = currentLanguage.Label ?? _localizationService.CurrentLanguage;
-
         _isSyncing = false;
     }
 
@@ -129,6 +134,13 @@ public partial class SettingsPage : ContentPage
 
         var result = await _backendConnectionService.CheckAsync();
         BackendStatusLabel.Text = result.Message;
+
+        if (result.HealthOk && result.ReadyOk && result.AuthorizationOk)
+        {
+            BackendStatusLabel.Text = "Backend проверен. Синхронизируем прогресс...";
+            var syncResult = await _appState.SyncBackendAsync(force: true);
+            BackendStatusLabel.Text = $"{result.Message}\n{syncResult.Message}";
+        }
 
         CheckBackendButton.IsEnabled = true;
         _isCheckingBackend = false;

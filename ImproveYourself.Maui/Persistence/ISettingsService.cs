@@ -32,6 +32,8 @@ public interface ISettingsService
 
     void WriteLanguage(string value);
 
+    string ReadBackendClientId();
+
     SelfAssessmentSnapshot? ReadSelfAssessment(SelfAssessmentKind kind);
 
     void WriteSelfAssessment(SelfAssessmentSnapshot snapshot);

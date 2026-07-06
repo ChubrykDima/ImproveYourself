@@ -20,5 +20,7 @@ public interface IChallengeRepository
 
     IReadOnlyList<DailyChallenge> ListChallengesBetween(string startDate, string endDate);
 
+    IReadOnlyList<DailyChallenge> ListAllChallenges();
+
     int GetCompletedChallengesCount();
 }

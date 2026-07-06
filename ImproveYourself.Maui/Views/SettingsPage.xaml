@@ -95,7 +95,8 @@
                 </VerticalStackLayout>
             </Border>
 
-            <Border Style="{StaticResource CardBorderStyle}">
+            <Border x:Name="BackendSettingsBorder"
+                    Style="{StaticResource CardBorderStyle}">
                 <VerticalStackLayout Spacing="10">
                     <Label x:Name="BackendSectionLabel"
                            Text=""

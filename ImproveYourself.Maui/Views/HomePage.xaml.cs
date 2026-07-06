@@ -25,6 +25,7 @@ public partial class HomePage : ContentPage
         _appState.RefreshDerivedState();
         RenderStaticLabels();
         Render();
+        _ = SyncBackendAndRenderAsync();
         await TryOpenFinalAssessmentAsync();
     }
 
@@ -100,10 +101,12 @@ public partial class HomePage : ContentPage
         if (_appState.TodayChallenge.Status == ChallengeStatus.Completed)
         {
             var nextChallenge = _appState.AdvanceToNextDay();
+            _appState.TrackChallengeOpened(nextChallenge);
             await Navigation.PushAsync(new ChallengeDetailPage(_appState, nextChallenge.Date));
             return;
         }
 
+        _appState.TrackChallengeOpened(_appState.TodayChallenge);
         await Navigation.PushAsync(new ChallengeDetailPage(_appState, _appState.TodayChallenge.Date));
     }
 
@@ -120,6 +123,16 @@ public partial class HomePage : ContentPage
     private async void OnOpenSettingsClicked(object? sender, EventArgs e)
     {
         await Navigation.PushAsync(new SettingsPage(_appState, _backendConnectionService, _localizationService));
+    }
+
+    private async Task SyncBackendAndRenderAsync()
+    {
+        var result = await _appState.SyncBackendAsync();
+
+        if (result.Succeeded && result.Stats is not null)
+        {
+            Render();
+        }
     }
 
     private async Task TryOpenFinalAssessmentAsync()

@@ -98,6 +98,19 @@
                     </Grid>
                 </VerticalStackLayout>
             </Border>
+
+            <Border x:Name="BackendStatsBorder"
+                    Style="{StaticResource CardBorderStyle}"
+                    IsVisible="False">
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="Backend"
+                           Style="{StaticResource SubtitleLabelStyle}" />
+                    <Label x:Name="BackendStatsLabel"
+                           Text=""
+                           Style="{StaticResource BodyLabelStyle}"
+                           LineBreakMode="WordWrap" />
+                </VerticalStackLayout>
+            </Border>
         </VerticalStackLayout>
     </ScrollView>
 </ContentPage>

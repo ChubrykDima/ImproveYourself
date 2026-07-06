@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using ImproveYourself.Maui;
 using ImproveYourself.Maui.Domain;
 using ImproveYourself.Maui.Persistence;
 
@@ -7,33 +8,45 @@ namespace ImproveYourself.Maui.Application;
 
 public sealed class AppState : INotifyPropertyChanged
 {
+    private static readonly TimeSpan BackendSyncCooldown = TimeSpan.FromMinutes(3);
+
     private readonly IChallengeRepository _challengeRepository;
     private readonly ISettingsService _settingsService;
     private readonly INotificationPreferenceService _notificationPreferenceService;
+    private readonly IBackendSyncService _backendSyncService;
+    private readonly IAnalyticsClient _analyticsClient;
 
     private bool _isHydrated;
+    private bool _isBackendSyncing;
     private string _displayName = string.Empty;
     private bool _onboardingCompleted;
     private bool _notificationsEnabled;
     private string _backendBaseUrl = string.Empty;
     private string _backendApiKey = string.Empty;
+    private string _backendSyncMessage = string.Empty;
     private string _currentChallengeDate = string.Empty;
     private DailyChallenge? _todayChallenge;
+    private BackendStatsSnapshot? _backendStats;
     private StreakSnapshot _streakSnapshot = StreakSnapshot.Empty;
     private MonthlyProgress _monthlyProgress = MonthlyProgress.Empty;
     private WeeklyStats _weeklyStats = WeeklyStats.Empty;
     private List<string> _completedDates = [];
     private SelfAssessmentSnapshot? _startSelfAssessment;
     private SelfAssessmentSnapshot? _finalSelfAssessment;
+    private DateTimeOffset? _lastBackendSyncUtc;
 
     public AppState(
         IChallengeRepository challengeRepository,
         ISettingsService settingsService,
-        INotificationPreferenceService notificationPreferenceService)
+        INotificationPreferenceService notificationPreferenceService,
+        IBackendSyncService backendSyncService,
+        IAnalyticsClient analyticsClient)
     {
         _challengeRepository = challengeRepository;
         _settingsService = settingsService;
         _notificationPreferenceService = notificationPreferenceService;
+        _backendSyncService = backendSyncService;
+        _analyticsClient = analyticsClient;
     }
 
     public event PropertyChangedEventHandler? PropertyChanged;
@@ -42,6 +55,12 @@ public sealed class AppState : INotifyPropertyChanged
     {
         get => _isHydrated;
         private set => SetProperty(ref _isHydrated, value);
+    }
+
+    public bool IsBackendSyncing
+    {
+        get => _isBackendSyncing;
+        private set => SetProperty(ref _isBackendSyncing, value);
     }
 
     public string DisplayName
@@ -74,6 +93,12 @@ public sealed class AppState : INotifyPropertyChanged
         private set => SetProperty(ref _backendApiKey, value);
     }
 
+    public string BackendSyncMessage
+    {
+        get => _backendSyncMessage;
+        private set => SetProperty(ref _backendSyncMessage, value);
+    }
+
     public string CurrentChallengeDate
     {
         get => _currentChallengeDate;
@@ -84,6 +109,12 @@ public sealed class AppState : INotifyPropertyChanged
     {
         get => _todayChallenge;
         private set => SetProperty(ref _todayChallenge, value);
+    }
+
+    public BackendStatsSnapshot? BackendStats
+    {
+        get => _backendStats;
+        private set => SetProperty(ref _backendStats, value);
     }
 
     public StreakSnapshot StreakSnapshot
@@ -138,7 +169,9 @@ public sealed class AppState : INotifyPropertyChanged
         DisplayName = _settingsService.ReadDisplayName();
         NotificationsEnabled = _settingsService.ReadNotificationsEnabled();
         BackendBaseUrl = _settingsService.ReadBackendBaseUrl();
-        BackendApiKey = _settingsService.ReadBackendApiKey();
+        BackendApiKey = BackendDefaults.AllowManualBackendSettings
+            ? _settingsService.ReadBackendApiKey()
+            : string.Empty;
         StartSelfAssessment = _settingsService.ReadSelfAssessment(SelfAssessmentKind.Start);
         FinalSelfAssessment = _settingsService.ReadSelfAssessment(SelfAssessmentKind.Final);
 
@@ -163,6 +196,7 @@ public sealed class AppState : INotifyPropertyChanged
 
         DisplayName = nextName;
         OnboardingCompleted = true;
+        TrackAnalytics(AnalyticsEventNames.OnboardingCompleted);
 
         return Task.CompletedTask;
     }
@@ -177,6 +211,17 @@ public sealed class AppState : INotifyPropertyChanged
         }
 
         return challenge;
+    }
+
+    public void TrackChallengeOpened(DailyChallenge challenge)
+    {
+        TrackAnalytics(
+            AnalyticsEventNames.ChallengeOpened,
+            new Dictionary<string, string>
+            {
+                ["challenge_date"] = challenge.Date,
+                ["challenge_status"] = challenge.Status.ToString().ToLowerInvariant(),
+            });
     }
 
     public DailyChallenge SetCurrentChallengeDate(string date)
@@ -205,7 +250,14 @@ public sealed class AppState : INotifyPropertyChanged
 
     public DailyChallenge AdvanceStep(string date, StepType stepType)
     {
+        var before = _challengeRepository.GetOrCreateChallenge(date, StartSelfAssessment);
+        var previousChallengeStatus = before.Status;
+        var previousStepStatus = before.Steps.FirstOrDefault(step => step.Type == stepType)?.Status;
         var updated = _challengeRepository.AdvanceChallengeStepStatus(date, stepType);
+        var updatedStepStatus = updated.Steps.FirstOrDefault(step => step.Type == stepType)?.Status;
+        TrackStepTransition(date, stepType, previousStepStatus, updatedStepStatus);
+        TrackChallengeTransition(date, previousChallengeStatus, updated.Status);
+
         // Use CurrentChallengeDate directly to avoid re-evaluating against the DB after the
         // step update (which may have just completed the challenge, causing ResolveChallengeDate
         // to return today's date instead of the active challenge date).
@@ -258,6 +310,16 @@ public sealed class AppState : INotifyPropertyChanged
         _settingsService.WriteNotificationsEnabled(applied);
         NotificationsEnabled = applied;
 
+        if (applied)
+        {
+            TrackAnalytics(
+                AnalyticsEventNames.NotificationEnabled,
+                new Dictionary<string, string>
+                {
+                    ["notifications_enabled"] = "true",
+                });
+        }
+
         return applied;
     }
 
@@ -275,12 +337,102 @@ public sealed class AppState : INotifyPropertyChanged
         _settingsService.WriteBackendApiKey(apiKey);
 
         BackendBaseUrl = _settingsService.ReadBackendBaseUrl();
-        BackendApiKey = _settingsService.ReadBackendApiKey();
+        BackendApiKey = BackendDefaults.AllowManualBackendSettings
+            ? _settingsService.ReadBackendApiKey()
+            : string.Empty;
+        BackendSyncMessage = string.IsNullOrWhiteSpace(BackendBaseUrl)
+            ? "Backend не настроен."
+            : "Backend сохранен. Можно проверить подключение и синхронизацию.";
+    }
+
+    public async Task<BackendSyncResult> SyncBackendAsync(bool force = false, CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(BackendBaseUrl))
+        {
+            return new BackendSyncResult(false, false, "Укажите URL backend.", BackendStats);
+        }
+
+        if (!force
+            && _lastBackendSyncUtc is not null
+            && DateTimeOffset.UtcNow - _lastBackendSyncUtc.Value < BackendSyncCooldown)
+        {
+            return new BackendSyncResult(
+                true,
+                true,
+                "Синхронизация уже выполнялась недавно.",
+                BackendStats);
+        }
+
+        if (IsBackendSyncing)
+        {
+            return new BackendSyncResult(
+                !string.IsNullOrWhiteSpace(BackendBaseUrl),
+                false,
+                "Синхронизация уже выполняется.",
+                BackendStats);
+        }
+
+        IsBackendSyncing = true;
+
+        try
+        {
+            var challenges = _challengeRepository.ListAllChallenges();
+            var result = await _backendSyncService.SyncChallengesAsync(challenges, cancellationToken);
+            _lastBackendSyncUtc = DateTimeOffset.UtcNow;
+
+            if (result.IsConfigured || !string.IsNullOrWhiteSpace(BackendBaseUrl))
+            {
+                BackendSyncMessage = result.Message;
+            }
+
+            if (result.Stats is not null)
+            {
+                BackendStats = result.Stats;
+            }
+
+            TrackAnalytics(
+                result.Succeeded ? AnalyticsEventNames.BackendSyncSucceeded : AnalyticsEventNames.BackendSyncFailed,
+                new Dictionary<string, string>
+                {
+                    ["configured"] = result.IsConfigured ? "true" : "false",
+                    ["has_stats"] = result.Stats is not null ? "true" : "false",
+                });
+
+            return result;
+        }
+        catch (Exception ex)
+        {
+            var message = $"Backend sync не удался: {ex.Message}";
+            BackendSyncMessage = message;
+            TrackAnalytics(
+                AnalyticsEventNames.BackendSyncFailed,
+                new Dictionary<string, string>
+                {
+                    ["configured"] = !string.IsNullOrWhiteSpace(BackendBaseUrl) ? "true" : "false",
+                    ["failure_type"] = "exception",
+                });
+
+            return new BackendSyncResult(
+                !string.IsNullOrWhiteSpace(BackendBaseUrl),
+                false,
+                message,
+                BackendStats);
+        }
+        finally
+        {
+            IsBackendSyncing = false;
+        }
     }
 
     public void SaveSelfAssessment(SelfAssessmentSnapshot snapshot)
     {
         _settingsService.WriteSelfAssessment(snapshot);
+        TrackAnalytics(
+            AnalyticsEventNames.SelfAssessmentCompleted,
+            new Dictionary<string, string>
+            {
+                ["kind"] = snapshot.Kind.ToString().ToLowerInvariant(),
+            });
 
         if (snapshot.Kind == SelfAssessmentKind.Start)
         {
@@ -392,6 +544,63 @@ public sealed class AppState : INotifyPropertyChanged
         StreakSnapshot = streakSnapshot;
         MonthlyProgress = monthlyProgress;
         WeeklyStats = weeklyStats;
+    }
+
+    private void TrackStepTransition(
+        string date,
+        StepType stepType,
+        StepStatus? previousStatus,
+        StepStatus? updatedStatus)
+    {
+        if (previousStatus is null || updatedStatus is null || previousStatus == updatedStatus)
+        {
+            return;
+        }
+
+        var eventName = updatedStatus switch
+        {
+            StepStatus.InProgress => AnalyticsEventNames.StepStarted,
+            StepStatus.Completed => AnalyticsEventNames.StepCompleted,
+            _ => string.Empty,
+        };
+
+        if (string.IsNullOrWhiteSpace(eventName))
+        {
+            return;
+        }
+
+        TrackAnalytics(
+            eventName,
+            new Dictionary<string, string>
+            {
+                ["challenge_date"] = date,
+                ["step_type"] = stepType.ToString().ToLowerInvariant(),
+                ["step_status"] = updatedStatus.Value.ToString().ToLowerInvariant(),
+            });
+    }
+
+    private void TrackChallengeTransition(
+        string date,
+        ChallengeStatus previousStatus,
+        ChallengeStatus updatedStatus)
+    {
+        if (previousStatus == ChallengeStatus.Completed || updatedStatus != ChallengeStatus.Completed)
+        {
+            return;
+        }
+
+        TrackAnalytics(
+            AnalyticsEventNames.ChallengeCompleted,
+            new Dictionary<string, string>
+            {
+                ["challenge_date"] = date,
+                ["challenge_status"] = updatedStatus.ToString().ToLowerInvariant(),
+            });
+    }
+
+    private void TrackAnalytics(string eventName, IReadOnlyDictionary<string, string>? properties = null)
+    {
+        _ = _analyticsClient.TrackAsync(eventName, properties);
     }
 
     private bool SetProperty<T>(ref T field, T value, [CallerMemberName] string? propertyName = null)

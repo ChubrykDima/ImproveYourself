@@ -11,11 +11,16 @@ public partial class App : Microsoft.Maui.Controls.Application
 {
 	private readonly AppState _appState;
 	private readonly IBackendConnectionService _backendConnectionService;
+	private readonly IAnalyticsClient _analyticsClient;
 	private readonly ILocalizationService _localizationService;
 	private Page _rootPage;
 	private Window? _window;
 
-	public App(AppState appState, IBackendConnectionService backendConnectionService, ILocalizationService localizationService)
+	public App(
+		AppState appState,
+		IBackendConnectionService backendConnectionService,
+		IAnalyticsClient analyticsClient,
+		ILocalizationService localizationService)
 	{
 		// Initialize localization before any UI is constructed so all pages
 		// receive the correct strings during InitializeComponent().
@@ -24,6 +29,7 @@ public partial class App : Microsoft.Maui.Controls.Application
 		InitializeComponent();
 		_appState = appState;
 		_backendConnectionService = backendConnectionService;
+		_analyticsClient = analyticsClient;
 		_localizationService = localizationService;
 		_rootPage = BuildNavigationPage(new LoadingPage());
 
@@ -70,6 +76,7 @@ public partial class App : Microsoft.Maui.Controls.Application
 		try
 		{
 			await _appState.InitializeAsync();
+			_ = _analyticsClient.TrackAsync(AnalyticsEventNames.AppOpened);
 
 			await MainThread.InvokeOnMainThreadAsync(() =>
 			{

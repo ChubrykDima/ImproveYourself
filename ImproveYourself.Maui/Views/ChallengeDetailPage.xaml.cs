@@ -281,6 +281,7 @@ public partial class ChallengeDetailPage : ContentPage
 
         _currentDate = _challenge.Date;
         Render();
+        _ = _appState.SyncBackendAsync();
         await TryOpenFinalAssessmentAsync();
 
         return;
@@ -296,6 +297,7 @@ public partial class ChallengeDetailPage : ContentPage
         _challenge = _appState.AdvanceToNextDay();
         _currentDate = _challenge.Date;
         Render();
+        _ = _appState.SyncBackendAsync();
     }
 
     private async Task TryOpenFinalAssessmentAsync()

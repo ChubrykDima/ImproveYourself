@@ -19,15 +19,18 @@ public static class MauiProgram
 				fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
 			});
 
+		builder.Services.AddSingleton<IChallengeRepository, SqliteChallengeRepository>();
 		builder.Services.AddSingleton<ISettingsService, PreferencesSettingsService>();
 		builder.Services.AddSingleton<ILocalizationService, LocalizationService>();
-		builder.Services.AddSingleton<IChallengeRepository, SqliteChallengeRepository>();
 		builder.Services.AddSingleton<INotificationPreferenceService, NotificationPreferenceService>();
 		builder.Services.AddSingleton(new HttpClient
 		{
 			Timeout = TimeSpan.FromSeconds(12),
 		});
-		builder.Services.AddSingleton<IBackendConnectionService, BackendConnectionService>();
+		builder.Services.AddSingleton<IAnalyticsClient, AnalyticsClient>();
+		builder.Services.AddSingleton<BackendConnectionService>();
+		builder.Services.AddSingleton<IBackendConnectionService>(services => services.GetRequiredService<BackendConnectionService>());
+		builder.Services.AddSingleton<IBackendSyncService>(services => services.GetRequiredService<BackendConnectionService>());
 		builder.Services.AddSingleton<AppState>();
 
 #if DEBUG

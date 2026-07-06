@@ -50,6 +50,8 @@ public sealed class ChallengeStep
     public StepStatus Status { get; set; }
 
     public string? CompletedAt { get; set; }
+
+    public string UpdatedAt { get; set; } = string.Empty;
 }
 
 public sealed class DailyChallenge
@@ -63,6 +65,8 @@ public sealed class DailyChallenge
     public ChallengeStatus Status { get; set; }
 
     public string CreatedAt { get; set; } = string.Empty;
+
+    public string UpdatedAt { get; set; } = string.Empty;
 
     public string? QuoteText { get; set; }
 
