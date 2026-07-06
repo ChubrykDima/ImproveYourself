@@ -88,9 +88,12 @@ public sealed class SqliteChallengeRepository : IChallengeRepository
         Converters = { new JsonStringEnumConverter() },
     };
 
+    private const string FallbackBundledLanguage = "en";
+
     private readonly SQLiteConnection _database;
     private readonly ILocalizationService _localizationService;
-    private readonly Lazy<IReadOnlyDictionary<string, DailyChallenge>> _bundledChallenges;
+    private IReadOnlyDictionary<string, DailyChallenge> _bundledChallenges =
+        new Dictionary<string, DailyChallenge>(StringComparer.Ordinal);
     private bool _initialized;
 
     public SqliteChallengeRepository(ILocalizationService localizationService)
@@ -98,11 +101,18 @@ public sealed class SqliteChallengeRepository : IChallengeRepository
         _localizationService = localizationService;
         var databasePath = Path.Combine(FileSystem.AppDataDirectory, "improveyourself.db");
         _database = new SQLiteConnection(databasePath, SQLiteOpenFlags.ReadWrite | SQLiteOpenFlags.Create | SQLiteOpenFlags.FullMutex);
-        _bundledChallenges = new Lazy<IReadOnlyDictionary<string, DailyChallenge>>(() => LoadBundledChallenges(BundledChallengeFileName));
+        _bundledChallenges = LoadBundledChallengesForLanguage(_localizationService.CurrentLanguage);
     }
 
-    private string BundledChallengeFileName =>
-        $"daily-challenges.{_localizationService.CurrentLanguage}.json";
+    public void ReloadBundledContent()
+    {
+        _bundledChallenges = LoadBundledChallengesForLanguage(_localizationService.CurrentLanguage);
+
+        if (_initialized)
+        {
+            SeedBundledChallenges();
+        }
+    }
 
     public void Initialize()
     {
@@ -223,7 +233,7 @@ public sealed class SqliteChallengeRepository : IChallengeRepository
 
     private DailyChallenge? GetBundledChallenge(string date)
     {
-        if (!_bundledChallenges.Value.TryGetValue(date, out var challenge))
+        if (!_bundledChallenges.TryGetValue(date, out var challenge))
         {
             return null;
         }
@@ -233,7 +243,7 @@ public sealed class SqliteChallengeRepository : IChallengeRepository
 
     private void SeedBundledChallenges()
     {
-        foreach (var challenge in _bundledChallenges.Value.Values)
+        foreach (var challenge in _bundledChallenges.Values)
         {
             var existing = TryGetStoredChallengeByDate(challenge.Date);
 
@@ -374,6 +384,18 @@ public sealed class SqliteChallengeRepository : IChallengeRepository
         }
 
         return false;
+    }
+
+    private static IReadOnlyDictionary<string, DailyChallenge> LoadBundledChallengesForLanguage(string language)
+    {
+        var challenges = LoadBundledChallenges($"daily-challenges.{language}.json");
+
+        if (challenges.Count == 0 && !string.Equals(language, FallbackBundledLanguage, StringComparison.Ordinal))
+        {
+            challenges = LoadBundledChallenges($"daily-challenges.{FallbackBundledLanguage}.json");
+        }
+
+        return challenges;
     }
 
     private static IReadOnlyDictionary<string, DailyChallenge> LoadBundledChallenges(string fileName)

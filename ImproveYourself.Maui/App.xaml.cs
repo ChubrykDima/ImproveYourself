@@ -43,6 +43,8 @@ public partial class App : Microsoft.Maui.Controls.Application
 	/// </summary>
 	public void ReloadNavigation()
 	{
+		_appState.ReloadAfterLanguageChange();
+
 		if (_appState.OnboardingCompleted)
 		{
 			SetRootPage(BuildNavigationPage(new HomePage(_appState, _backendConnectionService, _localizationService)));

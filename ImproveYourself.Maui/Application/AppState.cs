@@ -239,6 +239,18 @@ public sealed class AppState : INotifyPropertyChanged
         SetCurrentChallengeDateInternal(ResolveCurrentChallengeDate());
     }
 
+    public void ReloadAfterLanguageChange()
+    {
+        _challengeRepository.ReloadBundledContent();
+
+        if (StartSelfAssessment is not null)
+        {
+            _challengeRepository.ApplyPersonalization(StartSelfAssessment);
+        }
+
+        RefreshDerivedState();
+    }
+
     public async Task<bool> SetNotificationsEnabledAsync(bool enabled)
     {
         var applied = await _notificationPreferenceService.ApplyPreferenceAsync(enabled);

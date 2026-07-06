@@ -6,6 +6,8 @@ public interface IChallengeRepository
 {
     void Initialize();
 
+    void ReloadBundledContent();
+
     DailyChallenge? GetChallengeByDate(string date);
 
     DailyChallenge GetOrCreateChallenge(string date, SelfAssessmentSnapshot? personalizationSnapshot = null);
