@@ -56,7 +56,7 @@ public partial class ChallengeDetailPage : ContentPage
         var isCompleted = _challenge.Status == ChallengeStatus.Completed;
 
         DateLabel.Text = string.Format(AppStrings.DateFormat, DateHelpers.ToDisplayDate(_challenge.Date));
-        ChallengeTitleLabel.Text = _challenge.Title;
+        ChallengeTitleLabel.Text = ChallengeTextLocalizer.GetDisplayTitle(_challenge.Title);
         ProgressLabel.Text = string.Format(AppStrings.ProgressFormat, completedSteps, totalSteps);
         RenderPersonalization();
         ChallengeProgressBar.Progress = completedSteps / (double)totalSteps;

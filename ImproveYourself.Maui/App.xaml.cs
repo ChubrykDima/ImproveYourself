@@ -12,6 +12,7 @@ public partial class App : Microsoft.Maui.Controls.Application
 	private readonly AppState _appState;
 	private readonly IBackendConnectionService _backendConnectionService;
 	private readonly IAnalyticsClient _analyticsClient;
+	private readonly IAuthService _authService;
 	private readonly ILocalizationService _localizationService;
 	private Page _rootPage;
 	private Window? _window;
@@ -20,16 +21,16 @@ public partial class App : Microsoft.Maui.Controls.Application
 		AppState appState,
 		IBackendConnectionService backendConnectionService,
 		IAnalyticsClient analyticsClient,
+		IAuthService authService,
 		ILocalizationService localizationService)
 	{
-		// Initialize localization before any UI is constructed so all pages
-		// receive the correct strings during InitializeComponent().
 		localizationService.Initialize();
 
 		InitializeComponent();
 		_appState = appState;
 		_backendConnectionService = backendConnectionService;
 		_analyticsClient = analyticsClient;
+		_authService = authService;
 		_localizationService = localizationService;
 		_rootPage = BuildNavigationPage(new LoadingPage());
 
@@ -43,10 +44,6 @@ public partial class App : Microsoft.Maui.Controls.Application
 		return _window;
 	}
 
-	/// <summary>
-	/// Reloads the navigation root after a language change so all pages are
-	/// re-created with the newly applied culture.
-	/// </summary>
 	public void ReloadNavigation()
 	{
 		_appState.ReloadAfterLanguageChange();
@@ -76,6 +73,7 @@ public partial class App : Microsoft.Maui.Controls.Application
 		try
 		{
 			await _appState.InitializeAsync();
+			await _authService.TryRestoreSessionAsync();
 			_ = _analyticsClient.TrackAsync(AnalyticsEventNames.AppOpened);
 
 			await MainThread.InvokeOnMainThreadAsync(() =>

@@ -95,6 +95,37 @@
                 </VerticalStackLayout>
             </Border>
 
+            <Border Style="{StaticResource CardBorderStyle}">
+                <VerticalStackLayout Spacing="10">
+                    <Label x:Name="AccountSectionLabel"
+                           Text=""
+                           Style="{StaticResource SubtitleLabelStyle}" />
+                    <Label x:Name="AccountDescLabel"
+                           Text=""
+                           Style="{StaticResource BodyLabelStyle}"
+                           LineBreakMode="WordWrap" />
+                    <Label x:Name="AccountStatusLabel"
+                           Style="{StaticResource BodyLabelStyle}"
+                           LineBreakMode="WordWrap" />
+
+                    <Grid ColumnDefinitions="*,*"
+                          ColumnSpacing="10">
+                        <Button x:Name="LoginButton"
+                                Clicked="OnLoginClicked" />
+                        <Button Grid.Column="1"
+                                x:Name="RegisterAccountButton"
+                                Clicked="OnRegisterAccountClicked" />
+                    </Grid>
+
+                    <Button x:Name="SyncButton"
+                            Style="{StaticResource PrimaryButtonStyle}"
+                            Clicked="OnSyncClicked" />
+
+                    <Button x:Name="LogoutButton"
+                            Clicked="OnLogoutClicked" />
+                </VerticalStackLayout>
+            </Border>
+
             <Border x:Name="BackendSettingsBorder"
                     Style="{StaticResource CardBorderStyle}">
                 <VerticalStackLayout Spacing="10">
@@ -110,16 +141,6 @@
                            Placeholder="https://your-service.up.railway.app"
                            PlaceholderColor="{StaticResource ColorTextSecondary}"
                            Keyboard="Url"
-                           FontFamily="OpenSansRegular"
-                           FontSize="15"
-                           TextColor="{StaticResource ColorTextPrimary}"
-                           BackgroundColor="{StaticResource ColorFrame}"
-                           HeightRequest="52" />
-
-                    <Entry x:Name="BackendApiKeyEntry"
-                           Placeholder="API key"
-                           PlaceholderColor="{StaticResource ColorTextSecondary}"
-                           IsPassword="True"
                            FontFamily="OpenSansRegular"
                            FontSize="15"
                            TextColor="{StaticResource ColorTextPrimary}"

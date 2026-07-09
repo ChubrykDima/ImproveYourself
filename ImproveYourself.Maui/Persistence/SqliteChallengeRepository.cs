@@ -107,7 +107,6 @@ public sealed class SqliteChallengeRepository : IChallengeRepository
         _localizationService = localizationService;
         var databasePath = Path.Combine(FileSystem.AppDataDirectory, "improveyourself.db");
         _database = new SQLiteConnection(databasePath, SQLiteOpenFlags.ReadWrite | SQLiteOpenFlags.Create | SQLiteOpenFlags.FullMutex);
-        _bundledChallenges = LoadBundledChallengesForLanguage(_localizationService.CurrentLanguage);
     }
 
     public void ReloadBundledContent()
@@ -117,6 +116,7 @@ public sealed class SqliteChallengeRepository : IChallengeRepository
         if (_initialized)
         {
             SeedBundledChallenges();
+            RelocalizePristineFactoryChallenges();
         }
     }
 
@@ -134,7 +134,10 @@ public sealed class SqliteChallengeRepository : IChallengeRepository
 
         _database.Execute("CREATE INDEX IF NOT EXISTS idx_daily_challenges_date ON daily_challenges (date);");
         _database.Execute("CREATE INDEX IF NOT EXISTS idx_challenge_steps_challenge ON challenge_steps (daily_challenge_id, sort_order);");
+
+        _bundledChallenges = LoadBundledChallengesForLanguage(_localizationService.CurrentLanguage);
         SeedBundledChallenges();
+        RelocalizePristineFactoryChallenges();
 
         _initialized = true;
     }
@@ -282,6 +285,29 @@ public sealed class SqliteChallengeRepository : IChallengeRepository
             }
 
             SyncQuoteMetadata(existing, challenge);
+        }
+    }
+
+    private void RelocalizePristineFactoryChallenges()
+    {
+        var rows = _database.Query<DailyChallengeRecord>(
+            "SELECT id, date, title, status, created_at, updated_at FROM daily_challenges ORDER BY date ASC");
+
+        foreach (var row in rows)
+        {
+            if (_bundledChallenges.ContainsKey(row.Date))
+            {
+                continue;
+            }
+
+            var existing = MapChallengeRow(row);
+
+            if (!IsPristineChallenge(existing))
+            {
+                continue;
+            }
+
+            ReplaceChallenge(existing, ChallengeFactory.CreateDailyChallenge(existing.Date));
         }
     }
 
@@ -520,7 +546,8 @@ public sealed class SqliteChallengeRepository : IChallengeRepository
         {
             Id = challengeId,
             Date = challenge.Date,
-            Title = string.IsNullOrWhiteSpace(challenge.Title) ? AppStrings.DailyChallenge_DefaultTitle : challenge.Title,
+            Title = ChallengeTextLocalizer.GetDisplayTitle(
+                string.IsNullOrWhiteSpace(challenge.Title) ? null : challenge.Title),
             Status = ProgressCalculator.GetChallengeStatus(visibleSteps),
             CreatedAt = createdAt,
             UpdatedAt = updatedAt,
@@ -653,7 +680,7 @@ public sealed class SqliteChallengeRepository : IChallengeRepository
         {
             Id = row.Id,
             Date = row.Date,
-            Title = row.Title,
+            Title = ChallengeTextLocalizer.GetDisplayTitle(row.Title),
             Status = row.Status.ToChallengeStatus(),
             CreatedAt = row.CreatedAt,
             UpdatedAt = row.UpdatedAt,

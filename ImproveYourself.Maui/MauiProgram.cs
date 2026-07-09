@@ -21,11 +21,30 @@ public static class MauiProgram
 
 		builder.Services.AddSingleton<IChallengeRepository, SqliteChallengeRepository>();
 		builder.Services.AddSingleton<ISettingsService, PreferencesSettingsService>();
+		builder.Services.AddSingleton<IAuthTokenStore, SecureAuthTokenStore>();
 		builder.Services.AddSingleton<ILocalizationService, LocalizationService>();
 		builder.Services.AddSingleton<INotificationPreferenceService, NotificationPreferenceService>();
-		builder.Services.AddSingleton(new HttpClient
+		builder.Services.AddSingleton<IAuthService>(sp =>
 		{
-			Timeout = TimeSpan.FromSeconds(12),
+			var settingsService = sp.GetRequiredService<ISettingsService>();
+			var tokenStore = sp.GetRequiredService<IAuthTokenStore>();
+			var authHttpClient = new HttpClient
+			{
+				Timeout = TimeSpan.FromSeconds(12),
+			};
+
+			return new AuthService(authHttpClient, settingsService, tokenStore);
+		});
+		builder.Services.AddTransient<AuthenticatedHttpMessageHandler>();
+		builder.Services.AddSingleton(sp =>
+		{
+			var handler = sp.GetRequiredService<AuthenticatedHttpMessageHandler>();
+			handler.InnerHandler = new HttpClientHandler();
+
+			return new HttpClient(handler)
+			{
+				Timeout = TimeSpan.FromSeconds(12),
+			};
 		});
 		builder.Services.AddSingleton<IAnalyticsClient, AnalyticsClient>();
 		builder.Services.AddSingleton<BackendConnectionService>();

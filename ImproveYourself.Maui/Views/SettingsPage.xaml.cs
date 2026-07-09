@@ -26,6 +26,13 @@ public partial class SettingsPage : ContentPage
         _appState = appState;
         _backendConnectionService = backendConnectionService;
         _localizationService = localizationService;
+        _appState.PropertyChanged += (_, args) =>
+        {
+            if (args.PropertyName is nameof(AppState.IsLoggedIn) or nameof(AppState.UserEmail) or nameof(AppState.BackendSyncMessage))
+            {
+                MainThread.BeginInvokeOnMainThread(SyncFromState);
+            }
+        };
     }
 
     protected override void OnAppearing()
@@ -49,6 +56,12 @@ public partial class SettingsPage : ContentPage
         EnableNotificationsLabel.Text = AppStrings.EnableNotifications;
         OfflineFirstTitleLabel.Text = AppStrings.OfflineFirstTitle;
         OfflineFirstDescLabel.Text = AppStrings.OfflineFirstDescription;
+        AccountSectionLabel.Text = AppStrings.AuthAccountSection;
+        AccountDescLabel.Text = AppStrings.AuthAccountDescription;
+        LoginButton.Text = AppStrings.AuthLoginButton;
+        RegisterAccountButton.Text = AppStrings.AuthRegisterButton;
+        LogoutButton.Text = AppStrings.AuthLogoutButton;
+        SyncButton.Text = AppStrings.AuthSyncButton;
         BackendSectionLabel.Text = AppStrings.Backend;
         BackendDescLabel.Text = AppStrings.BackendDescription;
         SaveBackendButton.Text = AppStrings.SaveButton;
@@ -62,9 +75,24 @@ public partial class SettingsPage : ContentPage
         NameEntry.Text = _appState.DisplayName;
         NotificationSwitch.IsToggled = _appState.NotificationsEnabled;
         BackendUrlEntry.Text = _appState.BackendBaseUrl;
-        BackendApiKeyEntry.Text = BackendDefaults.AllowManualBackendSettings
-            ? _appState.BackendApiKey
-            : string.Empty;
+
+        if (_appState.IsLoggedIn)
+        {
+            AccountStatusLabel.Text = string.Format(AppStrings.AuthLoggedInAsFormat, _appState.UserEmail);
+            LoginButton.IsVisible = false;
+            RegisterAccountButton.IsVisible = false;
+            LogoutButton.IsVisible = true;
+            SyncButton.IsVisible = true;
+        }
+        else
+        {
+            AccountStatusLabel.Text = AppStrings.AuthNotLoggedIn;
+            LoginButton.IsVisible = true;
+            RegisterAccountButton.IsVisible = true;
+            LogoutButton.IsVisible = false;
+            SyncButton.IsVisible = false;
+        }
+
         BackendStatusLabel.Text = !string.IsNullOrWhiteSpace(_appState.BackendSyncMessage)
             ? _appState.BackendSyncMessage
             : string.IsNullOrWhiteSpace(_appState.BackendBaseUrl)
@@ -107,12 +135,32 @@ public partial class SettingsPage : ContentPage
         _isUpdating = false;
     }
 
+    private async void OnLoginClicked(object? sender, EventArgs e)
+    {
+        await Navigation.PushAsync(new LoginPage(_appState));
+    }
+
+    private async void OnRegisterAccountClicked(object? sender, EventArgs e)
+    {
+        await Navigation.PushAsync(new RegisterPage(_appState));
+    }
+
+    private async void OnLogoutClicked(object? sender, EventArgs e)
+    {
+        await _appState.LogoutAsync();
+        SyncFromState();
+    }
+
+    private async void OnSyncClicked(object? sender, EventArgs e)
+    {
+        BackendStatusLabel.Text = AppStrings.BackendVerifiedSyncing;
+        var syncResult = await _appState.SyncBackendAsync(force: true);
+        BackendStatusLabel.Text = syncResult.Message;
+    }
+
     private async void OnSaveBackendClicked(object? sender, EventArgs e)
     {
-        _appState.UpdateBackendConnection(
-            BackendUrlEntry.Text ?? string.Empty,
-            BackendApiKeyEntry.Text ?? string.Empty);
-
+        _appState.UpdateBackendBaseUrl(BackendUrlEntry.Text ?? string.Empty);
         SyncFromState();
         await DisplayAlertAsync(AppStrings.Saved_Title, AppStrings.BackendSettingsUpdated, AppStrings.OK);
     }
@@ -124,9 +172,7 @@ public partial class SettingsPage : ContentPage
             return;
         }
 
-        _appState.UpdateBackendConnection(
-            BackendUrlEntry.Text ?? string.Empty,
-            BackendApiKeyEntry.Text ?? string.Empty);
+        _appState.UpdateBackendBaseUrl(BackendUrlEntry.Text ?? string.Empty);
 
         _isCheckingBackend = true;
         CheckBackendButton.IsEnabled = false;
@@ -137,7 +183,7 @@ public partial class SettingsPage : ContentPage
 
         if (result.HealthOk && result.ReadyOk && result.AuthorizationOk)
         {
-            BackendStatusLabel.Text = "Backend проверен. Синхронизируем прогресс...";
+            BackendStatusLabel.Text = AppStrings.BackendVerifiedSyncing;
             var syncResult = await _appState.SyncBackendAsync(force: true);
             BackendStatusLabel.Text = $"{result.Message}\n{syncResult.Message}";
         }

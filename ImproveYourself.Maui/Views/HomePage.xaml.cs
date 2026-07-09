@@ -73,7 +73,7 @@ public partial class HomePage : ContentPage
         ChallengeLeadLabel.Text = isToday
             ? AppStrings.MainFocusOfDay
             : string.Format(AppStrings.FocusOnDate, DateHelpers.ToDisplayDate(_appState.TodayChallenge.Date));
-        ChallengeTitleLabel.Text = _appState.TodayChallenge.Title;
+        ChallengeTitleLabel.Text = ChallengeTextLocalizer.GetDisplayTitle(_appState.TodayChallenge.Title);
         ChallengeSubtitleLabel.Text = string.Format(AppStrings.DateStepsFormat, DateHelpers.ToDisplayDate(_appState.TodayChallenge.Date), completedSteps, totalSteps);
         RenderPersonalization();
         ChallengeProgressBar.Progress = completedSteps / (double)totalSteps;

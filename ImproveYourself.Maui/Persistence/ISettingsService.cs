@@ -24,10 +24,6 @@ public interface ISettingsService
 
     void WriteBackendBaseUrl(string value);
 
-    string ReadBackendApiKey();
-
-    void WriteBackendApiKey(string value);
-
     string ReadLanguage();
 
     void WriteLanguage(string value);

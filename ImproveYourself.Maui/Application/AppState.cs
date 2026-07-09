@@ -3,6 +3,7 @@ using System.Runtime.CompilerServices;
 using ImproveYourself.Maui;
 using ImproveYourself.Maui.Domain;
 using ImproveYourself.Maui.Persistence;
+using ImproveYourself.Maui.Resources.Strings;
 
 namespace ImproveYourself.Maui.Application;
 
@@ -15,6 +16,7 @@ public sealed class AppState : INotifyPropertyChanged
     private readonly INotificationPreferenceService _notificationPreferenceService;
     private readonly IBackendSyncService _backendSyncService;
     private readonly IAnalyticsClient _analyticsClient;
+    private readonly IAuthService _authService;
 
     private bool _isHydrated;
     private bool _isBackendSyncing;
@@ -22,7 +24,6 @@ public sealed class AppState : INotifyPropertyChanged
     private bool _onboardingCompleted;
     private bool _notificationsEnabled;
     private string _backendBaseUrl = string.Empty;
-    private string _backendApiKey = string.Empty;
     private string _backendSyncMessage = string.Empty;
     private string _currentChallengeDate = string.Empty;
     private DailyChallenge? _todayChallenge;
@@ -40,13 +41,16 @@ public sealed class AppState : INotifyPropertyChanged
         ISettingsService settingsService,
         INotificationPreferenceService notificationPreferenceService,
         IBackendSyncService backendSyncService,
-        IAnalyticsClient analyticsClient)
+        IAnalyticsClient analyticsClient,
+        IAuthService authService)
     {
         _challengeRepository = challengeRepository;
         _settingsService = settingsService;
         _notificationPreferenceService = notificationPreferenceService;
         _backendSyncService = backendSyncService;
         _analyticsClient = analyticsClient;
+        _authService = authService;
+        _authService.AuthStateChanged += (_, _) => NotifyAuthProperties();
     }
 
     public event PropertyChangedEventHandler? PropertyChanged;
@@ -87,11 +91,9 @@ public sealed class AppState : INotifyPropertyChanged
         private set => SetProperty(ref _backendBaseUrl, value);
     }
 
-    public string BackendApiKey
-    {
-        get => _backendApiKey;
-        private set => SetProperty(ref _backendApiKey, value);
-    }
+    public bool IsLoggedIn => _authService.IsLoggedIn;
+
+    public string UserEmail => _authService.UserEmail ?? string.Empty;
 
     public string BackendSyncMessage
     {
@@ -164,14 +166,13 @@ public sealed class AppState : INotifyPropertyChanged
     public Task InitializeAsync()
     {
         _challengeRepository.Initialize();
+        _challengeRepository.ReloadBundledContent();
 
         OnboardingCompleted = _settingsService.ReadOnboardingCompleted();
         DisplayName = _settingsService.ReadDisplayName();
         NotificationsEnabled = _settingsService.ReadNotificationsEnabled();
         BackendBaseUrl = _settingsService.ReadBackendBaseUrl();
-        BackendApiKey = BackendDefaults.AllowManualBackendSettings
-            ? _settingsService.ReadBackendApiKey()
-            : string.Empty;
+        NotifyAuthProperties();
         StartSelfAssessment = _settingsService.ReadSelfAssessment(SelfAssessmentKind.Start);
         FinalSelfAssessment = _settingsService.ReadSelfAssessment(SelfAssessmentKind.Final);
 
@@ -331,25 +332,34 @@ public sealed class AppState : INotifyPropertyChanged
         DisplayName = nextName;
     }
 
-    public void UpdateBackendConnection(string baseUrl, string apiKey)
+    public void UpdateBackendBaseUrl(string baseUrl)
     {
         _settingsService.WriteBackendBaseUrl(baseUrl);
-        _settingsService.WriteBackendApiKey(apiKey);
-
         BackendBaseUrl = _settingsService.ReadBackendBaseUrl();
-        BackendApiKey = BackendDefaults.AllowManualBackendSettings
-            ? _settingsService.ReadBackendApiKey()
-            : string.Empty;
         BackendSyncMessage = string.IsNullOrWhiteSpace(BackendBaseUrl)
-            ? "Backend не настроен."
-            : "Backend сохранен. Можно проверить подключение и синхронизацию.";
+            ? AppStrings.BackendNotConfigured
+            : AppStrings.BackendSaved;
     }
+
+    public Task<AuthOperationResult> RegisterAsync(string email, string password, CancellationToken cancellationToken = default) =>
+        _authService.RegisterAsync(email, password, cancellationToken);
+
+    public Task<AuthOperationResult> LoginAsync(string email, string password, CancellationToken cancellationToken = default) =>
+        _authService.LoginAsync(email, password, cancellationToken);
+
+    public Task LogoutAsync(CancellationToken cancellationToken = default) =>
+        _authService.LogoutAsync(cancellationToken);
 
     public async Task<BackendSyncResult> SyncBackendAsync(bool force = false, CancellationToken cancellationToken = default)
     {
         if (string.IsNullOrWhiteSpace(BackendBaseUrl))
         {
-            return new BackendSyncResult(false, false, "Укажите URL backend.", BackendStats);
+            return new BackendSyncResult(false, false, AppStrings.BackendProvideUrl, BackendStats);
+        }
+
+        if (!_authService.IsLoggedIn)
+        {
+            return new BackendSyncResult(true, false, AppStrings.AuthLoginRequired, BackendStats);
         }
 
         if (!force
@@ -359,7 +369,7 @@ public sealed class AppState : INotifyPropertyChanged
             return new BackendSyncResult(
                 true,
                 true,
-                "Синхронизация уже выполнялась недавно.",
+                AppStrings.BackendSyncRecently,
                 BackendStats);
         }
 
@@ -368,7 +378,7 @@ public sealed class AppState : INotifyPropertyChanged
             return new BackendSyncResult(
                 !string.IsNullOrWhiteSpace(BackendBaseUrl),
                 false,
-                "Синхронизация уже выполняется.",
+                AppStrings.BackendSyncInProgress,
                 BackendStats);
         }
 
@@ -402,7 +412,7 @@ public sealed class AppState : INotifyPropertyChanged
         }
         catch (Exception ex)
         {
-            var message = $"Backend sync не удался: {ex.Message}";
+            var message = string.Format(AppStrings.BackendSyncFailedFormat, ex.Message);
             BackendSyncMessage = message;
             TrackAnalytics(
                 AnalyticsEventNames.BackendSyncFailed,
@@ -614,6 +624,12 @@ public sealed class AppState : INotifyPropertyChanged
         OnPropertyChanged(propertyName);
 
         return true;
+    }
+
+    private void NotifyAuthProperties()
+    {
+        OnPropertyChanged(nameof(IsLoggedIn));
+        OnPropertyChanged(nameof(UserEmail));
     }
 
     private void OnPropertyChanged([CallerMemberName] string? propertyName = null) =>
