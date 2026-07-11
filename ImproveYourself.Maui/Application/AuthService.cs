@@ -1,3 +1,4 @@
+using System.Net;
 using System.Net.Http.Json;
 using System.Text.Json;
 using ImproveYourself.Maui.Persistence;
@@ -33,6 +34,7 @@ public sealed class AuthService : IAuthService
     private readonly HttpClient _httpClient;
     private readonly ISettingsService _settingsService;
     private readonly IAuthTokenStore _tokenStore;
+    private readonly SemaphoreSlim _refreshLock = new(1, 1);
 
     private StoredAuthTokens? _currentTokens;
 
@@ -96,47 +98,65 @@ public sealed class AuthService : IAuthService
 
     public async Task<bool> TryRefreshAsync(CancellationToken cancellationToken = default)
     {
-        _currentTokens ??= await _tokenStore.ReadAsync();
-
-        if (_currentTokens is null || _currentTokens.RefreshTokenExpiresAt <= DateTimeOffset.UtcNow)
-        {
-            await ClearSessionAsync();
-            return false;
-        }
-
-        var baseUri = ReadBackendBaseUri();
-        if (baseUri is null)
-        {
-            return false;
-        }
+        await _refreshLock.WaitAsync(cancellationToken);
 
         try
         {
-            using var response = await _httpClient.PostAsJsonAsync(
-                new Uri(baseUri, "api/auth/refresh"),
-                new { refreshToken = _currentTokens.RefreshToken },
-                ApiJsonOptions,
-                cancellationToken);
+            _currentTokens ??= await _tokenStore.ReadAsync();
 
-            if (!response.IsSuccessStatusCode)
+            if (_currentTokens is not null
+                && _currentTokens.AccessTokenExpiresAt > DateTimeOffset.UtcNow.AddMinutes(1))
+            {
+                return true;
+            }
+
+            if (_currentTokens is null || _currentTokens.RefreshTokenExpiresAt <= DateTimeOffset.UtcNow)
             {
                 await ClearSessionAsync();
                 return false;
             }
 
-            var tokens = await response.Content.ReadFromJsonAsync<AuthTokensResponse>(ApiJsonOptions, cancellationToken);
-            if (tokens is null)
+            var baseUri = ReadBackendBaseUri();
+            if (baseUri is null)
             {
-                await ClearSessionAsync();
                 return false;
             }
 
-            await PersistTokensAsync(tokens);
-            return true;
+            try
+            {
+                using var response = await _httpClient.PostAsJsonAsync(
+                    new Uri(baseUri, "api/auth/refresh"),
+                    new { refreshToken = _currentTokens.RefreshToken },
+                    ApiJsonOptions,
+                    cancellationToken);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    if (ShouldClearSessionOnRefreshFailure(response.StatusCode))
+                    {
+                        await ClearSessionAsync();
+                    }
+
+                    return false;
+                }
+
+                var tokens = await response.Content.ReadFromJsonAsync<AuthTokensResponse>(ApiJsonOptions, cancellationToken);
+                if (tokens is null)
+                {
+                    return false;
+                }
+
+                await PersistTokensAsync(tokens);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
         }
-        catch
+        finally
         {
-            return false;
+            _refreshLock.Release();
         }
     }
 
@@ -274,6 +294,11 @@ public sealed class AuthService : IAuthService
             _ => AppStrings.AuthFailed,
         };
     }
+
+    private static bool ShouldClearSessionOnRefreshFailure(HttpStatusCode statusCode) =>
+        statusCode is HttpStatusCode.BadRequest
+            or HttpStatusCode.Unauthorized
+            or HttpStatusCode.Forbidden;
 
     private void NotifyAuthStateChanged() => AuthStateChanged?.Invoke(this, EventArgs.Empty);
 }

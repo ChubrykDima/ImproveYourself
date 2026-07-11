@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using ImproveYourself.Maui;
 using ImproveYourself.Maui.Application;
 using ImproveYourself.Maui.Resources.Strings;
@@ -19,6 +20,7 @@ public partial class SettingsPage : ContentPage
     private bool _isSyncing;
     private bool _isUpdating;
     private bool _isCheckingBackend;
+    private readonly PropertyChangedEventHandler _appStatePropertyChangedHandler;
 
     public SettingsPage(AppState appState, IBackendConnectionService backendConnectionService, ILocalizationService localizationService)
     {
@@ -26,20 +28,29 @@ public partial class SettingsPage : ContentPage
         _appState = appState;
         _backendConnectionService = backendConnectionService;
         _localizationService = localizationService;
-        _appState.PropertyChanged += (_, args) =>
-        {
-            if (args.PropertyName is nameof(AppState.IsLoggedIn) or nameof(AppState.UserEmail) or nameof(AppState.BackendSyncMessage))
-            {
-                MainThread.BeginInvokeOnMainThread(SyncFromState);
-            }
-        };
+        _appStatePropertyChangedHandler = OnAppStatePropertyChanged;
     }
 
     protected override void OnAppearing()
     {
         base.OnAppearing();
+        _appState.PropertyChanged += _appStatePropertyChangedHandler;
         RenderStaticLabels();
         SyncFromState();
+    }
+
+    protected override void OnDisappearing()
+    {
+        _appState.PropertyChanged -= _appStatePropertyChangedHandler;
+        base.OnDisappearing();
+    }
+
+    private void OnAppStatePropertyChanged(object? sender, PropertyChangedEventArgs args)
+    {
+        if (args.PropertyName is nameof(AppState.IsLoggedIn) or nameof(AppState.UserEmail) or nameof(AppState.BackendSyncMessage))
+        {
+            MainThread.BeginInvokeOnMainThread(SyncFromState);
+        }
     }
 
     private void RenderStaticLabels()
