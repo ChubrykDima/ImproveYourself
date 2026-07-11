@@ -34,7 +34,7 @@ public sealed class AuthService : IAuthService
     private readonly HttpClient _httpClient;
     private readonly ISettingsService _settingsService;
     private readonly IAuthTokenStore _tokenStore;
-    private readonly SemaphoreSlim _refreshLock = new(1, 1);
+    private readonly SemaphoreSlim _sessionLock = new(1, 1);
 
     private StoredAuthTokens? _currentTokens;
 
@@ -89,7 +89,17 @@ public sealed class AuthService : IAuthService
 
         if (_currentTokens.RefreshTokenExpiresAt <= DateTimeOffset.UtcNow)
         {
-            await ClearSessionAsync();
+            await _sessionLock.WaitAsync(cancellationToken);
+
+            try
+            {
+                await ClearSessionAsync();
+            }
+            finally
+            {
+                _sessionLock.Release();
+            }
+
             return false;
         }
 
@@ -98,7 +108,7 @@ public sealed class AuthService : IAuthService
 
     public async Task<bool> TryRefreshAsync(CancellationToken cancellationToken = default)
     {
-        await _refreshLock.WaitAsync(cancellationToken);
+        await _sessionLock.WaitAsync(cancellationToken);
 
         try
         {
@@ -156,41 +166,51 @@ public sealed class AuthService : IAuthService
         }
         finally
         {
-            _refreshLock.Release();
+            _sessionLock.Release();
         }
     }
 
     public async Task LogoutAsync(CancellationToken cancellationToken = default)
     {
-        var baseUri = ReadBackendBaseUri();
-        var refreshToken = _currentTokens?.RefreshToken;
+        await _sessionLock.WaitAsync(cancellationToken);
 
-        if (baseUri is not null
-            && !string.IsNullOrWhiteSpace(refreshToken)
-            && !string.IsNullOrWhiteSpace(_currentTokens?.AccessToken))
+        try
         {
-            try
+            var baseUri = ReadBackendBaseUri();
+            var refreshToken = _currentTokens?.RefreshToken;
+            var accessToken = _currentTokens?.AccessToken;
+
+            if (baseUri is not null
+                && !string.IsNullOrWhiteSpace(refreshToken)
+                && !string.IsNullOrWhiteSpace(accessToken))
             {
-                using var request = new HttpRequestMessage(HttpMethod.Post, new Uri(baseUri, "api/auth/logout"))
+                try
                 {
-                    Content = JsonContent.Create(new { refreshToken }, options: ApiJsonOptions),
-                };
-                request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue(
-                    "Bearer",
-                    _currentTokens.AccessToken);
+                    using var request = new HttpRequestMessage(HttpMethod.Post, new Uri(baseUri, "api/auth/logout"))
+                    {
+                        Content = JsonContent.Create(new { refreshToken }, options: ApiJsonOptions),
+                    };
+                    request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue(
+                        "Bearer",
+                        accessToken);
 
-                using var response = await _httpClient.SendAsync(
-                    request,
-                    HttpCompletionOption.ResponseHeadersRead,
-                    cancellationToken);
+                    using var response = await _httpClient.SendAsync(
+                        request,
+                        HttpCompletionOption.ResponseHeadersRead,
+                        cancellationToken);
+                }
+                catch
+                {
+                    // Logout should always clear local session.
+                }
             }
-            catch
-            {
-                // Logout should always clear local session.
-            }
+
+            await ClearSessionAsync();
         }
-
-        await ClearSessionAsync();
+        finally
+        {
+            _sessionLock.Release();
+        }
     }
 
     private async Task<AuthOperationResult> AuthenticateAsync(
@@ -224,7 +244,17 @@ public sealed class AuthService : IAuthService
                 return new AuthOperationResult(false, AppStrings.AuthFailed);
             }
 
-            await PersistTokensAsync(tokens);
+            await _sessionLock.WaitAsync(cancellationToken);
+
+            try
+            {
+                await PersistTokensAsync(tokens);
+            }
+            finally
+            {
+                _sessionLock.Release();
+            }
+
             return new AuthOperationResult(true, AppStrings.AuthSucceeded, tokens);
         }
         catch (TaskCanceledException)
