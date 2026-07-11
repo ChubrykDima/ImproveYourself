@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="ImproveYourself.Maui.Views.LoginPage"
+             BackgroundColor="{StaticResource ColorBackground}">
+    <ScrollView>
+        <VerticalStackLayout Padding="22,16,22,30"
+                             Spacing="16">
+            <Border Style="{StaticResource CardBorderStyle}">
+                <VerticalStackLayout Spacing="10">
+                    <Label x:Name="TitleLabel"
+                           Style="{StaticResource SubtitleLabelStyle}" />
+                    <Label x:Name="DescriptionLabel"
+                           Style="{StaticResource BodyLabelStyle}"
+                           LineBreakMode="WordWrap" />
+
+                    <Entry x:Name="EmailEntry"
+                           Keyboard="Email"
+                           PlaceholderColor="{StaticResource ColorTextSecondary}"
+                           FontFamily="OpenSansRegular"
+                           FontSize="15"
+                           TextColor="{StaticResource ColorTextPrimary}"
+                           BackgroundColor="{StaticResource ColorFrame}"
+                           HeightRequest="52" />
+
+                    <Entry x:Name="PasswordEntry"
+                           IsPassword="True"
+                           PlaceholderColor="{StaticResource ColorTextSecondary}"
+                           FontFamily="OpenSansRegular"
+                           FontSize="15"
+                           TextColor="{StaticResource ColorTextPrimary}"
+                           BackgroundColor="{StaticResource ColorFrame}"
+                           HeightRequest="52" />
+
+                    <Button x:Name="LoginButton"
+                            Style="{StaticResource PrimaryButtonStyle}"
+                            Clicked="OnLoginClicked" />
+
+                    <Button x:Name="RegisterButton"
+                            Clicked="OnRegisterClicked" />
+
+                    <Label x:Name="StatusLabel"
+                           Style="{StaticResource BodyLabelStyle}"
+                           LineBreakMode="WordWrap" />
+                </VerticalStackLayout>
+            </Border>
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

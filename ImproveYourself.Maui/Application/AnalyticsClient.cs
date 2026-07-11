@@ -1,4 +1,3 @@
-using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text.Json;
 using ImproveYourself.Maui.Persistence;
@@ -70,11 +69,13 @@ public sealed class AnalyticsClient : IAnalyticsClient
 
     private readonly HttpClient _httpClient;
     private readonly ISettingsService _settingsService;
+    private readonly IAuthService _authService;
 
-    public AnalyticsClient(HttpClient httpClient, ISettingsService settingsService)
+    public AnalyticsClient(HttpClient httpClient, ISettingsService settingsService, IAuthService authService)
     {
         _httpClient = httpClient;
         _settingsService = settingsService;
+        _authService = authService;
     }
 
     public async Task TrackAsync(
@@ -82,7 +83,7 @@ public sealed class AnalyticsClient : IAnalyticsClient
         IReadOnlyDictionary<string, string>? properties = null,
         CancellationToken cancellationToken = default)
     {
-        if (!AnalyticsEventNames.IsAllowed(eventName))
+        if (!AnalyticsEventNames.IsAllowed(eventName) || !_authService.IsLoggedIn)
         {
             return;
         }
@@ -106,7 +107,6 @@ public sealed class AnalyticsClient : IAnalyticsClient
             {
                 Content = JsonContent.Create(requestBody, options: ApiJsonOptions),
             };
-            AddApiKey(request, _settingsService.ReadBackendApiKey());
 
             using var response = await _httpClient.SendAsync(
                 request,
@@ -166,18 +166,6 @@ public sealed class AnalyticsClient : IAnalyticsClient
         return normalized.Length <= MaxPropertyValueLength
             ? normalized
             : normalized[..MaxPropertyValueLength];
-    }
-
-    private static void AddApiKey(HttpRequestMessage request, string? apiKey)
-    {
-        if (string.IsNullOrWhiteSpace(apiKey))
-        {
-            return;
-        }
-
-        var trimmedApiKey = apiKey.Trim();
-        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", trimmedApiKey);
-        request.Headers.Add("X-Api-Key", trimmedApiKey);
     }
 
     private sealed record AnalyticsEventRequest(

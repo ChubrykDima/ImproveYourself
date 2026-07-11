@@ -13,7 +13,6 @@ public sealed class PreferencesSettingsService : ISettingsService
     private const string DisplayNameKey = "displayName";
     private const string NotificationsEnabledKey = "notificationsEnabled";
     private const string BackendBaseUrlKey = "backend.baseUrl";
-    private const string BackendApiKeyKey = "backend.apiKey";
     private const string LanguageKey = "language";
     private const string BackendClientIdKey = "backend.clientId";
     private const string StartSelfAssessmentKey = "selfAssessment.start";
@@ -77,32 +76,6 @@ public sealed class PreferencesSettingsService : ISettingsService
         }
 
         Preferences.Default.Set(BackendBaseUrlKey, NormalizeBackendBaseUrl(value));
-    }
-
-    public string ReadBackendApiKey()
-    {
-        if (BackendDefaults.AllowManualBackendSettings)
-        {
-            var savedApiKey = Preferences.Default.Get(BackendApiKeyKey, string.Empty);
-
-            if (!string.IsNullOrWhiteSpace(savedApiKey))
-            {
-                return savedApiKey.Trim();
-            }
-        }
-
-        return BackendDefaults.ProductionApiKey.Trim();
-    }
-
-    public void WriteBackendApiKey(string value)
-    {
-        if (!BackendDefaults.AllowManualBackendSettings)
-        {
-            return;
-        }
-
-        var normalized = string.IsNullOrWhiteSpace(value) ? string.Empty : value.Trim();
-        Preferences.Default.Set(BackendApiKeyKey, normalized);
     }
 
     public string ReadLanguage() =>

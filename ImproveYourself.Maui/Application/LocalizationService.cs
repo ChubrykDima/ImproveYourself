@@ -42,10 +42,20 @@ public sealed class LocalizationService : ILocalizationService
         var strings = LoadStrings(language);
         AppStrings.Load(strings);
 
-        var culture = CultureInfo.GetCultureInfo(language);
+        var culture = GetCultureForLanguage(language);
         CultureInfo.CurrentUICulture = culture;
         CultureInfo.CurrentCulture = culture;
+        CultureInfo.DefaultThreadCurrentUICulture = culture;
+        CultureInfo.DefaultThreadCurrentCulture = culture;
     }
+
+    private static CultureInfo GetCultureForLanguage(string language) =>
+        language switch
+        {
+            "ru" => CultureInfo.GetCultureInfo("ru-RU"),
+            "de" => CultureInfo.GetCultureInfo("de-DE"),
+            _ => CultureInfo.GetCultureInfo("en-US"),
+        };
 
     private static IReadOnlyDictionary<string, string> LoadStrings(string language)
     {

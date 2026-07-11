@@ -72,6 +72,7 @@ public static class AppStrings
     public static string NotificationPermissionInstructions => Get("NotificationPermissionInstructions");
     public static string BackendSettingsUpdated => Get("BackendSettingsUpdated");
     public static string CheckingBackend => Get("CheckingBackend");
+    public static string BackendVerifiedSyncing => Get("BackendVerifiedSyncing");
     public static string LanguageSection => Get("LanguageSection");
 
     // Onboarding
@@ -170,6 +171,37 @@ public static class AppStrings
     public static string BackendUnavailable => Get("BackendUnavailable");
     public static string BackendTimeout => Get("BackendTimeout");
     public static string BackendConnectionFailedFormat => Get("BackendConnectionFailedFormat");
+    public static string BackendSyncNoChallenges => Get("BackendSyncNoChallenges");
+    public static string BackendSyncSucceeded => Get("BackendSyncSucceeded");
+    public static string BackendSyncSucceededWithStatsFormat => Get("BackendSyncSucceededWithStatsFormat");
+    public static string BackendSyncFailedStatusFormat => Get("BackendSyncFailedStatusFormat");
+    public static string BackendSyncFailedFormat => Get("BackendSyncFailedFormat");
+    public static string BackendSyncTimeout => Get("BackendSyncTimeout");
+    public static string BackendSyncRecently => Get("BackendSyncRecently");
+    public static string BackendSyncInProgress => Get("BackendSyncInProgress");
+
+    public static string AuthAccountSection => Get("AuthAccountSection");
+    public static string AuthAccountDescription => Get("AuthAccountDescription");
+    public static string AuthLoginTitle => Get("AuthLoginTitle");
+    public static string AuthLoginDescription => Get("AuthLoginDescription");
+    public static string AuthRegisterTitle => Get("AuthRegisterTitle");
+    public static string AuthRegisterDescription => Get("AuthRegisterDescription");
+    public static string AuthEmailPlaceholder => Get("AuthEmailPlaceholder");
+    public static string AuthPasswordPlaceholder => Get("AuthPasswordPlaceholder");
+    public static string AuthLoginButton => Get("AuthLoginButton");
+    public static string AuthRegisterButton => Get("AuthRegisterButton");
+    public static string AuthGoToRegister => Get("AuthGoToRegister");
+    public static string AuthLogoutButton => Get("AuthLogoutButton");
+    public static string AuthSyncButton => Get("AuthSyncButton");
+    public static string AuthLoggedInAsFormat => Get("AuthLoggedInAsFormat");
+    public static string AuthNotLoggedIn => Get("AuthNotLoggedIn");
+    public static string AuthLoginRequired => Get("AuthLoginRequired");
+    public static string AuthSessionExpired => Get("AuthSessionExpired");
+    public static string AuthSucceeded => Get("AuthSucceeded");
+    public static string AuthFailed => Get("AuthFailed");
+    public static string AuthInvalidCredentials => Get("AuthInvalidCredentials");
+    public static string AuthEmailAlreadyRegistered => Get("AuthEmailAlreadyRegistered");
+    public static string AuthWorking => Get("AuthWorking");
 
     // Domain — challenge structure
     public static string DailyChallenge_DefaultTitle => Get("DailyChallenge_DefaultTitle");

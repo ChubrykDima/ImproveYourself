@@ -1,9 +1,8 @@
 using System.Net;
 using System.Net.Http.Json;
-using System.Net.Http.Headers;
+using System.Text.Json;
 using System.Security.Cryptography;
 using System.Text;
-using System.Text.Json;
 using ImproveYourself.Maui.Persistence;
 using ImproveYourself.Maui.Resources.Strings;
 using ImproveYourself.Maui.Domain;
@@ -46,35 +45,44 @@ public sealed class BackendConnectionService : IBackendConnectionService, IBacke
 
     private readonly HttpClient _httpClient;
     private readonly ISettingsService _settingsService;
+    private readonly IAuthService _authService;
 
-    public BackendConnectionService(HttpClient httpClient, ISettingsService settingsService)
+    public BackendConnectionService(
+        HttpClient httpClient,
+        ISettingsService settingsService,
+        IAuthService authService)
     {
         _httpClient = httpClient;
         _settingsService = settingsService;
+        _authService = authService;
     }
 
     public async Task<BackendConnectionResult> CheckAsync(CancellationToken cancellationToken = default)
     {
         var (baseUri, errorMessage) = ReadBackendBaseUri();
-        var apiKey = _settingsService.ReadBackendApiKey();
 
         if (baseUri is null)
         {
             return new BackendConnectionResult(false, false, false, false, errorMessage);
         }
 
+        if (!_authService.IsLoggedIn)
+        {
+            return new BackendConnectionResult(true, false, false, false, AppStrings.AuthLoginRequired);
+        }
+
         try
         {
-            var healthOk = await IsSuccessAsync(baseUri, "health", apiKey: null, cancellationToken);
-            var readyOk = await IsSuccessAsync(baseUri, "ready", apiKey: null, cancellationToken);
-            var authStatus = await GetStatusAsync(baseUri, "auth/check", apiKey, cancellationToken);
+            var healthOk = await IsSuccessAsync(baseUri, "health", cancellationToken);
+            var readyOk = await IsSuccessAsync(baseUri, "ready", cancellationToken);
+            var authStatus = await GetStatusAsync(baseUri, "auth/check", cancellationToken);
             var authorizationOk = authStatus == HttpStatusCode.OK;
 
             var message = (healthOk, readyOk, authorizationOk, authStatus) switch
             {
                 (true, true, true, _) => AppStrings.BackendAllOk,
                 (true, false, true, _) => AppStrings.BackendNoDb,
-                (true, _, false, HttpStatusCode.Unauthorized) => AppStrings.BackendBadApiKey,
+                (true, _, false, HttpStatusCode.Unauthorized) => AppStrings.AuthSessionExpired,
                 (true, _, false, _) => string.Format(AppStrings.BackendBadStatusFormat, (int)authStatus),
                 _ => AppStrings.BackendUnavailable,
             };
@@ -102,12 +110,16 @@ public sealed class BackendConnectionService : IBackendConnectionService, IBacke
             return new BackendSyncResult(false, false, errorMessage);
         }
 
-        if (challenges.Count == 0)
+        if (!_authService.IsLoggedIn)
         {
-            return new BackendSyncResult(true, true, "Нет локальных челленджей для синхронизации.");
+            return new BackendSyncResult(true, false, AppStrings.AuthLoginRequired);
         }
 
-        var apiKey = _settingsService.ReadBackendApiKey();
+        if (challenges.Count == 0)
+        {
+            return new BackendSyncResult(true, true, AppStrings.BackendSyncNoChallenges);
+        }
+
         var clientId = _settingsService.ReadBackendClientId();
         var requestBody = new SyncChallengesRequest(
             clientId,
@@ -119,7 +131,6 @@ public sealed class BackendConnectionService : IBackendConnectionService, IBacke
             {
                 Content = JsonContent.Create(requestBody, options: ApiJsonOptions),
             };
-            AddApiKey(request, apiKey);
 
             using var response = await _httpClient.SendAsync(request, cancellationToken);
 
@@ -128,60 +139,45 @@ public sealed class BackendConnectionService : IBackendConnectionService, IBacke
                 return new BackendSyncResult(
                     true,
                     false,
-                    $"Backend sync вернул {(int)response.StatusCode}.");
+                    string.Format(AppStrings.BackendSyncFailedStatusFormat, (int)response.StatusCode));
             }
 
-            var stats = await GetStatsAsync(baseUri, clientId, apiKey, cancellationToken);
+            var stats = await GetStatsAsync(baseUri, cancellationToken);
             var message = stats is null
-                ? "Backend sync выполнен."
-                : $"Backend sync выполнен. На сервере: {stats.TotalChallengesCompleted} дней, {stats.TotalStepsCompleted} шагов.";
+                ? AppStrings.BackendSyncSucceeded
+                : string.Format(
+                    AppStrings.BackendSyncSucceededWithStatsFormat,
+                    stats.TotalChallengesCompleted,
+                    stats.TotalStepsCompleted);
 
             return new BackendSyncResult(true, true, message, stats);
         }
         catch (TaskCanceledException)
         {
-            return new BackendSyncResult(true, false, "Backend sync занял слишком много времени.");
+            return new BackendSyncResult(true, false, AppStrings.BackendSyncTimeout);
         }
         catch (Exception ex)
         {
-            return new BackendSyncResult(true, false, $"Backend sync не удался: {ex.Message}");
+            return new BackendSyncResult(true, false, string.Format(AppStrings.BackendSyncFailedFormat, ex.Message));
         }
     }
 
-    private async Task<bool> IsSuccessAsync(
-        Uri baseUri,
-        string path,
-        string? apiKey,
-        CancellationToken cancellationToken)
+    private async Task<bool> IsSuccessAsync(Uri baseUri, string path, CancellationToken cancellationToken)
     {
-        var status = await GetStatusAsync(baseUri, path, apiKey, cancellationToken);
+        var status = await GetStatusAsync(baseUri, path, cancellationToken);
         return (int)status is >= 200 and <= 299;
     }
 
-    private async Task<HttpStatusCode> GetStatusAsync(
-        Uri baseUri,
-        string path,
-        string? apiKey,
-        CancellationToken cancellationToken)
+    private async Task<HttpStatusCode> GetStatusAsync(Uri baseUri, string path, CancellationToken cancellationToken)
     {
         using var request = new HttpRequestMessage(HttpMethod.Get, new Uri(baseUri, path));
-
-        AddApiKey(request, apiKey);
-
         using var response = await _httpClient.SendAsync(request, cancellationToken);
         return response.StatusCode;
     }
 
-    private async Task<BackendStatsSnapshot?> GetStatsAsync(
-        Uri baseUri,
-        string clientId,
-        string apiKey,
-        CancellationToken cancellationToken)
+    private async Task<BackendStatsSnapshot?> GetStatsAsync(Uri baseUri, CancellationToken cancellationToken)
     {
-        var path = $"api/stats?clientId={Uri.EscapeDataString(clientId)}";
-        using var request = new HttpRequestMessage(HttpMethod.Get, new Uri(baseUri, path));
-        AddApiKey(request, apiKey);
-
+        using var request = new HttpRequestMessage(HttpMethod.Get, new Uri(baseUri, "api/stats"));
         using var response = await _httpClient.SendAsync(request, cancellationToken);
 
         if (!response.IsSuccessStatusCode)
@@ -208,18 +204,6 @@ public sealed class BackendConnectionService : IBackendConnectionService, IBacke
         }
 
         return (baseUri, string.Empty);
-    }
-
-    private static void AddApiKey(HttpRequestMessage request, string? apiKey)
-    {
-        if (string.IsNullOrWhiteSpace(apiKey))
-        {
-            return;
-        }
-
-        var trimmedApiKey = apiKey.Trim();
-        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", trimmedApiKey);
-        request.Headers.Add("X-Api-Key", trimmedApiKey);
     }
 
     private static SyncDailyChallengeDto MapChallenge(string clientId, DailyChallenge challenge) => new(
