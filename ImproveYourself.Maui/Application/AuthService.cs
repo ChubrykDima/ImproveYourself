@@ -20,6 +20,10 @@ public interface IAuthService
 
     Task<AuthOperationResult> LoginAsync(string email, string password, CancellationToken cancellationToken = default);
 
+    Task<AuthOperationResult> RequestPasswordResetAsync(string email, CancellationToken cancellationToken = default);
+
+    Task<AuthOperationResult> DeleteAccountAsync(CancellationToken cancellationToken = default);
+
     Task<bool> TryRestoreSessionAsync(CancellationToken cancellationToken = default);
 
     Task<bool> TryRefreshAsync(CancellationToken cancellationToken = default);
@@ -70,6 +74,152 @@ public sealed class AuthService : IAuthService
         CancellationToken cancellationToken = default)
     {
         return await AuthenticateAsync("api/auth/login", email, password, cancellationToken);
+    }
+
+    /// <summary>
+    /// Requests a password-reset email.
+    /// Backend dependency: POST /api/auth/forgot-password (not deployed yet on production).
+    /// </summary>
+    public async Task<AuthOperationResult> RequestPasswordResetAsync(
+        string email,
+        CancellationToken cancellationToken = default)
+    {
+        var normalizedEmail = email.Trim();
+        if (string.IsNullOrWhiteSpace(normalizedEmail))
+        {
+            return new AuthOperationResult(false, AppStrings.AuthEmailRequired);
+        }
+
+        var baseUri = ReadBackendBaseUri();
+        if (baseUri is null)
+        {
+            return new AuthOperationResult(false, AppStrings.BackendProvideUrl);
+        }
+
+        try
+        {
+            using var response = await _httpClient.PostAsJsonAsync(
+                new Uri(baseUri, "api/auth/forgot-password"),
+                new { email = normalizedEmail },
+                ApiJsonOptions,
+                cancellationToken);
+
+            if (response.StatusCode == HttpStatusCode.NotFound
+                || response.StatusCode == HttpStatusCode.MethodNotAllowed
+                || response.StatusCode == HttpStatusCode.NotImplemented)
+            {
+                return new AuthOperationResult(
+                    false,
+                    AppStrings.AuthForgotPasswordBackendMissing,
+                    BackendEndpointMissing: true);
+            }
+
+            if (!response.IsSuccessStatusCode)
+            {
+                // Some gateways return 401 for unmapped public routes; treat as missing endpoint.
+                if (response.StatusCode == HttpStatusCode.Unauthorized
+                    && string.IsNullOrWhiteSpace(AccessToken))
+                {
+                    return new AuthOperationResult(
+                        false,
+                        AppStrings.AuthForgotPasswordBackendMissing,
+                        BackendEndpointMissing: true);
+                }
+
+                return new AuthOperationResult(false, await ReadErrorMessageAsync(response, cancellationToken));
+            }
+
+            return new AuthOperationResult(true, AppStrings.AuthForgotPasswordSent);
+        }
+        catch (TaskCanceledException)
+        {
+            return new AuthOperationResult(false, AppStrings.BackendTimeout);
+        }
+        catch (Exception ex)
+        {
+            return new AuthOperationResult(false, string.Format(AppStrings.BackendConnectionFailedFormat, ex.Message));
+        }
+    }
+
+    /// <summary>
+    /// Deletes the signed-in account on the server, then clears the local session.
+    /// Backend dependency: DELETE /api/auth/account (not deployed yet on production).
+    /// </summary>
+    public async Task<AuthOperationResult> DeleteAccountAsync(CancellationToken cancellationToken = default)
+    {
+        if (!IsLoggedIn)
+        {
+            return new AuthOperationResult(false, AppStrings.AuthLoginRequired);
+        }
+
+        // Ensure access token is fresh before the delete call (auth HttpClient has no auto-refresh handler).
+        if (_currentTokens is null
+            || _currentTokens.AccessTokenExpiresAt <= DateTimeOffset.UtcNow.AddMinutes(1))
+        {
+            if (!await TryRefreshAsync(cancellationToken))
+            {
+                return new AuthOperationResult(false, AppStrings.AuthSessionExpired);
+            }
+        }
+
+        await _sessionLock.WaitAsync(cancellationToken);
+
+        try
+        {
+            if (!IsLoggedIn || string.IsNullOrWhiteSpace(_currentTokens?.AccessToken))
+            {
+                return new AuthOperationResult(false, AppStrings.AuthLoginRequired);
+            }
+
+            var baseUri = ReadBackendBaseUri();
+            if (baseUri is null)
+            {
+                return new AuthOperationResult(false, AppStrings.BackendProvideUrl);
+            }
+
+            try
+            {
+                using var request = new HttpRequestMessage(HttpMethod.Delete, new Uri(baseUri, "api/auth/account"));
+                request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue(
+                    "Bearer",
+                    _currentTokens.AccessToken);
+
+                using var response = await _httpClient.SendAsync(
+                    request,
+                    HttpCompletionOption.ResponseHeadersRead,
+                    cancellationToken);
+
+                if (response.StatusCode is HttpStatusCode.NotFound
+                    or HttpStatusCode.MethodNotAllowed
+                    or HttpStatusCode.NotImplemented)
+                {
+                    return new AuthOperationResult(
+                        false,
+                        AppStrings.AuthDeleteAccountBackendMissing,
+                        BackendEndpointMissing: true);
+                }
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    return new AuthOperationResult(false, await ReadErrorMessageAsync(response, cancellationToken));
+                }
+
+                await ClearSessionAsync();
+                return new AuthOperationResult(true, AppStrings.AuthDeleteAccountSucceeded);
+            }
+            catch (TaskCanceledException)
+            {
+                return new AuthOperationResult(false, AppStrings.BackendTimeout);
+            }
+            catch (Exception ex)
+            {
+                return new AuthOperationResult(false, string.Format(AppStrings.BackendConnectionFailedFormat, ex.Message));
+            }
+        }
+        finally
+        {
+            _sessionLock.Release();
+        }
     }
 
     public async Task<bool> TryRestoreSessionAsync(CancellationToken cancellationToken = default)

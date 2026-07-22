@@ -73,6 +73,11 @@ public partial class SettingsPage : ContentPage
         RegisterAccountButton.Text = AppStrings.AuthRegisterButton;
         LogoutButton.Text = AppStrings.AuthLogoutButton;
         SyncButton.Text = AppStrings.AuthSyncButton;
+        DeleteAccountButton.Text = AppStrings.AuthDeleteAccountButton;
+        LegalSectionLabel.Text = AppStrings.LegalSection;
+        LegalDescLabel.Text = AppStrings.LegalSectionDescription;
+        PrivacyPolicyButton.Text = AppStrings.LegalPrivacyTitle;
+        TermsButton.Text = AppStrings.LegalTermsTitle;
         BackendSectionLabel.Text = AppStrings.Backend;
         BackendDescLabel.Text = AppStrings.BackendDescription;
         SaveBackendButton.Text = AppStrings.SaveButton;
@@ -94,6 +99,7 @@ public partial class SettingsPage : ContentPage
             RegisterAccountButton.IsVisible = false;
             LogoutButton.IsVisible = true;
             SyncButton.IsVisible = true;
+            DeleteAccountButton.IsVisible = true;
         }
         else
         {
@@ -102,6 +108,7 @@ public partial class SettingsPage : ContentPage
             RegisterAccountButton.IsVisible = true;
             LogoutButton.IsVisible = false;
             SyncButton.IsVisible = false;
+            DeleteAccountButton.IsVisible = false;
         }
 
         BackendStatusLabel.Text = !string.IsNullOrWhiteSpace(_appState.BackendSyncMessage)
@@ -160,6 +167,40 @@ public partial class SettingsPage : ContentPage
     {
         await _appState.LogoutAsync();
         SyncFromState();
+    }
+
+    private async void OnDeleteAccountClicked(object? sender, EventArgs e)
+    {
+        var confirmed = await DisplayAlertAsync(
+            AppStrings.AuthDeleteAccountTitle,
+            AppStrings.AuthDeleteAccountConfirm,
+            AppStrings.AuthDeleteAccountConfirmButton,
+            AppStrings.Back);
+
+        if (!confirmed)
+        {
+            return;
+        }
+
+        DeleteAccountButton.IsEnabled = false;
+        BackendStatusLabel.Text = AppStrings.AuthWorking;
+
+        var result = await _appState.DeleteAccountAsync();
+        BackendStatusLabel.Text = result.Message;
+        SyncFromState();
+
+        await DisplayAlertAsync(AppStrings.AuthDeleteAccountTitle, result.Message, AppStrings.OK);
+        DeleteAccountButton.IsEnabled = true;
+    }
+
+    private async void OnPrivacyPolicyClicked(object? sender, EventArgs e)
+    {
+        await Navigation.PushAsync(LegalDocumentPage.PrivacyPolicy());
+    }
+
+    private async void OnTermsClicked(object? sender, EventArgs e)
+    {
+        await Navigation.PushAsync(LegalDocumentPage.TermsOfService());
     }
 
     private async void OnSyncClicked(object? sender, EventArgs e)

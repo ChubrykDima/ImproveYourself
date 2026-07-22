@@ -166,7 +166,7 @@ public static class AppStrings
     public static string BackendInvalidUrl => Get("BackendInvalidUrl");
     public static string BackendAllOk => Get("BackendAllOk");
     public static string BackendNoDb => Get("BackendNoDb");
-    public static string BackendBadApiKey => Get("BackendBadApiKey");
+    public static string BackendUnauthorized => Get("BackendUnauthorized");
     public static string BackendBadStatusFormat => Get("BackendBadStatusFormat");
     public static string BackendUnavailable => Get("BackendUnavailable");
     public static string BackendTimeout => Get("BackendTimeout");
@@ -202,6 +202,27 @@ public static class AppStrings
     public static string AuthInvalidCredentials => Get("AuthInvalidCredentials");
     public static string AuthEmailAlreadyRegistered => Get("AuthEmailAlreadyRegistered");
     public static string AuthWorking => Get("AuthWorking");
+    public static string AuthEmailRequired => Get("AuthEmailRequired");
+    public static string AuthForgotPasswordButton => Get("AuthForgotPasswordButton");
+    public static string AuthForgotPasswordTitle => Get("AuthForgotPasswordTitle");
+    public static string AuthForgotPasswordDescription => Get("AuthForgotPasswordDescription");
+    public static string AuthForgotPasswordSubmit => Get("AuthForgotPasswordSubmit");
+    public static string AuthForgotPasswordSent => Get("AuthForgotPasswordSent");
+    public static string AuthForgotPasswordBackendMissing => Get("AuthForgotPasswordBackendMissing");
+    public static string AuthDeleteAccountButton => Get("AuthDeleteAccountButton");
+    public static string AuthDeleteAccountTitle => Get("AuthDeleteAccountTitle");
+    public static string AuthDeleteAccountConfirm => Get("AuthDeleteAccountConfirm");
+    public static string AuthDeleteAccountConfirmButton => Get("AuthDeleteAccountConfirmButton");
+    public static string AuthDeleteAccountSucceeded => Get("AuthDeleteAccountSucceeded");
+    public static string AuthDeleteAccountBackendMissing => Get("AuthDeleteAccountBackendMissing");
+    public static string AuthRegisterLegalHint => Get("AuthRegisterLegalHint");
+
+    public static string LegalSection => Get("LegalSection");
+    public static string LegalSectionDescription => Get("LegalSectionDescription");
+    public static string LegalPrivacyTitle => Get("LegalPrivacyTitle");
+    public static string LegalTermsTitle => Get("LegalTermsTitle");
+    public static string LegalOpenInBrowser => Get("LegalOpenInBrowser");
+    public static string LegalOpenFailed => Get("LegalOpenFailed");
 
     // Domain — challenge structure
     public static string DailyChallenge_DefaultTitle => Get("DailyChallenge_DefaultTitle");

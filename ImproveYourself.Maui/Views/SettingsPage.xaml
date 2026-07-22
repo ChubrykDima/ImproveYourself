@@ -123,6 +123,24 @@
 
                     <Button x:Name="LogoutButton"
                             Clicked="OnLogoutClicked" />
+
+                    <Button x:Name="DeleteAccountButton"
+                            Clicked="OnDeleteAccountClicked" />
+                </VerticalStackLayout>
+            </Border>
+
+            <Border Style="{StaticResource CardBorderStyle}">
+                <VerticalStackLayout Spacing="10">
+                    <Label x:Name="LegalSectionLabel"
+                           Style="{StaticResource SubtitleLabelStyle}" />
+                    <Label x:Name="LegalDescLabel"
+                           Style="{StaticResource BodyLabelStyle}"
+                           LineBreakMode="WordWrap" />
+
+                    <Button x:Name="PrivacyPolicyButton"
+                            Clicked="OnPrivacyPolicyClicked" />
+                    <Button x:Name="TermsButton"
+                            Clicked="OnTermsClicked" />
                 </VerticalStackLayout>
             </Border>
 

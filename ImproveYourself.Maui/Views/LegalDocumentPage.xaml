@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="ImproveYourself.Maui.Views.LegalDocumentPage"
+             BackgroundColor="{StaticResource ColorBackground}">
+    <ScrollView>
+        <VerticalStackLayout Padding="22,16,22,30"
+                             Spacing="14">
+            <Label x:Name="TitleLabel"
+                   Style="{StaticResource SubtitleLabelStyle}"
+                   LineBreakMode="WordWrap" />
+
+            <Label x:Name="BodyLabel"
+                   Style="{StaticResource BodyLabelStyle}"
+                   LineBreakMode="WordWrap" />
+
+            <Button x:Name="OpenInBrowserButton"
+                    IsVisible="False"
+                    Clicked="OnOpenInBrowserClicked" />
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

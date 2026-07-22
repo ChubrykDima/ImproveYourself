@@ -36,6 +36,19 @@
                             Style="{StaticResource PrimaryButtonStyle}"
                             Clicked="OnRegisterClicked" />
 
+                    <Label x:Name="LegalHintLabel"
+                           Style="{StaticResource BodyLabelStyle}"
+                           LineBreakMode="WordWrap" />
+
+                    <Grid ColumnDefinitions="*,*"
+                          ColumnSpacing="10">
+                        <Button x:Name="PrivacyPolicyButton"
+                                Clicked="OnPrivacyPolicyClicked" />
+                        <Button Grid.Column="1"
+                                x:Name="TermsButton"
+                                Clicked="OnTermsClicked" />
+                    </Grid>
+
                     <Label x:Name="StatusLabel"
                            Style="{StaticResource BodyLabelStyle}"
                            LineBreakMode="WordWrap" />
