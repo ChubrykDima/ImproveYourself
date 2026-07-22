@@ -41,6 +41,7 @@ public interface IBackendSyncService
 
 public sealed class BackendConnectionService : IBackendConnectionService, IBackendSyncService
 {
+    // Backend sync expects numeric enums (not JsonStringEnumConverter strings).
     private static readonly JsonSerializerOptions ApiJsonOptions = new(JsonSerializerDefaults.Web);
 
     private readonly HttpClient _httpClient;
@@ -73,6 +74,7 @@ public sealed class BackendConnectionService : IBackendConnectionService, IBacke
 
         try
         {
+            // /ready is public. /health and /auth/check require Bearer JWT on production.
             var healthOk = await IsSuccessAsync(baseUri, "health", cancellationToken);
             var readyOk = await IsSuccessAsync(baseUri, "ready", cancellationToken);
             var authStatus = await GetStatusAsync(baseUri, "auth/check", cancellationToken);
@@ -81,9 +83,11 @@ public sealed class BackendConnectionService : IBackendConnectionService, IBacke
             var message = (healthOk, readyOk, authorizationOk, authStatus) switch
             {
                 (true, true, true, _) => AppStrings.BackendAllOk,
+                (_, true, true, _) => AppStrings.BackendAllOk,
                 (true, false, true, _) => AppStrings.BackendNoDb,
-                (true, _, false, HttpStatusCode.Unauthorized) => AppStrings.AuthSessionExpired,
-                (true, _, false, _) => string.Format(AppStrings.BackendBadStatusFormat, (int)authStatus),
+                (_, false, true, _) => AppStrings.BackendNoDb,
+                (_, _, false, HttpStatusCode.Unauthorized) => AppStrings.AuthSessionExpired,
+                (_, _, false, _) => string.Format(AppStrings.BackendBadStatusFormat, (int)authStatus),
                 _ => AppStrings.BackendUnavailable,
             };
 

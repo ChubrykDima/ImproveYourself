@@ -28,6 +28,7 @@ public partial class LoginPage : ContentPage
         EmailEntry.Placeholder = AppStrings.AuthEmailPlaceholder;
         PasswordEntry.Placeholder = AppStrings.AuthPasswordPlaceholder;
         LoginButton.Text = AppStrings.AuthLoginButton;
+        ForgotPasswordButton.Text = AppStrings.AuthForgotPasswordButton;
         RegisterButton.Text = AppStrings.AuthGoToRegister;
     }
 
@@ -55,6 +56,11 @@ public partial class LoginPage : ContentPage
 
         LoginButton.IsEnabled = true;
         _isSubmitting = false;
+    }
+
+    private async void OnForgotPasswordClicked(object? sender, EventArgs e)
+    {
+        await Navigation.PushAsync(new ForgotPasswordPage(_appState, EmailEntry.Text));
     }
 
     private async void OnRegisterClicked(object? sender, EventArgs e)
