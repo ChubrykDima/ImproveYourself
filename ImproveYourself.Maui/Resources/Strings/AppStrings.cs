@@ -209,6 +209,7 @@ public static class AppStrings
     public static string AuthForgotPasswordSubmit => Get("AuthForgotPasswordSubmit");
     public static string AuthForgotPasswordSent => Get("AuthForgotPasswordSent");
     public static string AuthForgotPasswordBackendMissing => Get("AuthForgotPasswordBackendMissing");
+    public static string AuthForgotPasswordUnavailable => Get("AuthForgotPasswordUnavailable");
     public static string AuthDeleteAccountButton => Get("AuthDeleteAccountButton");
     public static string AuthDeleteAccountTitle => Get("AuthDeleteAccountTitle");
     public static string AuthDeleteAccountConfirm => Get("AuthDeleteAccountConfirm");

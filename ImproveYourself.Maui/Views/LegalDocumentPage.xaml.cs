@@ -53,7 +53,7 @@ public partial class LegalDocumentPage : ContentPage
         }
         catch
         {
-            await DisplayAlertAsync(AppStrings.LegalPrivacyTitle, AppStrings.LegalOpenFailed, AppStrings.OK);
+            await DisplayAlertAsync(_title, AppStrings.LegalOpenFailed, AppStrings.OK);
         }
     }
 }
