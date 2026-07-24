@@ -165,6 +165,9 @@ public sealed class AuthService : IAuthService
 
                 if (!await TryRefreshAsync(cancellationToken))
                 {
+                    // Refresh may fail without clearing (e.g. transient network). Delete already got 401,
+                    // so drop the local session to match AuthSessionExpired.
+                    await ForceClearSessionAsync(cancellationToken);
                     return new AuthOperationResult(false, AppStrings.AuthSessionExpired);
                 }
 

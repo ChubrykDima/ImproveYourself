@@ -2,12 +2,12 @@ namespace ImproveYourself.Maui.Legal;
 
 /// <summary>
 /// In-app Privacy Policy and Terms of Service copy for store listing readiness.
-/// Hosted web URLs (when available) live in <see cref="LegalUrls"/>.
+/// Public console URLs live in <see cref="LegalUrls"/> (mirrored under /docs in the repo).
 /// </summary>
 public static class LegalDocuments
 {
     public const string PrivacyPolicyBody = """
-Last updated: July 22, 2026
+Last updated: July 24, 2026
 
 Improve Yourself (“we”, “us”, “the App”) helps you build daily social-confidence habits. This Privacy Policy explains what data the App processes and why.
 
@@ -31,13 +31,14 @@ We do not sell your personal data. Data may be processed by infrastructure provi
 
 5. Retention
 • Local data remains on your device until you clear app data or delete the App.
-• Cloud account data is retained while your account exists. Account deletion will remove server-side account data once the delete-account API is available and completed.
-• Authentication tokens are stored securely on device and cleared on sign-out.
+• Cloud account data is retained while your account exists.
+• When you delete your account in Settings and the server completes the request, cloud account data associated with that account is removed and you are signed out.
+• Authentication tokens are stored securely on device and cleared on sign-out or when the session can no longer be refreshed.
 
 6. Your choices
 • Use the App offline without creating an account.
 • Sign out at any time in Settings.
-• Request account deletion in Settings (requires the backend delete-account endpoint).
+• Delete your account in Settings. If the server cannot complete deletion, the App tells you and you can still sign out locally; contact support for follow-up.
 • Contact us about privacy requests at the support email listed in the store listing / app metadata.
 
 7. Children
@@ -54,7 +55,7 @@ For privacy questions: use the developer contact email published with the App on
 """;
 
     public const string TermsOfServiceBody = """
-Last updated: July 22, 2026
+Last updated: July 24, 2026
 
 These Terms of Service (“Terms”) govern your use of Improve Yourself (the “App”). By using the App you agree to these Terms.
 
@@ -79,10 +80,10 @@ The App, branding, and content structure are owned by the developer. You retain 
 Current versions may be free. If paid features are introduced later, pricing and renewal terms will be shown in the store listing and in-app purchase sheets before you buy.
 
 7. Privacy
-Your use of the App is also governed by the Privacy Policy available in the App.
+Your use of the App is also governed by the Privacy Policy available in the App and at the public Privacy Policy URL published with the App.
 
 8. Termination
-You may stop using the App at any time. You may request account deletion in Settings. Server-side deletion depends on the companion backend delete-account endpoint being available.
+You may stop using the App at any time. You may delete your account in Settings. Successful server-side deletion removes the cloud account and signs you out. If deletion cannot be completed on the server, the App informs you and local sign-out remains available.
 
 9. Disclaimer of warranties
 The App is provided “as is” without warranties of any kind to the maximum extent permitted by law.
@@ -99,16 +100,18 @@ Questions about these Terms: use the developer contact email published with the 
 }
 
 /// <summary>
-/// Optional hosted URLs for store console fields. Leave empty until pages are published on the web.
-/// In-app screens remain the source of truth for the client.
+/// Public URLs for App Store Connect / Google Play Console.
+/// Mirrored markdown lives in the repo under /docs (same branch as this client).
 /// </summary>
 public static class LegalUrls
 {
-    /// <summary>Public Privacy Policy URL for App Store / Google Play consoles (optional).</summary>
-    public const string PrivacyPolicy = "";
+    /// <summary>Public Privacy Policy URL for App Store / Google Play consoles.</summary>
+    public const string PrivacyPolicy =
+        "https://github.com/ChubrykDima/ImproveYourself/blob/master/docs/privacy-policy.md";
 
-    /// <summary>Public Terms of Service URL for App Store / Google Play consoles (optional).</summary>
-    public const string TermsOfService = "";
+    /// <summary>Public Terms of Service URL for App Store / Google Play consoles.</summary>
+    public const string TermsOfService =
+        "https://github.com/ChubrykDima/ImproveYourself/blob/master/docs/terms-of-service.md";
 
     public static bool HasPrivacyPolicyUrl =>
         Uri.TryCreate(PrivacyPolicy, UriKind.Absolute, out var uri)
