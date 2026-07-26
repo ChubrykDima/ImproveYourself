@@ -28,6 +28,9 @@ public partial class RegisterPage : ContentPage
         EmailEntry.Placeholder = AppStrings.AuthEmailPlaceholder;
         PasswordEntry.Placeholder = AppStrings.AuthPasswordPlaceholder;
         RegisterButton.Text = AppStrings.AuthRegisterButton;
+        LegalHintLabel.Text = AppStrings.AuthRegisterLegalHint;
+        PrivacyPolicyButton.Text = AppStrings.LegalPrivacyTitle;
+        TermsButton.Text = AppStrings.LegalTermsTitle;
     }
 
     private async void OnRegisterClicked(object? sender, EventArgs e)
@@ -58,5 +61,15 @@ public partial class RegisterPage : ContentPage
 
         RegisterButton.IsEnabled = true;
         _isSubmitting = false;
+    }
+
+    private async void OnPrivacyPolicyClicked(object? sender, EventArgs e)
+    {
+        await Navigation.PushAsync(LegalDocumentPage.PrivacyPolicy());
+    }
+
+    private async void OnTermsClicked(object? sender, EventArgs e)
+    {
+        await Navigation.PushAsync(LegalDocumentPage.TermsOfService());
     }
 }

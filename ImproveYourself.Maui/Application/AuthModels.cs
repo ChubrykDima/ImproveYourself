@@ -19,4 +19,5 @@ public sealed record AuthTokensResponse(
 public sealed record AuthOperationResult(
     bool Succeeded,
     string Message,
-    AuthTokensResponse? Tokens = null);
+    AuthTokensResponse? Tokens = null,
+    bool BackendEndpointMissing = false);

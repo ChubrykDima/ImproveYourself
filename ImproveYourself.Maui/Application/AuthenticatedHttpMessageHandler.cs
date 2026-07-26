@@ -25,6 +25,12 @@ public sealed class AuthenticatedHttpMessageHandler : DelegatingHandler
             return response;
         }
 
+        // No local session / no bearer was sent — do not attempt refresh.
+        if (string.IsNullOrWhiteSpace(_authService.AccessToken))
+        {
+            return response;
+        }
+
         response.Dispose();
 
         if (!await _authService.TryRefreshAsync(cancellationToken))
@@ -69,6 +75,11 @@ public sealed class AuthenticatedHttpMessageHandler : DelegatingHandler
 
         foreach (var header in request.Headers)
         {
+            if (header.Key.Equals("Authorization", StringComparison.OrdinalIgnoreCase))
+            {
+                continue;
+            }
+
             clone.Headers.TryAddWithoutValidation(header.Key, header.Value);
         }
 
