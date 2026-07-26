@@ -7,6 +7,7 @@ public partial class ForgotPasswordPage : ContentPage
 {
     private readonly AppState _appState;
     private bool _isSubmitting;
+    private bool _isConfirming;
 
     public ForgotPasswordPage(AppState appState, string? prefillEmail = null)
     {
@@ -23,6 +24,12 @@ public partial class ForgotPasswordPage : ContentPage
         DescriptionLabel.Text = AppStrings.AuthForgotPasswordDescription;
         EmailEntry.Placeholder = AppStrings.AuthEmailPlaceholder;
         SubmitButton.Text = AppStrings.AuthForgotPasswordSubmit;
+        ShowConfirmButton.Text = AppStrings.AuthResetHaveCodeButton;
+        ConfirmTitleLabel.Text = AppStrings.AuthResetConfirmTitle;
+        ConfirmDescriptionLabel.Text = AppStrings.AuthResetConfirmDescription;
+        TokenEntry.Placeholder = AppStrings.AuthResetTokenPlaceholder;
+        NewPasswordEntry.Placeholder = AppStrings.AuthNewPasswordPlaceholder;
+        ConfirmButton.Text = AppStrings.AuthResetConfirmSubmit;
     }
 
     private async void OnSubmitClicked(object? sender, EventArgs e)
@@ -36,20 +43,76 @@ public partial class ForgotPasswordPage : ContentPage
         SubmitButton.IsEnabled = false;
         StatusLabel.Text = AppStrings.AuthWorking;
 
-        var result = await _appState.RequestPasswordResetAsync(EmailEntry.Text ?? string.Empty);
-        StatusLabel.Text = result.Message;
-
-        if (result.Succeeded)
+        try
         {
-            await DisplayAlertAsync(AppStrings.AuthForgotPasswordTitle, result.Message, AppStrings.OK);
-            await Navigation.PopAsync();
+            var result = await _appState.RequestPasswordResetAsync(EmailEntry.Text ?? string.Empty);
+            StatusLabel.Text = result.Message;
+
+            if (result.Succeeded)
+            {
+                ShowConfirmSection(result.ResetToken);
+                await DisplayAlertAsync(AppStrings.AuthForgotPasswordTitle, result.Message, AppStrings.OK);
+            }
+            else if (result.BackendEndpointMissing)
+            {
+                await DisplayAlertAsync(AppStrings.AuthForgotPasswordTitle, result.Message, AppStrings.OK);
+            }
         }
-        else if (result.BackendEndpointMissing)
+        finally
         {
-            await DisplayAlertAsync(AppStrings.AuthForgotPasswordTitle, result.Message, AppStrings.OK);
+            SubmitButton.IsEnabled = true;
+            _isSubmitting = false;
+        }
+    }
+
+    private void OnShowConfirmClicked(object? sender, EventArgs e)
+    {
+        ShowConfirmSection(prefillToken: null);
+    }
+
+    private async void OnConfirmClicked(object? sender, EventArgs e)
+    {
+        if (_isConfirming)
+        {
+            return;
         }
 
-        SubmitButton.IsEnabled = true;
-        _isSubmitting = false;
+        _isConfirming = true;
+        ConfirmButton.IsEnabled = false;
+        ConfirmStatusLabel.Text = AppStrings.AuthWorking;
+
+        try
+        {
+            var result = await _appState.ConfirmPasswordResetAsync(
+                EmailEntry.Text ?? string.Empty,
+                TokenEntry.Text ?? string.Empty,
+                NewPasswordEntry.Text ?? string.Empty);
+
+            ConfirmStatusLabel.Text = result.Message;
+
+            if (result.Succeeded)
+            {
+                await DisplayAlertAsync(AppStrings.AuthResetConfirmTitle, result.Message, AppStrings.OK);
+                await Navigation.PopAsync();
+            }
+            else if (result.BackendEndpointMissing)
+            {
+                await DisplayAlertAsync(AppStrings.AuthResetConfirmTitle, result.Message, AppStrings.OK);
+            }
+        }
+        finally
+        {
+            ConfirmButton.IsEnabled = true;
+            _isConfirming = false;
+        }
+    }
+
+    private void ShowConfirmSection(string? prefillToken)
+    {
+        ConfirmBorder.IsVisible = true;
+        if (!string.IsNullOrWhiteSpace(prefillToken))
+        {
+            TokenEntry.Text = prefillToken;
+        }
     }
 }

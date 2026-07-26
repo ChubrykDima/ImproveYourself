@@ -22,6 +22,14 @@ public interface IAuthService
 
     Task<AuthOperationResult> RequestPasswordResetAsync(string email, CancellationToken cancellationToken = default);
 
+    Task<AuthOperationResult> ConfirmPasswordResetAsync(
+        string email,
+        string token,
+        string newPassword,
+        CancellationToken cancellationToken = default);
+
+    Task<AccountExportResult> ExportAccountAsync(CancellationToken cancellationToken = default);
+
     Task<AuthOperationResult> DeleteAccountAsync(CancellationToken cancellationToken = default);
 
     Task<bool> TryRestoreSessionAsync(CancellationToken cancellationToken = default);
@@ -78,7 +86,7 @@ public sealed class AuthService : IAuthService
 
     /// <summary>
     /// Requests a password-reset email.
-    /// Backend dependency: POST /api/auth/forgot-password (not deployed yet on production).
+    /// Backend: POST /api/auth/password-reset/request
     /// </summary>
     public async Task<AuthOperationResult> RequestPasswordResetAsync(
         string email,
@@ -99,7 +107,7 @@ public sealed class AuthService : IAuthService
         try
         {
             using var response = await _httpClient.PostAsJsonAsync(
-                new Uri(baseUri, "api/auth/forgot-password"),
+                new Uri(baseUri, "api/auth/password-reset/request"),
                 new { email = normalizedEmail },
                 ApiJsonOptions,
                 cancellationToken);
@@ -114,12 +122,16 @@ public sealed class AuthService : IAuthService
 
             if (response.IsSuccessStatusCode)
             {
-                return new AuthOperationResult(true, AppStrings.AuthForgotPasswordSent);
+                var payload = await response.Content.ReadFromJsonAsync<PasswordResetRequestResponse>(
+                    ApiJsonOptions,
+                    cancellationToken);
+
+                return new AuthOperationResult(
+                    true,
+                    AppStrings.AuthForgotPasswordSent,
+                    ResetToken: payload?.ResetToken);
             }
 
-            // Do not map bare 401 → "endpoint missing": when the route ships, 401 must surface as a
-            // normal failure. Current production may still 401 unmapped public routes — show a soft
-            // unavailable message without claiming the contract is absent.
             if (response.StatusCode == HttpStatusCode.Unauthorized)
             {
                 return new AuthOperationResult(false, AppStrings.AuthForgotPasswordUnavailable);
@@ -138,9 +150,151 @@ public sealed class AuthService : IAuthService
     }
 
     /// <summary>
+    /// Confirms password reset with the emailed one-time token.
+    /// Backend: POST /api/auth/password-reset/confirm
+    /// </summary>
+    public async Task<AuthOperationResult> ConfirmPasswordResetAsync(
+        string email,
+        string token,
+        string newPassword,
+        CancellationToken cancellationToken = default)
+    {
+        var normalizedEmail = (email ?? string.Empty).Trim();
+        var normalizedToken = (token ?? string.Empty).Trim();
+        var password = newPassword ?? string.Empty;
+
+        if (string.IsNullOrWhiteSpace(normalizedEmail))
+        {
+            return new AuthOperationResult(false, AppStrings.AuthEmailRequired);
+        }
+
+        if (string.IsNullOrWhiteSpace(normalizedToken))
+        {
+            return new AuthOperationResult(false, AppStrings.AuthResetTokenRequired);
+        }
+
+        if (password.Length < 8)
+        {
+            return new AuthOperationResult(false, AppStrings.AuthPasswordTooShort);
+        }
+
+        var baseUri = ReadBackendBaseUri();
+        if (baseUri is null)
+        {
+            return new AuthOperationResult(false, AppStrings.BackendProvideUrl);
+        }
+
+        try
+        {
+            using var response = await _httpClient.PostAsJsonAsync(
+                new Uri(baseUri, "api/auth/password-reset/confirm"),
+                new { email = normalizedEmail, token = normalizedToken, newPassword = password },
+                ApiJsonOptions,
+                cancellationToken);
+
+            if (IsMissingEndpointStatus(response.StatusCode))
+            {
+                return new AuthOperationResult(
+                    false,
+                    AppStrings.AuthForgotPasswordBackendMissing,
+                    BackendEndpointMissing: true);
+            }
+
+            if (response.IsSuccessStatusCode || response.StatusCode == HttpStatusCode.NoContent)
+            {
+                return new AuthOperationResult(true, AppStrings.AuthResetPasswordSucceeded);
+            }
+
+            if (response.StatusCode == HttpStatusCode.Unauthorized)
+            {
+                return new AuthOperationResult(false, AppStrings.AuthResetTokenInvalid);
+            }
+
+            return new AuthOperationResult(false, await ReadErrorMessageAsync(response, cancellationToken));
+        }
+        catch (TaskCanceledException)
+        {
+            return new AuthOperationResult(false, AppStrings.BackendTimeout);
+        }
+        catch (Exception ex)
+        {
+            return new AuthOperationResult(false, string.Format(AppStrings.BackendConnectionFailedFormat, ex.Message));
+        }
+    }
+
+    /// <summary>
+    /// Downloads account data JSON (profile, challenges, analytics).
+    /// Backend: GET /api/auth/export — refreshes and retries once on 401.
+    /// </summary>
+    public async Task<AccountExportResult> ExportAccountAsync(CancellationToken cancellationToken = default)
+    {
+        if (!IsLoggedIn)
+        {
+            return new AccountExportResult(false, AppStrings.AuthLoginRequired);
+        }
+
+        var baseUri = ReadBackendBaseUri();
+        if (baseUri is null)
+        {
+            return new AccountExportResult(false, AppStrings.BackendProvideUrl);
+        }
+
+        try
+        {
+            var response = await SendAuthenticatedAsync(HttpMethod.Get, baseUri, "api/auth/export", cancellationToken);
+
+            if (response.StatusCode == HttpStatusCode.Unauthorized)
+            {
+                response.Dispose();
+
+                if (!await TryRefreshAsync(cancellationToken))
+                {
+                    await ForceClearSessionAsync(cancellationToken);
+                    return new AccountExportResult(false, AppStrings.AuthSessionExpired);
+                }
+
+                response = await SendAuthenticatedAsync(HttpMethod.Get, baseUri, "api/auth/export", cancellationToken);
+
+                if (response.StatusCode == HttpStatusCode.Unauthorized)
+                {
+                    response.Dispose();
+                    await ForceClearSessionAsync(cancellationToken);
+                    return new AccountExportResult(false, AppStrings.AuthSessionExpired);
+                }
+            }
+
+            using (response)
+            {
+                if (IsMissingEndpointStatus(response.StatusCode))
+                {
+                    return new AccountExportResult(
+                        false,
+                        AppStrings.AuthExportBackendMissing,
+                        BackendEndpointMissing: true);
+                }
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    return new AccountExportResult(false, await ReadErrorMessageAsync(response, cancellationToken));
+                }
+
+                var json = await response.Content.ReadAsStringAsync(cancellationToken);
+                return new AccountExportResult(true, AppStrings.AuthExportSucceeded, json);
+            }
+        }
+        catch (TaskCanceledException)
+        {
+            return new AccountExportResult(false, AppStrings.BackendTimeout);
+        }
+        catch (Exception ex)
+        {
+            return new AccountExportResult(false, string.Format(AppStrings.BackendConnectionFailedFormat, ex.Message));
+        }
+    }
+
+    /// <summary>
     /// Deletes the signed-in account on the server, then clears the local session.
-    /// Backend dependency: DELETE /api/auth/account (not deployed yet on production).
-    /// Auth HttpClient has no auto-refresh handler — this method refreshes and retries once on 401.
+    /// Backend: DELETE /api/auth/account — refreshes and retries once on 401.
     /// </summary>
     public async Task<AuthOperationResult> DeleteAccountAsync(CancellationToken cancellationToken = default)
     {
@@ -157,7 +311,7 @@ public sealed class AuthService : IAuthService
 
         try
         {
-            var response = await SendDeleteAccountAsync(baseUri, cancellationToken);
+            var response = await SendAuthenticatedAsync(HttpMethod.Delete, baseUri, "api/auth/account", cancellationToken);
 
             if (response.StatusCode == HttpStatusCode.Unauthorized)
             {
@@ -171,7 +325,7 @@ public sealed class AuthService : IAuthService
                     return new AuthOperationResult(false, AppStrings.AuthSessionExpired);
                 }
 
-                response = await SendDeleteAccountAsync(baseUri, cancellationToken);
+                response = await SendAuthenticatedAsync(HttpMethod.Delete, baseUri, "api/auth/account", cancellationToken);
 
                 if (response.StatusCode == HttpStatusCode.Unauthorized)
                 {
@@ -210,7 +364,11 @@ public sealed class AuthService : IAuthService
         }
     }
 
-    private async Task<HttpResponseMessage> SendDeleteAccountAsync(Uri baseUri, CancellationToken cancellationToken)
+    private async Task<HttpResponseMessage> SendAuthenticatedAsync(
+        HttpMethod method,
+        Uri baseUri,
+        string relativePath,
+        CancellationToken cancellationToken)
     {
         var accessToken = AccessToken;
         if (string.IsNullOrWhiteSpace(accessToken))
@@ -218,7 +376,7 @@ public sealed class AuthService : IAuthService
             return new HttpResponseMessage(HttpStatusCode.Unauthorized);
         }
 
-        using var request = new HttpRequestMessage(HttpMethod.Delete, new Uri(baseUri, "api/auth/account"));
+        using var request = new HttpRequestMessage(method, new Uri(baseUri, relativePath));
         request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue(
             "Bearer",
             accessToken);

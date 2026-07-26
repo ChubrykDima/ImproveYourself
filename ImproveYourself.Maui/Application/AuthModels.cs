@@ -20,4 +20,13 @@ public sealed record AuthOperationResult(
     bool Succeeded,
     string Message,
     AuthTokensResponse? Tokens = null,
+    bool BackendEndpointMissing = false,
+    string? ResetToken = null);
+
+public sealed record PasswordResetRequestResponse(bool Accepted, string? ResetToken);
+
+public sealed record AccountExportResult(
+    bool Succeeded,
+    string Message,
+    string? JsonPayload = null,
     bool BackendEndpointMissing = false);

@@ -39,6 +39,7 @@ We do not sell your personal data. Data may be processed by infrastructure provi
 • Use the App offline without creating an account.
 • Sign out at any time in Settings.
 • Delete your account in Settings. If the server cannot complete deletion, the App tells you and you can still sign out locally; contact support for follow-up.
+• Export your cloud account data from Settings (JSON download/share) while signed in.
 • Contact us about privacy requests at the support email listed in the store listing / app metadata.
 
 7. Children

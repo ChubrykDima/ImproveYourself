@@ -124,6 +124,9 @@
                     <Button x:Name="LogoutButton"
                             Clicked="OnLogoutClicked" />
 
+                    <Button x:Name="ExportAccountButton"
+                            Clicked="OnExportAccountClicked" />
+
                     <Button x:Name="DeleteAccountButton"
                             Clicked="OnDeleteAccountClicked" />
                 </VerticalStackLayout>
