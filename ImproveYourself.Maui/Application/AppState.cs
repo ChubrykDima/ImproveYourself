@@ -350,6 +350,16 @@ public sealed class AppState : INotifyPropertyChanged
     public Task<AuthOperationResult> RequestPasswordResetAsync(string email, CancellationToken cancellationToken = default) =>
         _authService.RequestPasswordResetAsync(email, cancellationToken);
 
+    public Task<AuthOperationResult> ConfirmPasswordResetAsync(
+        string email,
+        string token,
+        string newPassword,
+        CancellationToken cancellationToken = default) =>
+        _authService.ConfirmPasswordResetAsync(email, token, newPassword, cancellationToken);
+
+    public Task<AccountExportResult> ExportAccountAsync(CancellationToken cancellationToken = default) =>
+        _authService.ExportAccountAsync(cancellationToken);
+
     public Task<AuthOperationResult> DeleteAccountAsync(CancellationToken cancellationToken = default) =>
         _authService.DeleteAccountAsync(cancellationToken);
 
