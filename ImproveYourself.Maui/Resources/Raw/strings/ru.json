@@ -197,6 +197,7 @@
   "AuthExportButton": "Экспорт данных",
   "AuthExportTitle": "Экспорт данных",
   "AuthExportSucceeded": "Экспорт готов — можно сохранить или отправить файл.",
+  "AuthExportFailed": "Не удалось экспортировать или поделиться данными. Попробуйте ещё раз.",
   "AuthExportBackendMissing": "Экспорт данных на сервере пока недоступен.",
   "AuthDeleteAccountButton": "Удалить аккаунт",
   "AuthDeleteAccountTitle": "Удаление аккаунта",

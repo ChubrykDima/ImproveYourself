@@ -176,20 +176,21 @@ public partial class SettingsPage : ContentPage
     {
         ExportAccountButton.IsEnabled = false;
         BackendStatusLabel.Text = AppStrings.AuthWorking;
+        string? filePath = null;
 
         try
         {
             var result = await _appState.ExportAccountAsync();
-            BackendStatusLabel.Text = result.Message;
 
             if (!result.Succeeded || string.IsNullOrWhiteSpace(result.JsonPayload))
             {
+                BackendStatusLabel.Text = result.Message;
                 await DisplayAlertAsync(AppStrings.AuthExportTitle, result.Message, AppStrings.OK);
                 return;
             }
 
             var fileName = $"improveyourself-export-{DateTime.UtcNow:yyyyMMdd-HHmmss}.json";
-            var filePath = Path.Combine(FileSystem.CacheDirectory, fileName);
+            filePath = Path.Combine(FileSystem.CacheDirectory, fileName);
             await File.WriteAllTextAsync(filePath, result.JsonPayload);
 
             await Share.Default.RequestAsync(new ShareFileRequest
@@ -197,9 +198,28 @@ public partial class SettingsPage : ContentPage
                 Title = AppStrings.AuthExportTitle,
                 File = new ShareFile(filePath),
             });
+
+            BackendStatusLabel.Text = AppStrings.AuthExportSucceeded;
+        }
+        catch (Exception)
+        {
+            BackendStatusLabel.Text = AppStrings.AuthExportFailed;
+            await DisplayAlertAsync(AppStrings.AuthExportTitle, AppStrings.AuthExportFailed, AppStrings.OK);
         }
         finally
         {
+            if (filePath is not null)
+            {
+                try
+                {
+                    File.Delete(filePath);
+                }
+                catch
+                {
+                    // Best-effort cleanup of the temporary export file.
+                }
+            }
+
             ExportAccountButton.IsEnabled = true;
         }
     }

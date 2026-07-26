@@ -223,6 +223,7 @@ public static class AppStrings
     public static string AuthExportButton => Get("AuthExportButton");
     public static string AuthExportTitle => Get("AuthExportTitle");
     public static string AuthExportSucceeded => Get("AuthExportSucceeded");
+    public static string AuthExportFailed => Get("AuthExportFailed");
     public static string AuthExportBackendMissing => Get("AuthExportBackendMissing");
     public static string AuthDeleteAccountButton => Get("AuthDeleteAccountButton");
     public static string AuthDeleteAccountTitle => Get("AuthDeleteAccountTitle");

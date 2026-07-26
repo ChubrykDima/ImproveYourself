@@ -50,7 +50,9 @@ public partial class ForgotPasswordPage : ContentPage
 
             if (result.Succeeded)
             {
-                ShowConfirmSection(result.ResetToken);
+                // Always replace the token field: a new request revokes prior unused codes.
+                // In production the API does not echo ResetToken, so clear any stale pasted value.
+                ShowConfirmSection(result.ResetToken, replaceTokenField: true);
                 await DisplayAlertAsync(AppStrings.AuthForgotPasswordTitle, result.Message, AppStrings.OK);
             }
             else if (result.BackendEndpointMissing)
@@ -107,10 +109,15 @@ public partial class ForgotPasswordPage : ContentPage
         }
     }
 
-    private void ShowConfirmSection(string? prefillToken)
+    private void ShowConfirmSection(string? prefillToken, bool replaceTokenField = false)
     {
         ConfirmBorder.IsVisible = true;
-        if (!string.IsNullOrWhiteSpace(prefillToken))
+
+        if (replaceTokenField)
+        {
+            TokenEntry.Text = prefillToken ?? string.Empty;
+        }
+        else if (!string.IsNullOrWhiteSpace(prefillToken))
         {
             TokenEntry.Text = prefillToken;
         }

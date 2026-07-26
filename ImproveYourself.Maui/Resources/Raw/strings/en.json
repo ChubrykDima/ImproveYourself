@@ -197,6 +197,7 @@
   "AuthExportButton": "Export my data",
   "AuthExportTitle": "Export data",
   "AuthExportSucceeded": "Your data export is ready to share.",
+  "AuthExportFailed": "Could not export or share your data. Try again.",
   "AuthExportBackendMissing": "Data export is not available on the server yet.",
   "AuthDeleteAccountButton": "Delete account",
   "AuthDeleteAccountTitle": "Delete account",
