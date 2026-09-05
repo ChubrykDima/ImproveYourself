@@ -64,6 +64,8 @@ public sealed class DailyChallenge
     // stable ordinal, independently from the calendar date on which it is completed.
     public int ProgramDayNumber { get; set; }
 
+    public string? CompletedAt { get; set; }
+
     public string Title { get; set; } = string.Empty;
 
     public ChallengeStatus Status { get; set; }
