@@ -103,7 +103,8 @@
                     Style="{StaticResource CardBorderStyle}"
                     IsVisible="False">
                 <VerticalStackLayout Spacing="10">
-                    <Label Text="Backend"
+                    <Label x:Name="BackendStatsTitleLabel"
+                           Text=""
                            Style="{StaticResource SubtitleLabelStyle}" />
                     <Label x:Name="BackendStatsLabel"
                            Text=""

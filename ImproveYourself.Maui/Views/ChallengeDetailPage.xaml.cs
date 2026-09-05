@@ -7,16 +7,16 @@ namespace ImproveYourself.Maui.Views;
 public partial class ChallengeDetailPage : ContentPage
 {
     private readonly AppState _appState;
-    private string _currentDate;
+    private int _currentProgramDay;
     private DailyChallenge? _challenge;
     private bool _isQuoteNoteVisible;
     private bool _isOpeningFinalAssessment;
 
-    public ChallengeDetailPage(AppState appState, string date)
+    public ChallengeDetailPage(AppState appState, int programDay)
     {
         InitializeComponent();
         _appState = appState;
-        _currentDate = date;
+        _currentProgramDay = programDay;
 
         Title = AppStrings.ChallengeDetail_Title;
         CompletedTextLabel.Text = AppStrings.ChallengeCompleted;
@@ -28,7 +28,7 @@ public partial class ChallengeDetailPage : ContentPage
     protected override void OnAppearing()
     {
         base.OnAppearing();
-        _challenge = string.IsNullOrWhiteSpace(_currentDate) ? null : _appState.EnsureChallengeForDate(_currentDate);
+        _challenge = _currentProgramDay <= 0 ? null : _appState.EnsureChallengeForProgramDay(_currentProgramDay);
         Render();
     }
 
@@ -55,7 +55,7 @@ public partial class ChallengeDetailPage : ContentPage
         var totalSteps = Math.Max(_challenge.Steps.Count, 1);
         var isCompleted = _challenge.Status == ChallengeStatus.Completed;
 
-        DateLabel.Text = string.Format(AppStrings.DateFormat, DateHelpers.ToDisplayDate(_challenge.Date));
+        DateLabel.Text = string.Format(AppStrings.ProgramDayFormat, _challenge.ProgramDayNumber);
         ChallengeTitleLabel.Text = ChallengeTextLocalizer.GetDisplayTitle(_challenge.Title);
         ProgressLabel.Text = string.Format(AppStrings.ProgressFormat, completedSteps, totalSteps);
         RenderPersonalization();
@@ -252,7 +252,7 @@ public partial class ChallengeDetailPage : ContentPage
 
         var button = new Button
         {
-            Text = step.Status.ToActionTitle(),
+            Text = isCompleted ? AppStrings.ActionCompleted : AppStrings.ActionMarkCompleted,
             Style = (Style)Microsoft.Maui.Controls.Application.Current!.Resources[isCompleted ? "GhostButtonStyle" : "PrimaryButtonStyle"],
             IsEnabled = !isCompleted,
         };
@@ -272,14 +272,8 @@ public partial class ChallengeDetailPage : ContentPage
             return;
         }
 
-        _challenge = _appState.AdvanceStep(_challenge.Date, stepType);
-
-        if (_challenge.Status == ChallengeStatus.Completed)
-        {
-            _challenge = _appState.AdvanceToNextDay();
-        }
-
-        _currentDate = _challenge.Date;
+        _challenge = _appState.AdvanceStep(_challenge.ProgramDayNumber, stepType);
+        _currentProgramDay = _challenge.ProgramDayNumber;
         Render();
         _ = _appState.SyncBackendAsync();
         await TryOpenFinalAssessmentAsync();
@@ -295,7 +289,7 @@ public partial class ChallengeDetailPage : ContentPage
         }
 
         _challenge = _appState.AdvanceToNextDay();
-        _currentDate = _challenge.Date;
+        _currentProgramDay = _challenge.ProgramDayNumber;
         Render();
         _ = _appState.SyncBackendAsync();
     }

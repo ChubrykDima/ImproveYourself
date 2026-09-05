@@ -42,6 +42,8 @@ public static class AppStrings
     public static string TryOpenInSecond => Get("TryOpenInSecond");
     public static string FocusOnDate => Get("FocusOnDate");
     public static string DateStepsFormat => Get("DateStepsFormat");
+    public static string ProgramDayFormat => Get("ProgramDayFormat");
+    public static string ProgramDayStepsFormat => Get("ProgramDayStepsFormat");
     public static string StatisticsButtonTitle => Get("StatisticsButtonTitle");
     public static string StatisticsButtonSubtitle => Get("StatisticsButtonSubtitle");
     public static string CalendarButtonTitle => Get("CalendarButtonTitle");
@@ -128,6 +130,7 @@ public static class AppStrings
     public static string TaskCategories => Get("TaskCategories");
     public static string MorningPractice => Get("MorningPractice");
     public static string DailyChallengeName => Get("DailyChallengeName");
+    public static string BackendStatsFormat => Get("BackendStatsFormat");
     public static string DayMon => Get("DayMon");
     public static string DayTue => Get("DayTue");
     public static string DayWed => Get("DayWed");

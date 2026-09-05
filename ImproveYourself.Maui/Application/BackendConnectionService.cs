@@ -88,7 +88,6 @@ public sealed class BackendConnectionService : IBackendConnectionService, IBacke
                 (_, false, true, _) => AppStrings.BackendNoDb,
                 (_, _, false, HttpStatusCode.Unauthorized) => AppStrings.AuthSessionExpired,
                 (_, _, false, _) => string.Format(AppStrings.BackendBadStatusFormat, (int)authStatus),
-                _ => AppStrings.BackendUnavailable,
             };
 
             return new BackendConnectionResult(true, healthOk, readyOk, authorizationOk, message);

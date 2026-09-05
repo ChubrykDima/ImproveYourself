@@ -8,9 +8,13 @@ public interface IChallengeRepository
 
     void ReloadBundledContent();
 
+    void RelocalizeChallenges(SelfAssessmentSnapshot? personalizationSnapshot);
+
     DailyChallenge? GetChallengeByDate(string date);
 
     DailyChallenge GetOrCreateChallenge(string date, SelfAssessmentSnapshot? personalizationSnapshot = null);
+
+    DailyChallenge GetChallengeForProgramDay(int programDay, SelfAssessmentSnapshot? personalizationSnapshot = null);
 
     void ApplyPersonalization(SelfAssessmentSnapshot snapshot);
 

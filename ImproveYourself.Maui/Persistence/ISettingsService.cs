@@ -8,9 +8,9 @@ public interface ISettingsService
 
     void WriteOnboardingCompleted(bool value);
 
-    string ReadCurrentChallengeDate();
+    string ReadCurrentProgramDay();
 
-    void WriteCurrentChallengeDate(string value);
+    void WriteCurrentProgramDay(int value);
 
     string ReadDisplayName();
 

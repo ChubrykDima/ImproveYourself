@@ -1,5 +1,6 @@
 using System.Globalization;
 using System.Text.Json;
+using ImproveYourself.Maui.Domain;
 using ImproveYourself.Maui.Persistence;
 using ImproveYourself.Maui.Resources.Strings;
 
@@ -16,6 +17,8 @@ public sealed class LocalizationService : ILocalizationService
 
     public string CurrentLanguage { get; private set; } = FallbackLanguage;
 
+    public event EventHandler? LanguageChanged;
+
     public LocalizationService(ISettingsService settingsService)
     {
         _settingsService = settingsService;
@@ -31,13 +34,21 @@ public sealed class LocalizationService : ILocalizationService
     public void SetLanguage(string languageCode)
     {
         var language = ResolveLanguage(languageCode);
+
+        if (string.Equals(language, CurrentLanguage, StringComparison.Ordinal))
+        {
+            return;
+        }
+
         _settingsService.WriteLanguage(language);
         ApplyLanguage(language);
+        LanguageChanged?.Invoke(this, EventArgs.Empty);
     }
 
     private void ApplyLanguage(string language)
     {
         CurrentLanguage = language;
+        ChallengeTemplateLanguage.SetLanguage(language);
 
         var strings = LoadStrings(language);
         AppStrings.Load(strings);

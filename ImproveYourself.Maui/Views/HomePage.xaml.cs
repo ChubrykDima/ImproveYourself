@@ -68,13 +68,9 @@ public partial class HomePage : ContentPage
         var completedSteps = ProgressCalculator.CountCompletedSteps(_appState.TodayChallenge.Steps);
         var totalSteps = Math.Max(_appState.TodayChallenge.Steps.Count, 1);
         var isCompleted = _appState.TodayChallenge.Status == ChallengeStatus.Completed;
-        var isToday = _appState.TodayChallenge.Date == DateHelpers.ToIsoDate(DateTime.Now);
-
-        ChallengeLeadLabel.Text = isToday
-            ? AppStrings.MainFocusOfDay
-            : string.Format(AppStrings.FocusOnDate, DateHelpers.ToDisplayDate(_appState.TodayChallenge.Date));
+        ChallengeLeadLabel.Text = string.Format(AppStrings.ProgramDayFormat, _appState.TodayChallenge.ProgramDayNumber);
         ChallengeTitleLabel.Text = ChallengeTextLocalizer.GetDisplayTitle(_appState.TodayChallenge.Title);
-        ChallengeSubtitleLabel.Text = string.Format(AppStrings.DateStepsFormat, DateHelpers.ToDisplayDate(_appState.TodayChallenge.Date), completedSteps, totalSteps);
+        ChallengeSubtitleLabel.Text = string.Format(AppStrings.ProgramDayStepsFormat, completedSteps, totalSteps);
         RenderPersonalization();
         ChallengeProgressBar.Progress = completedSteps / (double)totalSteps;
         ChallengeButton.Text = isCompleted
@@ -102,12 +98,12 @@ public partial class HomePage : ContentPage
         {
             var nextChallenge = _appState.AdvanceToNextDay();
             _appState.TrackChallengeOpened(nextChallenge);
-            await Navigation.PushAsync(new ChallengeDetailPage(_appState, nextChallenge.Date));
+            await Navigation.PushAsync(new ChallengeDetailPage(_appState, nextChallenge.ProgramDayNumber));
             return;
         }
 
         _appState.TrackChallengeOpened(_appState.TodayChallenge);
-        await Navigation.PushAsync(new ChallengeDetailPage(_appState, _appState.TodayChallenge.Date));
+        await Navigation.PushAsync(new ChallengeDetailPage(_appState, _appState.TodayChallenge.ProgramDayNumber));
     }
 
     private async void OnOpenStatisticsClicked(object? sender, EventArgs e)

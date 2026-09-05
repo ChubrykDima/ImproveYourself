@@ -324,7 +324,7 @@ public static class ChallengePersonalizer
     {
         var parsed = DateHelpers.TryParseIsoDate(date, out var dateOnly)
             ? dateOnly
-            : DateOnly.FromDateTime(DateTime.Now);
+            : DateOnly.FromDateTime(DateTime.UtcNow);
 
         return parsed.Year + ((parsed.Month - 1) * 31) + parsed.Day;
     }

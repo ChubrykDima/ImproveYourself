@@ -25,7 +25,7 @@ public sealed class AppState : INotifyPropertyChanged
     private bool _notificationsEnabled;
     private string _backendBaseUrl = string.Empty;
     private string _backendSyncMessage = string.Empty;
-    private string _currentChallengeDate = string.Empty;
+    private int _currentProgramDay;
     private DailyChallenge? _todayChallenge;
     private BackendStatsSnapshot? _backendStats;
     private StreakSnapshot _streakSnapshot = StreakSnapshot.Empty;
@@ -101,10 +101,10 @@ public sealed class AppState : INotifyPropertyChanged
         private set => SetProperty(ref _backendSyncMessage, value);
     }
 
-    public string CurrentChallengeDate
+    public int CurrentProgramDay
     {
-        get => _currentChallengeDate;
-        private set => SetProperty(ref _currentChallengeDate, value);
+        get => _currentProgramDay;
+        private set => SetProperty(ref _currentProgramDay, value);
     }
 
     public DailyChallenge? TodayChallenge
@@ -181,7 +181,7 @@ public sealed class AppState : INotifyPropertyChanged
             _challengeRepository.ApplyPersonalization(StartSelfAssessment);
         }
 
-        SetCurrentChallengeDateInternal(ResolveCurrentChallengeDate());
+        SetCurrentProgramDayInternal(ResolveCurrentProgramDay());
 
         IsHydrated = true;
 
@@ -202,11 +202,11 @@ public sealed class AppState : INotifyPropertyChanged
         return Task.CompletedTask;
     }
 
-    public DailyChallenge EnsureChallengeForDate(string date)
+    public DailyChallenge EnsureChallengeForProgramDay(int programDay)
     {
-        var challenge = _challengeRepository.GetOrCreateChallenge(date, StartSelfAssessment);
+        var challenge = _challengeRepository.GetChallengeForProgramDay(programDay, StartSelfAssessment);
 
-        if (date == CurrentChallengeDate)
+        if (programDay == CurrentProgramDay)
         {
             TodayChallenge = challenge;
         }
@@ -220,86 +220,77 @@ public sealed class AppState : INotifyPropertyChanged
             AnalyticsEventNames.ChallengeOpened,
             new Dictionary<string, string>
             {
-                ["challenge_date"] = challenge.Date,
+                ["program_day"] = challenge.ProgramDayNumber.ToString(),
                 ["challenge_status"] = challenge.Status.ToString().ToLowerInvariant(),
             });
     }
 
-    public DailyChallenge SetCurrentChallengeDate(string date)
+    public DailyChallenge SetCurrentProgramDay(int programDay)
     {
-        var nextDate = ResolveRequestedChallengeDate(date);
-        SetCurrentChallengeDateInternal(nextDate);
+        var nextDay = Math.Clamp(programDay, 1, DateHelpers.TargetMonthlyDays);
+        SetCurrentProgramDayInternal(nextDay);
 
-        return TodayChallenge ?? _challengeRepository.GetOrCreateChallenge(nextDate, StartSelfAssessment);
+        return TodayChallenge ?? _challengeRepository.GetChallengeForProgramDay(nextDay, StartSelfAssessment);
     }
 
     public DailyChallenge AdvanceToNextDay()
     {
-        var referenceDate = string.IsNullOrWhiteSpace(CurrentChallengeDate)
-            ? ResolveCurrentChallengeDate()
-            : CurrentChallengeDate;
+        var referenceDay = CurrentProgramDay == 0 ? ResolveCurrentProgramDay() : CurrentProgramDay;
 
         if (TodayChallenge is not null
-            && TodayChallenge.Date == referenceDate
+            && TodayChallenge.ProgramDayNumber == referenceDay
             && TodayChallenge.Status != ChallengeStatus.Completed)
         {
             return TodayChallenge;
         }
 
-        return SetCurrentChallengeDate(DateHelpers.AddDays(referenceDate, 1));
+        if (referenceDay >= DateHelpers.TargetMonthlyDays)
+        {
+            return TodayChallenge ?? SetCurrentProgramDay(referenceDay);
+        }
+
+        return SetCurrentProgramDay(referenceDay + 1);
     }
 
-    public DailyChallenge AdvanceStep(string date, StepType stepType)
+    public DailyChallenge AdvanceStep(int programDay, StepType stepType)
     {
-        var before = _challengeRepository.GetOrCreateChallenge(date, StartSelfAssessment);
+        var before = _challengeRepository.GetChallengeForProgramDay(programDay, StartSelfAssessment);
         var previousChallengeStatus = before.Status;
         var previousStepStatus = before.Steps.FirstOrDefault(step => step.Type == stepType)?.Status;
-        var updated = _challengeRepository.AdvanceChallengeStepStatus(date, stepType);
+        var updated = _challengeRepository.AdvanceChallengeStepStatus(before.Date, stepType);
+        updated.ProgramDayNumber = programDay;
         var updatedStepStatus = updated.Steps.FirstOrDefault(step => step.Type == stepType)?.Status;
-        TrackStepTransition(date, stepType, previousStepStatus, updatedStepStatus);
-        TrackChallengeTransition(date, previousChallengeStatus, updated.Status);
-
-        // Use CurrentChallengeDate directly to avoid re-evaluating against the DB after the
-        // step update (which may have just completed the challenge, causing ResolveChallengeDate
-        // to return today's date instead of the active challenge date).
-        var referenceDate = string.IsNullOrWhiteSpace(CurrentChallengeDate)
-            ? ResolveCurrentChallengeDate()
-            : CurrentChallengeDate;
-        var isCurrentChallenge = date == referenceDate;
+        var programDayValue = programDay.ToString();
+        TrackStepTransition(programDayValue, stepType, previousStepStatus, updatedStepStatus);
+        TrackChallengeTransition(programDayValue, previousChallengeStatus, updated.Status);
+        var referenceDay = CurrentProgramDay == 0 ? ResolveCurrentProgramDay() : CurrentProgramDay;
+        var isCurrentChallenge = programDay == referenceDay;
 
         if (isCurrentChallenge)
         {
             TodayChallenge = updated;
 
-            if (updated.Status == ChallengeStatus.Completed)
-            {
-                return AdvanceToNextDay();
-            }
         }
 
-        LoadDerived(referenceDate);
+        LoadDerived();
         TodayChallenge = isCurrentChallenge
             ? updated
-            : (TodayChallenge is not null && TodayChallenge.Date == referenceDate
+            : (TodayChallenge is not null && TodayChallenge.ProgramDayNumber == referenceDay
                 ? TodayChallenge
-                : _challengeRepository.GetOrCreateChallenge(referenceDate, StartSelfAssessment));
+                : _challengeRepository.GetChallengeForProgramDay(referenceDay, StartSelfAssessment));
 
         return updated;
     }
 
     public void RefreshDerivedState()
     {
-        SetCurrentChallengeDateInternal(ResolveCurrentChallengeDate());
+        SetCurrentProgramDayInternal(ResolveCurrentProgramDay());
     }
 
     public void ReloadAfterLanguageChange()
     {
         _challengeRepository.ReloadBundledContent();
-
-        if (StartSelfAssessment is not null)
-        {
-            _challengeRepository.ApplyPersonalization(StartSelfAssessment);
-        }
+        _challengeRepository.RelocalizeChallenges(StartSelfAssessment);
 
         RefreshDerivedState();
     }
@@ -465,9 +456,9 @@ public sealed class AppState : INotifyPropertyChanged
             StartSelfAssessment = snapshot;
             _challengeRepository.ApplyPersonalization(snapshot);
 
-            if (!string.IsNullOrWhiteSpace(CurrentChallengeDate))
+            if (CurrentProgramDay > 0)
             {
-                TodayChallenge = _challengeRepository.GetOrCreateChallenge(CurrentChallengeDate, snapshot);
+                TodayChallenge = _challengeRepository.GetChallengeForProgramDay(CurrentProgramDay, snapshot);
             }
 
             OnPropertyChanged(nameof(HasStartSelfAssessment));
@@ -480,83 +471,46 @@ public sealed class AppState : INotifyPropertyChanged
         OnPropertyChanged(nameof(ShouldShowFinalSelfAssessment));
     }
 
-    private string ResolveCurrentChallengeDate()
+    private int ResolveCurrentProgramDay()
     {
-        var todayIsoDate = DateHelpers.ToIsoDate(DateTime.Now);
-        var preferredDate = string.IsNullOrWhiteSpace(CurrentChallengeDate)
-            ? _settingsService.ReadCurrentChallengeDate()
-            : CurrentChallengeDate;
+        var storedValue = CurrentProgramDay > 0
+            ? CurrentProgramDay.ToString()
+            : _settingsService.ReadCurrentProgramDay();
 
-        return ResolveChallengeDate(preferredDate, todayIsoDate);
-    }
-
-    private string ResolveRequestedChallengeDate(string date)
-    {
-        if (DateHelpers.TryParseIsoDate(date, out _))
+        if (int.TryParse(storedValue, out var storedDay)
+            && storedDay >= 1
+            && storedDay <= DateHelpers.TargetMonthlyDays)
         {
-            return date;
+            return storedDay;
         }
 
-        return ResolveCurrentChallengeDate();
+        // Versions before program days stored a calendar date here. Preserve their completed
+        // work by mapping it to the next sequential day of the new program.
+        var completedLegacyChallenges = _challengeRepository.GetCompletedChallengesCount();
+        return Math.Clamp(completedLegacyChallenges + 1, 1, DateHelpers.TargetMonthlyDays);
     }
 
-    private string ResolveChallengeDate(string preferredDate, string fallbackDate)
+    private void SetCurrentProgramDayInternal(int programDay)
     {
-        if (!DateHelpers.TryParseIsoDate(preferredDate, out _))
-        {
-            return ResolveNextIncompleteDate(fallbackDate);
-        }
-
-        string candidateDate;
-
-        if (string.CompareOrdinal(preferredDate, fallbackDate) >= 0)
-        {
-            candidateDate = preferredDate;
-        }
-        else
-        {
-            var preferredChallenge = _challengeRepository.GetChallengeByDate(preferredDate);
-
-            candidateDate = preferredChallenge is not null && preferredChallenge.Status != ChallengeStatus.Completed
-                ? preferredDate
-                : fallbackDate;
-        }
-
-        return ResolveNextIncompleteDate(candidateDate);
+        CurrentProgramDay = programDay;
+        _settingsService.WriteCurrentProgramDay(programDay);
+        TodayChallenge = _challengeRepository.GetChallengeForProgramDay(programDay, StartSelfAssessment);
+        LoadDerived();
     }
 
-    private string ResolveNextIncompleteDate(string startDate)
-    {
-        var date = startDate;
-
-        while (true)
-        {
-            var challenge = _challengeRepository.GetChallengeByDate(date);
-
-            if (challenge is null || challenge.Status != ChallengeStatus.Completed)
-            {
-                return date;
-            }
-
-            date = DateHelpers.AddDays(date, 1);
-        }
-    }
-
-    private void SetCurrentChallengeDateInternal(string date)
-    {
-        CurrentChallengeDate = date;
-        _settingsService.WriteCurrentChallengeDate(date);
-        TodayChallenge = _challengeRepository.GetOrCreateChallenge(date, StartSelfAssessment);
-        LoadDerived(date);
-    }
-
-    private void LoadDerived(string todayIsoDate)
+    private void LoadDerived()
     {
         var completedDates = _challengeRepository.ListCompletedDates().ToList();
+        var todayIsoDate = DateHelpers.ToIsoDate(DateTime.UtcNow);
         var streakSnapshot = ProgressCalculator.CalculateStreakSnapshot(completedDates, todayIsoDate);
-        var monthlyProgress = ProgressCalculator.CalculateMonthlyProgress(
-            completedDates,
-            DateHelpers.ParseIsoDate(todayIsoDate).ToDateTime(TimeOnly.MinValue));
+        var completedProgramDays = Math.Min(completedDates.Count, DateHelpers.TargetMonthlyDays);
+        var monthlyProgress = new MonthlyProgress
+        {
+            CompletedDays = completedProgramDays,
+            TargetDays = DateHelpers.TargetMonthlyDays,
+            Percent = (int)Math.Round(completedProgramDays / (double)DateHelpers.TargetMonthlyDays * 100, MidpointRounding.AwayFromZero),
+            RemainingDays = Math.Max(DateHelpers.TargetMonthlyDays - completedProgramDays, 0),
+        };
 
         var weekStart = DateHelpers.ParseIsoDate(todayIsoDate).AddDays(-6).ToString("yyyy-MM-dd");
         var weeklyChallenges = _challengeRepository.ListChallengesBetween(weekStart, todayIsoDate);
@@ -573,7 +527,7 @@ public sealed class AppState : INotifyPropertyChanged
     }
 
     private void TrackStepTransition(
-        string date,
+        string programDay,
         StepType stepType,
         StepStatus? previousStatus,
         StepStatus? updatedStatus)
@@ -599,14 +553,14 @@ public sealed class AppState : INotifyPropertyChanged
             eventName,
             new Dictionary<string, string>
             {
-                ["challenge_date"] = date,
+                ["program_day"] = programDay,
                 ["step_type"] = stepType.ToString().ToLowerInvariant(),
                 ["step_status"] = updatedStatus.Value.ToString().ToLowerInvariant(),
             });
     }
 
     private void TrackChallengeTransition(
-        string date,
+        string programDay,
         ChallengeStatus previousStatus,
         ChallengeStatus updatedStatus)
     {
@@ -619,7 +573,7 @@ public sealed class AppState : INotifyPropertyChanged
             AnalyticsEventNames.ChallengeCompleted,
             new Dictionary<string, string>
             {
-                ["challenge_date"] = date,
+                ["program_day"] = programDay,
                 ["challenge_status"] = updatedStatus.ToString().ToLowerInvariant(),
             });
     }

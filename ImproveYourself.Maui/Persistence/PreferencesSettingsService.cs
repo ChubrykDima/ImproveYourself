@@ -9,7 +9,8 @@ namespace ImproveYourself.Maui.Persistence;
 public sealed class PreferencesSettingsService : ISettingsService
 {
     private const string OnboardingCompletedKey = "onboardingCompleted";
-    private const string CurrentChallengeDateKey = "currentChallengeDate";
+    private const string CurrentProgramDayKey = "currentProgramDay";
+    private const string LegacyCurrentChallengeDateKey = "currentChallengeDate";
     private const string DisplayNameKey = "displayName";
     private const string NotificationsEnabledKey = "notificationsEnabled";
     private const string BackendBaseUrlKey = "backend.baseUrl";
@@ -29,13 +30,18 @@ public sealed class PreferencesSettingsService : ISettingsService
     public void WriteOnboardingCompleted(bool value) =>
         Preferences.Default.Set(OnboardingCompletedKey, value);
 
-    public string ReadCurrentChallengeDate() =>
-        Preferences.Default.Get(CurrentChallengeDateKey, string.Empty);
-
-    public void WriteCurrentChallengeDate(string value)
+    public string ReadCurrentProgramDay()
     {
-        var normalized = string.IsNullOrWhiteSpace(value) ? string.Empty : value.Trim();
-        Preferences.Default.Set(CurrentChallengeDateKey, normalized);
+        var programDay = Preferences.Default.Get(CurrentProgramDayKey, string.Empty);
+
+        return string.IsNullOrWhiteSpace(programDay)
+            ? Preferences.Default.Get(LegacyCurrentChallengeDateKey, string.Empty)
+            : programDay;
+    }
+
+    public void WriteCurrentProgramDay(int value)
+    {
+        Preferences.Default.Set(CurrentProgramDayKey, value.ToString());
     }
 
     public string ReadDisplayName() =>
