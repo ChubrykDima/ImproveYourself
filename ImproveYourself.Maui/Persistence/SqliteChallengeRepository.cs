@@ -691,6 +691,7 @@ public sealed class SqliteChallengeRepository : IChallengeRepository
             Status = ProgressCalculator.GetChallengeStatus(visibleSteps),
             CreatedAt = createdAt,
             UpdatedAt = updatedAt,
+            CompletedAt = challenge.CompletedAt,
             QuoteText = string.IsNullOrWhiteSpace(quoteText) ? null : quoteText,
             QuoteAuthor = NormalizeQuoteAuthor(quoteAuthor),
             QuoteNote = string.IsNullOrWhiteSpace(quoteNote) ? null : quoteNote,
