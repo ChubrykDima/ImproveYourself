@@ -270,10 +270,12 @@ public static class ChallengePersonalizer
         {
             Id = challenge.Id,
             Date = challenge.Date,
+            ProgramDayNumber = challenge.ProgramDayNumber,
             Title = challenge.Title,
             Status = challenge.Status,
             CreatedAt = challenge.CreatedAt,
             UpdatedAt = challenge.UpdatedAt,
+            CompletedAt = challenge.CompletedAt,
             QuoteText = challenge.QuoteText,
             QuoteAuthor = challenge.QuoteAuthor,
             QuoteNote = challenge.QuoteNote,
@@ -324,7 +326,7 @@ public static class ChallengePersonalizer
     {
         var parsed = DateHelpers.TryParseIsoDate(date, out var dateOnly)
             ? dateOnly
-            : DateOnly.FromDateTime(DateTime.Now);
+            : DateOnly.FromDateTime(DateTime.UtcNow);
 
         return parsed.Year + ((parsed.Month - 1) * 31) + parsed.Day;
     }
@@ -340,10 +342,12 @@ public static class ChallengePersonalizer
     {
         Id = challenge.Id,
         Date = challenge.Date,
+        ProgramDayNumber = challenge.ProgramDayNumber,
         Title = challenge.Title,
         Status = challenge.Status,
         CreatedAt = challenge.CreatedAt,
         UpdatedAt = challenge.UpdatedAt,
+        CompletedAt = challenge.CompletedAt,
         QuoteText = challenge.QuoteText,
         QuoteAuthor = challenge.QuoteAuthor,
         QuoteNote = challenge.QuoteNote,

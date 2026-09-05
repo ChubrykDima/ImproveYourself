@@ -323,10 +323,5 @@ public partial class SettingsPage : ContentPage
         }
 
         _localizationService.SetLanguage(selected.Code);
-
-        if (Microsoft.Maui.Controls.Application.Current is App app)
-        {
-            app.ReloadNavigation();
-        }
     }
 }

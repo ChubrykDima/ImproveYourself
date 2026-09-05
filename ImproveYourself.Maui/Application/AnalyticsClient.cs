@@ -57,7 +57,7 @@ public sealed class AnalyticsClient : IAnalyticsClient
         "platform",
         "idiom",
         "kind",
-        "challenge_date",
+        "program_day",
         "challenge_status",
         "step_type",
         "step_status",

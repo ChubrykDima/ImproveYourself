@@ -37,6 +37,7 @@ public partial class StatisticsPage : ContentPage
         TaskCategoriesTitleLabel.Text = AppStrings.TaskCategories;
         MorningPracticeLabel.Text = AppStrings.MorningPractice;
         DailyChallengeLabel.Text = AppStrings.DailyChallengeName;
+        BackendStatsTitleLabel.Text = AppStrings.Backend;
     }
 
     private void Render()
@@ -69,8 +70,11 @@ public partial class StatisticsPage : ContentPage
             return;
         }
 
-        BackendStatsLabel.Text =
-            $"Сервер: {backendStats.TotalChallengesCompleted} дней, {backendStats.TotalStepsCompleted} шагов. {_appState.BackendSyncMessage}";
+        BackendStatsLabel.Text = string.Format(
+            AppStrings.BackendStatsFormat,
+            backendStats.TotalChallengesCompleted,
+            backendStats.TotalStepsCompleted,
+            _appState.BackendSyncMessage);
     }
 
     private void RenderWeeklyBars(IReadOnlyList<WeeklyDayStat> days)

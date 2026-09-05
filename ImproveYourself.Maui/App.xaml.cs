@@ -32,6 +32,7 @@ public partial class App : Microsoft.Maui.Controls.Application
 		_analyticsClient = analyticsClient;
 		_authService = authService;
 		_localizationService = localizationService;
+		_localizationService.LanguageChanged += OnLanguageChanged;
 		_rootPage = BuildNavigationPage(new LoadingPage());
 
 		_ = BootstrapAsync();
@@ -56,6 +57,11 @@ public partial class App : Microsoft.Maui.Controls.Application
 		{
 			SetRootPage(BuildNavigationPage(new OnboardingSlideOnePage(_appState, NavigateToHomeAsync)));
 		}
+	}
+
+	private void OnLanguageChanged(object? sender, EventArgs e)
+	{
+		MainThread.BeginInvokeOnMainThread(ReloadNavigation);
 	}
 
 	private static NavigationPage BuildNavigationPage(Page rootPage)

@@ -88,7 +88,6 @@ public sealed class BackendConnectionService : IBackendConnectionService, IBacke
                 (_, false, true, _) => AppStrings.BackendNoDb,
                 (_, _, false, HttpStatusCode.Unauthorized) => AppStrings.AuthSessionExpired,
                 (_, _, false, _) => string.Format(AppStrings.BackendBadStatusFormat, (int)authStatus),
-                _ => AppStrings.BackendUnavailable,
             };
 
             return new BackendConnectionResult(true, healthOk, readyOk, authorizationOk, message);
@@ -212,9 +211,10 @@ public sealed class BackendConnectionService : IBackendConnectionService, IBacke
 
     private static SyncDailyChallengeDto MapChallenge(string clientId, DailyChallenge challenge) => new(
         CreateStableGuid(clientId, challenge.Id),
-        challenge.Date,
+        challenge.ProgramDayNumber,
         challenge.Title,
         challenge.Status,
+        ParseNullableTimestamp(challenge.CompletedAt),
         ParseTimestamp(challenge.CreatedAt),
         challenge.QuoteText,
         challenge.QuoteAuthor,
@@ -238,8 +238,11 @@ public sealed class BackendConnectionService : IBackendConnectionService, IBacke
 
     private static DateTimeOffset ParseTimestamp(string value) =>
         DateTimeOffset.TryParse(value, out var timestamp)
-            ? timestamp
+            ? timestamp.ToUniversalTime()
             : DateTimeOffset.UtcNow;
+
+    private static DateTimeOffset? ParseNullableTimestamp(string? value) =>
+        string.IsNullOrWhiteSpace(value) ? null : ParseTimestamp(value);
 
     private static Guid CreateStableGuid(string clientId, string localId)
     {
@@ -256,9 +259,10 @@ public sealed class BackendConnectionService : IBackendConnectionService, IBacke
 
     private sealed record SyncDailyChallengeDto(
         Guid Id,
-        string Date,
+        int ProgramDayNumber,
         string Title,
         ChallengeStatus Status,
+        DateTimeOffset? CompletedAt,
         DateTimeOffset CreatedAt,
         string? QuoteText,
         string? QuoteAuthor,

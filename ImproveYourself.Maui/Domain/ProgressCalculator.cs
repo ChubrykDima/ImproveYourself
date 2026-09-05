@@ -30,18 +30,13 @@ public static class ProgressCalculator
     public static bool IsChallengeCompleted(IReadOnlyList<ChallengeStep> steps) =>
         GetChallengeStatus(steps) == ChallengeStatus.Completed;
 
-    public static StepStatus GetNextStepStatus(StepStatus status) => status switch
-    {
-        StepStatus.NotStarted => StepStatus.InProgress,
-        StepStatus.InProgress => StepStatus.Completed,
-        _ => StepStatus.Completed,
-    };
+    public static StepStatus GetNextStepStatus(StepStatus status) => StepStatus.Completed;
 
     public static StreakSnapshot CalculateStreakSnapshot(
         IEnumerable<string> completedDates,
         string? referenceDate = null)
     {
-        var reference = referenceDate ?? DateHelpers.ToIsoDate(DateTime.Now);
+        var reference = referenceDate ?? DateHelpers.ToIsoDate(DateTime.UtcNow);
         var sorted = NormalizeAndSortDates(completedDates);
 
         return new StreakSnapshot
@@ -58,9 +53,10 @@ public static class ProgressCalculator
         DateTime? referenceDate = null,
         int targetDays = DateHelpers.TargetMonthlyDays)
     {
-        var reference = referenceDate ?? DateTime.Now;
+        var reference = referenceDate ?? DateTime.UtcNow;
         var monthKey = DateHelpers.MonthKeyFromDate(reference);
-        var completedDays = NormalizeAndSortDates(completedDates)
+        var completedDays = completedDates
+            .Where(date => !string.IsNullOrWhiteSpace(date))
             .Count(date => date.StartsWith(monthKey, StringComparison.Ordinal));
 
         var percent = targetDays <= 0
@@ -80,9 +76,11 @@ public static class ProgressCalculator
         IEnumerable<DailyChallenge> challenges,
         string? referenceDate = null)
     {
-        var reference = DateHelpers.ParseIsoDate(referenceDate ?? DateHelpers.ToIsoDate(DateTime.Now));
+        var reference = DateHelpers.ParseIsoDate(referenceDate ?? DateHelpers.ToIsoDate(DateTime.UtcNow));
         var challengeList = challenges.ToList();
-        var lookup = challengeList.ToDictionary(challenge => challenge.Date, challenge => challenge);
+        var lookup = challengeList
+            .GroupBy(challenge => challenge.Date, StringComparer.Ordinal)
+            .ToDictionary(group => group.Key, group => group.ToList(), StringComparer.Ordinal);
 
         var days = Enumerable.Range(0, 7)
             .Select(index =>
@@ -90,7 +88,7 @@ public static class ProgressCalculator
                 var date = reference.AddDays(index - 6);
                 var isoDate = date.ToString("yyyy-MM-dd");
 
-                if (!lookup.TryGetValue(isoDate, out var challenge))
+                if (!lookup.TryGetValue(isoDate, out var challenges))
                 {
                     return new WeeklyDayStat
                     {
@@ -101,8 +99,8 @@ public static class ProgressCalculator
                     };
                 }
 
-                var completedSteps = CountCompletedSteps(challenge.Steps);
-                var totalSteps = challenge.Steps.Count;
+                var completedSteps = challenges.Sum(challenge => CountCompletedSteps(challenge.Steps));
+                var totalSteps = challenges.Sum(challenge => challenge.Steps.Count);
 
                 return new WeeklyDayStat
                 {
@@ -146,7 +144,7 @@ public static class ProgressCalculator
         int periodDays = DateHelpers.TargetMonthlyDays,
         string? referenceDate = null)
     {
-        var reference = DateHelpers.ParseIsoDate(referenceDate ?? DateHelpers.ToIsoDate(DateTime.Now));
+        var reference = DateHelpers.ParseIsoDate(referenceDate ?? DateHelpers.ToIsoDate(DateTime.UtcNow));
         var periodStart = reference.AddDays(-(periodDays - 1));
 
         var completedInRange = NormalizeAndSortDates(completedDates)
