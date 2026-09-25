@@ -35,14 +35,13 @@ We do not sell personal data, do not use it for advertising, and do not track yo
 We share data only with processors that operate features you use:
 • Railway hosts the backend application and database.
 • Resend delivers password-reset emails (your email address and the one-time code).
-• Sentry receives error diagnostics from the backend (request metadata and error details) when error monitoring is enabled.
 These providers act on our instructions and process data under their own privacy and security terms, which provide protection comparable to this Policy.
 
 5. Retention and deletion
 • Local data remains on your device until you clear app data or delete the App.
 • Cloud account data is retained while your account exists.
 • When you delete your account in Settings → Delete account, your account, synced challenges and steps, usage events, and authentication and password-reset tokens are permanently deleted from our database, and you are signed out.
-• Server logs and error diagnostics are kept only for the limited period set by our hosting and monitoring providers and are not used to restore deleted accounts.
+• Server logs are kept only for the limited period set by our hosting provider and are not used to restore deleted accounts.
 
 6. Your choices and rights
 • Use the App offline without creating an account.
