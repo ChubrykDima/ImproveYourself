@@ -104,6 +104,10 @@ public static class AppStrings
     public static string Notifications_Title => Get("Notifications_Title");
     public static string PermissionNotGranted => Get("PermissionNotGranted");
     public static string EnableNotificationsLater => Get("EnableNotificationsLater");
+    public static string ReminderMorningTitle => Get("ReminderMorningTitle");
+    public static string ReminderMorningBody => Get("ReminderMorningBody");
+    public static string ReminderEveningTitle => Get("ReminderEveningTitle");
+    public static string ReminderEveningBody => Get("ReminderEveningBody");
     public static string FinalComparisonFormat => Get("FinalComparisonFormat");
 
     // ChallengeDetailPage
