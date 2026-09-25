@@ -84,6 +84,10 @@
   "Notifications_Title": "Erinnerungen",
   "PermissionNotGranted": "Berechtigung nicht erteilt",
   "EnableNotificationsLater": "Benachrichtigungen k\u00f6nnen sp\u00e4ter in den Einstellungen aktiviert werden.",
+  "ReminderMorningTitle": "Deine Challenge f\u00fcr heute",
+  "ReminderMorningBody": "\u00d6ffne Improve Yourself und mach den ersten Schritt des Tages.",
+  "ReminderEveningTitle": "Wie war dein Tag?",
+  "ReminderEveningBody": "Markiere erledigte Schritte, damit deine Serie weiterl\u00e4uft.",
   "FinalComparisonFormat": "Start: {0:0.0}/10\nEnde: {1:0.0}/10\nVerschiebung: {2}{3:0.0}",
 
   "ChallengeDetail_Title": "T\u00e4gliche Herausforderung",

@@ -52,4 +52,4 @@ We may update these Terms. Continued use after changes means you accept the upda
 
 ## 12. Contact
 
-Questions about these Terms: use the developer contact email published with the App on the App Store / Google Play.
+Questions about these Terms: Dzmitry Chubryk — [supportimproveyourself@gmail.com](mailto:supportimproveyourself@gmail.com).

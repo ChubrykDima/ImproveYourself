@@ -84,6 +84,10 @@
   "Notifications_Title": "Reminders",
   "PermissionNotGranted": "Permission not granted",
   "EnableNotificationsLater": "Notifications can be enabled later in settings.",
+  "ReminderMorningTitle": "Your challenge for today",
+  "ReminderMorningBody": "Open Improve Yourself and take the first step of the day.",
+  "ReminderEveningTitle": "How did today go?",
+  "ReminderEveningBody": "Mark your completed steps to keep your streak going.",
   "FinalComparisonFormat": "Start: {0:0.0}/10\nFinish: {1:0.0}/10\nShift: {2}{3:0.0}",
 
   "ChallengeDetail_Title": "Daily Challenge",

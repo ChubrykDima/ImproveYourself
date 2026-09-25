@@ -185,6 +185,8 @@ public sealed class AppState : INotifyPropertyChanged
 
         IsHydrated = true;
 
+        _ = RefreshRemindersAsync();
+
         return Task.CompletedTask;
     }
 
@@ -293,6 +295,8 @@ public sealed class AppState : INotifyPropertyChanged
         _challengeRepository.RelocalizeChallenges(StartSelfAssessment);
 
         RefreshDerivedState();
+
+        _ = RefreshRemindersAsync();
     }
 
     public async Task<bool> SetNotificationsEnabledAsync(bool enabled)
@@ -313,6 +317,28 @@ public sealed class AppState : INotifyPropertyChanged
         }
 
         return applied;
+    }
+
+    private async Task RefreshRemindersAsync()
+    {
+        if (!NotificationsEnabled)
+        {
+            return;
+        }
+
+        try
+        {
+            var active = await _notificationPreferenceService.RefreshAsync(enabled: true);
+            if (!active)
+            {
+                _settingsService.WriteNotificationsEnabled(false);
+                MainThread.BeginInvokeOnMainThread(() => NotificationsEnabled = false);
+            }
+        }
+        catch
+        {
+            // Reminder scheduling must never block startup or language changes.
+        }
     }
 
     public void UpdateDisplayName(string name)
