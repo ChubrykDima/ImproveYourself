@@ -81,7 +81,9 @@ public partial class HomePage : ContentPage
 
     private void RenderPersonalization()
     {
-        var profile = ChallengePersonalizer.CreateProfile(_appState.StartSelfAssessment);
+        var profile = _appState.TodayChallenge is not null && ChallengePersonalizer.UsesStructuredProgram(_appState.TodayChallenge)
+            ? null
+            : ChallengePersonalizer.CreateProfile(_appState.StartSelfAssessment);
 
         PersonalizationLabel.IsVisible = profile is not null;
         PersonalizationLabel.Text = profile?.DailyReason ?? string.Empty;
