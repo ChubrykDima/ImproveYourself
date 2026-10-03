@@ -253,11 +253,17 @@ public static class ChallengePersonalizer
             string.Format(AppStrings.FocusDayReasonFormat, title.ToLowerInvariant()));
     }
 
+    // The Russian course already offers a choice of difficulty for each program day.
+    // Replacing it with the legacy rotating templates would erase its progression.
+    public static bool UsesStructuredProgram(DailyChallenge challenge) =>
+        ChallengeTemplateLanguage.Current == "ru"
+        && challenge.ProgramDayNumber is >= 1 and <= DateHelpers.TargetMonthlyDays;
+
     public static DailyChallenge Personalize(DailyChallenge challenge, SelfAssessmentSnapshot? snapshot)
     {
         var profile = CreateProfile(snapshot);
 
-        if (profile is null)
+        if (UsesStructuredProgram(challenge) || profile is null)
         {
             return CloneChallenge(challenge);
         }

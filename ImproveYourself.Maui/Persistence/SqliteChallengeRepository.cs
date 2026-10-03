@@ -636,6 +636,13 @@ public sealed class SqliteChallengeRepository : IChallengeRepository
                 bundledChallenges[normalized.Date] = normalized;
             }
 
+            // Assign ordinals before any retrieval or language-change personalization.
+            var programDay = 1;
+            foreach (var challenge in bundledChallenges.Values.OrderBy(challenge => challenge.Date))
+            {
+                challenge.ProgramDayNumber = programDay++;
+            }
+
             return bundledChallenges;
         }
         catch
