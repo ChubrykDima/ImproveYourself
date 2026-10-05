@@ -15,6 +15,11 @@ Check(days.Count == 30, "The course must contain exactly 30 days.");
 Check(days.Select(day => day.Id).Distinct().Count() == 30, "Day IDs must be unique.");
 Check(days.SelectMany(day => day.Steps).Select(step => step.Id).Distinct().Count() == 90,
     "Step IDs must remain unique.");
+var dayFiveQuote = days.OrderBy(day => day.Date).ElementAt(4).Steps.Single(step => step.Type == StepType.Quote);
+Check(dayFiveQuote.QuoteAuthor == "Марк Аврелий",
+    "Day 5 must attribute its quote to Marcus Aurelius.");
+Check(string.IsNullOrWhiteSpace(dayFiveQuote.QuoteNote),
+    "Day 5 must not describe the Marcus Aurelius quote as original program text.");
 
 var snapshot = new SelfAssessmentSnapshot
 {
