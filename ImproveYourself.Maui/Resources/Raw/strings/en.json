@@ -42,8 +42,6 @@
   "Reminders": "Reminders",
   "ReminderDescription": "Daily morning and evening reminders support the habit rhythm.",
   "EnableNotifications": "Enable notifications",
-  "OfflineFirstTitle": "Offline-first",
-  "OfflineFirstDescription": "All progress, streaks, and calendar data are stored locally and work without internet.",
   "Backend": "Cloud sync",
   "BackendDescription": "Sign in to back up progress and send analytics to the server.",
   "SaveButton": "Save",
