@@ -42,8 +42,6 @@
   "Reminders": "Erinnerungen",
   "ReminderDescription": "T\u00e4gliche Morgen- und Abenderinnerungen unterst\u00fctzen den Gewohnheitsrhythmus.",
   "EnableNotifications": "Benachrichtigungen aktivieren",
-  "OfflineFirstTitle": "Offline-first",
-  "OfflineFirstDescription": "Alle Fortschritts-, Serien- und Kalenderdaten werden lokal gespeichert und funktionieren ohne Internet.",
   "Backend": "Cloud-Sync",
   "BackendDescription": "Melde dich an, um Fortschritt zu sichern und Analysen zu senden.",
   "SaveButton": "Speichern",

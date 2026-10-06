@@ -83,19 +83,6 @@
             </Border>
 
             <Border Style="{StaticResource CardBorderStyle}">
-                <VerticalStackLayout Spacing="6">
-                    <Label x:Name="OfflineFirstTitleLabel"
-                           FontFamily="OpenSansSemibold"
-                           FontSize="18"
-                           TextColor="{StaticResource ColorAccent}" />
-                    <Label x:Name="OfflineFirstDescLabel"
-                           Text=""
-                           Style="{StaticResource BodyLabelStyle}"
-                           LineBreakMode="WordWrap" />
-                </VerticalStackLayout>
-            </Border>
-
-            <Border Style="{StaticResource CardBorderStyle}">
                 <VerticalStackLayout Spacing="10">
                     <Label x:Name="AccountSectionLabel"
                            Text=""

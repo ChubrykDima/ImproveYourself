@@ -65,8 +65,6 @@ public partial class SettingsPage : ContentPage
         RemindersSectionLabel.Text = AppStrings.Reminders;
         ReminderDescLabel.Text = AppStrings.ReminderDescription;
         EnableNotificationsLabel.Text = AppStrings.EnableNotifications;
-        OfflineFirstTitleLabel.Text = AppStrings.OfflineFirstTitle;
-        OfflineFirstDescLabel.Text = AppStrings.OfflineFirstDescription;
         AccountSectionLabel.Text = AppStrings.AuthAccountSection;
         AccountDescLabel.Text = AppStrings.AuthAccountDescription;
         LoginButton.Text = AppStrings.AuthLoginButton;

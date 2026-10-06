@@ -60,8 +60,6 @@ public static class AppStrings
     public static string Reminders => Get("Reminders");
     public static string ReminderDescription => Get("ReminderDescription");
     public static string EnableNotifications => Get("EnableNotifications");
-    public static string OfflineFirstTitle => Get("OfflineFirstTitle");
-    public static string OfflineFirstDescription => Get("OfflineFirstDescription");
     public static string Backend => Get("Backend");
     public static string BackendDescription => Get("BackendDescription");
     public static string SaveButton => Get("SaveButton");
