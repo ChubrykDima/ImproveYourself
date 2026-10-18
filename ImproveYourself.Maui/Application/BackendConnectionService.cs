@@ -150,8 +150,8 @@ public sealed class BackendConnectionService : IBackendConnectionService, IBacke
                 ? AppStrings.BackendSyncSucceeded
                 : string.Format(
                     AppStrings.BackendSyncSucceededWithStatsFormat,
-                    stats.TotalChallengesCompleted,
-                    stats.TotalStepsCompleted);
+                    AppStrings.Plural("DaysCount", stats.TotalChallengesCompleted),
+                    AppStrings.Plural("StepsCount", stats.TotalStepsCompleted));
 
             return new BackendSyncResult(true, true, message, stats);
         }

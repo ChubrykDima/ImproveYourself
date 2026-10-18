@@ -21,7 +21,6 @@ public partial class ChallengeDetailPage : ContentPage
         Title = AppStrings.ChallengeDetail_Title;
         CompletedTextLabel.Text = AppStrings.ChallengeCompleted;
         NextDayButton.Text = AppStrings.GoToNextDay;
-        QuoteOfDayLabel.Text = AppStrings.QuoteOfDay;
         NoteTitleLabel.Text = AppStrings.NoteLabel;
     }
 
@@ -75,12 +74,14 @@ public partial class ChallengeDetailPage : ContentPage
 
     private void RenderPersonalization()
     {
-        var profile = _challenge is not null && ChallengePersonalizer.UsesStructuredProgram(_challenge)
+        var focus = _challenge is null
             ? null
-            : ChallengePersonalizer.CreateProfile(_appState.StartSelfAssessment);
+            : ChallengePersonalizer.GetDayFocus(_challenge);
 
-        PersonalizationLabel.IsVisible = profile is not null;
-        PersonalizationLabel.Text = profile?.DailyReason ?? string.Empty;
+        PersonalizationLabel.IsVisible = focus is not null;
+        PersonalizationLabel.Text = focus is null
+            ? string.Empty
+            : string.Format(AppStrings.FocusDayReasonFormat, focus);
     }
 
     private void RenderQuoteSection(DailyChallenge challenge)
@@ -102,11 +103,13 @@ public partial class ChallengeDetailPage : ContentPage
             return;
         }
 
-        QuoteTextLabel.Text = $"\u201C{challenge.QuoteText}\u201D";
-        QuoteAuthorLabel.IsVisible = !string.IsNullOrWhiteSpace(challenge.QuoteAuthor);
-        QuoteAuthorLabel.Text = QuoteAuthorLabel.IsVisible
+        var hasAuthor = !string.IsNullOrWhiteSpace(challenge.QuoteAuthor);
+        QuoteOfDayLabel.Text = hasAuthor ? AppStrings.QuoteOfDay : AppStrings.ThoughtOfDay;
+        QuoteTextLabel.Text = string.Format(AppStrings.QuoteFormat, challenge.QuoteText);
+        QuoteAuthorLabel.IsVisible = true;
+        QuoteAuthorLabel.Text = hasAuthor
             ? $"\u2014 {challenge.QuoteAuthor}"
-            : string.Empty;
+            : AppStrings.QuoteAuthorProgram;
 
         var hasQuoteNote = !string.IsNullOrWhiteSpace(challenge.QuoteNote);
         QuoteHintLabel.IsVisible = hasQuoteNote;

@@ -126,7 +126,7 @@ public sealed class SqliteChallengeRepository : IChallengeRepository
         }
     }
 
-    public void RelocalizeChallenges(SelfAssessmentSnapshot? personalizationSnapshot)
+    public void RelocalizeChallenges()
     {
         Initialize();
 
@@ -138,11 +138,6 @@ public sealed class SqliteChallengeRepository : IChallengeRepository
             var existing = MapChallengeRow(row);
             var localized = GetBundledChallenge(existing.Date)
                 ?? ChallengeFactory.CreateDailyChallenge(existing.Date);
-
-            if (personalizationSnapshot is not null)
-            {
-                localized = ChallengePersonalizer.Personalize(localized, personalizationSnapshot);
-            }
 
             ReplaceChallengeContentPreservingProgress(existing, localized);
         }
@@ -179,7 +174,7 @@ public sealed class SqliteChallengeRepository : IChallengeRepository
         return row is null ? null : MapChallengeRow(row);
     }
 
-    public DailyChallenge GetOrCreateChallenge(string date, SelfAssessmentSnapshot? personalizationSnapshot = null)
+    public DailyChallenge GetOrCreateChallenge(string date)
     {
         Initialize();
 
@@ -187,11 +182,10 @@ public sealed class SqliteChallengeRepository : IChallengeRepository
 
         if (existing is not null)
         {
-            return PersonalizeExistingChallengeIfNeeded(existing, personalizationSnapshot);
+            return existing;
         }
 
         var challenge = GetBundledChallenge(date) ?? ChallengeFactory.CreateDailyChallenge(date);
-        challenge = ChallengePersonalizer.Personalize(challenge, personalizationSnapshot);
         InsertChallenge(challenge);
 
         return GetChallengeByDate(date) ?? challenge;
@@ -214,24 +208,7 @@ public sealed class SqliteChallengeRepository : IChallengeRepository
         var challenge = MapChallengeRow(row);
         challenge.ProgramDayNumber = programDay;
 
-        var result = PersonalizeExistingChallengeIfNeeded(challenge, personalizationSnapshot);
-        result.ProgramDayNumber = programDay;
-
-        return result;
-    }
-
-    public void ApplyPersonalization(SelfAssessmentSnapshot snapshot)
-    {
-        Initialize();
-
-        var rows = _database.Query<DailyChallengeRecord>(
-            "SELECT id, date, program_day, title, status, created_at, updated_at, completed_at FROM daily_challenges ORDER BY program_day ASC");
-
-        foreach (var row in rows)
-        {
-            var challenge = MapChallengeRow(row);
-            PersonalizeExistingChallengeIfNeeded(challenge, snapshot);
-        }
+        return ChallengePersonalizer.Personalize(challenge, personalizationSnapshot);
     }
 
     public DailyChallenge AdvanceChallengeStepStatus(string date, StepType stepType)
@@ -434,10 +411,6 @@ public sealed class SqliteChallengeRepository : IChallengeRepository
         return row is null ? null : MapChallengeRow(row);
     }
 
-    private static bool IsPristineChallenge(DailyChallenge challenge) =>
-        challenge.Status == ChallengeStatus.NotStarted
-        && challenge.Steps.All(step => step.Status == StepStatus.NotStarted);
-
     private void SyncQuoteMetadata(DailyChallenge existingChallenge, DailyChallenge bundledChallenge)
     {
         var bundledQuoteStep = BuildQuoteStorageStep(bundledChallenge);
@@ -540,69 +513,6 @@ public sealed class SqliteChallengeRepository : IChallengeRepository
                 previousStep.UpdatedAt,
                 replacementStep.Id);
         }
-    }
-
-    private DailyChallenge PersonalizeExistingChallengeIfNeeded(
-        DailyChallenge challenge,
-        SelfAssessmentSnapshot? personalizationSnapshot)
-    {
-        if (personalizationSnapshot is null || !IsPristineChallenge(challenge))
-        {
-            return challenge;
-        }
-
-        var personalized = ChallengePersonalizer.Personalize(challenge, personalizationSnapshot);
-
-        if (!HasChallengeContentChanges(challenge, personalized))
-        {
-            return challenge;
-        }
-
-        TouchChallenge(personalized);
-        ReplaceChallenge(challenge, personalized);
-
-        return GetChallengeByDate(challenge.Date) ?? personalized;
-    }
-
-    private static void TouchChallenge(DailyChallenge challenge)
-    {
-        var updatedAt = DateTime.UtcNow.ToString("o", CultureInfo.InvariantCulture);
-        challenge.UpdatedAt = updatedAt;
-
-        foreach (var step in challenge.Steps)
-        {
-            step.UpdatedAt = updatedAt;
-        }
-    }
-
-    private static bool HasChallengeContentChanges(DailyChallenge current, DailyChallenge next)
-    {
-        if (current.Title != next.Title
-            || current.QuoteText != next.QuoteText
-            || current.QuoteAuthor != next.QuoteAuthor
-            || current.QuoteNote != next.QuoteNote
-            || current.Steps.Count != next.Steps.Count)
-        {
-            return true;
-        }
-
-        var nextStepsById = next.Steps.ToDictionary(step => step.Id, StringComparer.Ordinal);
-
-        foreach (var currentStep in current.Steps)
-        {
-            if (!nextStepsById.TryGetValue(currentStep.Id, out var nextStep)
-                || currentStep.Title != nextStep.Title
-                || currentStep.Subtitle != nextStep.Subtitle
-                || currentStep.Description != nextStep.Description
-                || currentStep.Tip != nextStep.Tip
-                || currentStep.DurationSeconds != nextStep.DurationSeconds
-                || currentStep.SortOrder != nextStep.SortOrder)
-            {
-                return true;
-            }
-        }
-
-        return false;
     }
 
     private static IReadOnlyDictionary<string, DailyChallenge> LoadBundledChallengesForLanguage(string language)
@@ -746,28 +656,9 @@ public sealed class SqliteChallengeRepository : IChallengeRepository
 
         var trimmed = author.Trim();
 
-        return trimmed switch
-        {
-            "Современная интерпретация" => null,
-            "В духе Брюса Ли" => "Брюс Ли",
-            "В духе Брене Браун" => "Брене Браун",
-            "В духе Конфуция" => "Конфуций",
-            "В духе Майи Энджелоу" => "Майя Энджелоу",
-            "В духе Марка Аврелия" => "Марк Аврелий",
-            "В духе Марка Твена" => "Марк Твен",
-            "В духе Нельсона Манделы" => "Нельсон Мандела",
-            "В духе Роберта Фроста" => "Роберт Фрост",
-            "В духе Сенеки" => "Сенека",
-            "В духе Теодора Рузвельта" => "Теодор Рузвельт",
-            "В духе Тима Ферриса" => "Тим Феррис",
-            "В духе Уильяма Джеймса" => "Уильям Джеймс",
-            "В духе Уэйна Гретцки" => "Уэйн Гретцки",
-            "В духе Франклина Рузвельта" => "Франклин Рузвельт",
-            "В духе Фридриха Ницше" => "Фридрих Ницше",
-            "В духе Элеоноры Рузвельт" => "Элеонора Рузвельт",
-            "В духе Эпиктета" => "Эпиктет",
-            _ => trimmed.StartsWith("В духе ", StringComparison.OrdinalIgnoreCase) ? null : trimmed,
-        };
+        // "В духе …" marks a paraphrase; turning it into a bare name would attribute
+        // words to a person who never said them.
+        return trimmed == "Современная интерпретация" ? null : trimmed;
     }
 
     private static DailyChallenge CloneChallenge(DailyChallenge challenge) => new()

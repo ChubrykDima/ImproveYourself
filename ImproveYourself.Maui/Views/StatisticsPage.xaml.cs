@@ -29,9 +29,7 @@ public partial class StatisticsPage : ContentPage
     private void RenderStaticLabels()
     {
         CurrentStreakTitleLabel.Text = AppStrings.CurrentStreak;
-        DaysLabel1.Text = AppStrings.Days;
         BestStreakTitleLabel.Text = AppStrings.BestStreak;
-        DaysLabel2.Text = AppStrings.Days;
         WeekCompletionTitleLabel.Text = AppStrings.WeekCompletion;
         WeeklyActivityTitleLabel.Text = AppStrings.WeeklyActivity;
         TaskCategoriesTitleLabel.Text = AppStrings.TaskCategories;
@@ -43,7 +41,9 @@ public partial class StatisticsPage : ContentPage
     private void Render()
     {
         CurrentStreakLabel.Text = _appState.StreakSnapshot.CurrentStreakDays.ToString();
+        DaysLabel1.Text = AppStrings.Plural("DaysUnit", _appState.StreakSnapshot.CurrentStreakDays);
         BestStreakLabel.Text = _appState.StreakSnapshot.BestStreakDays.ToString();
+        DaysLabel2.Text = AppStrings.Plural("DaysUnit", _appState.StreakSnapshot.BestStreakDays);
 
         var stats = _appState.WeeklyStats;
 
@@ -72,8 +72,8 @@ public partial class StatisticsPage : ContentPage
 
         BackendStatsLabel.Text = string.Format(
             AppStrings.BackendStatsFormat,
-            backendStats.TotalChallengesCompleted,
-            backendStats.TotalStepsCompleted,
+            AppStrings.Plural("DaysCount", backendStats.TotalChallengesCompleted),
+            AppStrings.Plural("StepsCount", backendStats.TotalStepsCompleted),
             _appState.BackendSyncMessage);
     }
 
