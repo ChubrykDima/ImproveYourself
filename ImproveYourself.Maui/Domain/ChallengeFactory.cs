@@ -78,11 +78,11 @@ public static class ChallengeFactory
 
     private static readonly IReadOnlyList<QuoteTemplate> RuQuoteTemplates =
     [
-        new("Сначала назови себе свою роль, потом подтверди её самым неудобным делом дня.", "Эпиктет", "Идентичность становится реальной, когда подтверждается действием, а не намерением."),
-        new("Не каждую мысль нужно слушаться: иногда она просто усталая версия вчерашнего страха.", "Эпиктет", "Отдели факт от автоматической мысли и проверь, что реально происходит сейчас."),
-        new("Мысли становятся средой жизни: отсеки шум, оставь одну честную мысль и поступок.", "Марк Аврелий", "Сократи внутренний шум до одного ясного вывода и одного шага на сегодня."),
-        new("Трудность полезна не сама по себе, а тем, как она тренирует выдержку.", "Сенека", "Сложность не всегда благо, но она показывает, где можно укрепить устойчивость."),
-        new("Даже маленькое действие меняет день; особенно то, которое ты решил не откладывать.", "Уильям Джеймс", "Маленький завершённый шаг обычно лечит бессилие лучше долгих размышлений."),
+        new("Сначала назови себе свою роль, потом подтверди её самым неудобным делом дня.", "В духе Эпиктета", "Идентичность становится реальной, когда подтверждается действием, а не намерением."),
+        new("Не каждую мысль нужно слушаться: иногда она просто усталая версия вчерашнего страха.", "В духе Эпиктета", "Отдели факт от автоматической мысли и проверь, что реально происходит сейчас."),
+        new("Мысли становятся средой жизни: отсеки шум, оставь одну честную мысль и поступок.", "В духе Марка Аврелия", "Сократи внутренний шум до одного ясного вывода и одного шага на сегодня."),
+        new("Трудность полезна не сама по себе, а тем, как она тренирует выдержку.", "В духе Сенеки", "Сложность не всегда благо, но она показывает, где можно укрепить устойчивость."),
+        new("Даже маленькое действие меняет день; особенно то, которое ты решил не откладывать.", "В духе Уильяма Джеймса", "Маленький завершённый шаг обычно лечит бессилие лучше долгих размышлений."),
     ];
 
     private static readonly IReadOnlyList<QuoteTemplate> DeQuoteTemplates =
@@ -96,7 +96,7 @@ public static class ChallengeFactory
 
     private static readonly IReadOnlyList<SocialTemplate> EnSocialTemplates =
     [
-        new("Daily challenge", "Start a short dialogue with a stranger: 2-3 sentences.", "Begin with a simple question about the situation around you."),
+        new("Daily challenge", "Start a short dialogue with a stranger: 2–3 sentences.", "Begin with a simple question about the situation around you."),
         new("Daily challenge", "Give a colleague or acquaintance a sincere, specific compliment.", "The compliment should be concrete and honest."),
         new("Daily challenge", "Ask for feedback on one of your actions today.", "Listen without defending yourself; only clarify details."),
         new("Daily challenge", "Keep a conversation going for at least 5 minutes without your phone.", "Maintain eye contact and ask follow-up questions."),
@@ -105,8 +105,8 @@ public static class ChallengeFactory
 
     private static readonly IReadOnlyList<SocialTemplate> RuSocialTemplates =
     [
-        new("Челлендж дня", "Заведи короткий диалог с незнакомым человеком: 2-3 фразы.", "Начни с простого вопроса по ситуации вокруг."),
-        new("Челлендж дня", "Сделай комплимент коллеге или знакомому по делу.", "Комплимент должен быть конкретным и честным."),
+        new("Челлендж дня", "Заведи короткий диалог с незнакомым человеком: 2–3 фразы.", "Начни с простого вопроса по ситуации вокруг."),
+        new("Челлендж дня", "Сделай знакомому искренний конкретный комплимент.", "Комплимент должен быть конкретным и честным."),
         new("Челлендж дня", "Попроси обратную связь по одному своему действию сегодня.", "Слушай без оправданий, только уточняй детали."),
         new("Челлендж дня", "Поддержи разговор минимум 5 минут без телефона в руках.", "Поддерживай контакт глазами и задавай уточняющие вопросы."),
         new("Челлендж дня", "Поздоровайся первым с тремя людьми в течение дня.", "Голос ровный, осанка открытая, без спешки."),
@@ -114,21 +114,21 @@ public static class ChallengeFactory
 
     private static readonly IReadOnlyList<SocialTemplate> DeSocialTemplates =
     [
-        new("Tagesherausforderung", "Führe ein kurzes Gespräch mit einer fremden Person: 2-3 Sätze.", "Beginne mit einer einfachen Frage zur Situation um dich herum."),
+        new("Tagesherausforderung", "Führe ein kurzes Gespräch mit einer fremden Person: 2–3 Sätze.", "Beginne mit einer einfachen Frage zur Situation um dich herum."),
         new("Tagesherausforderung", "Mache einem Kollegen oder Bekannten ein ehrliches, konkretes Kompliment.", "Das Kompliment soll spezifisch und ehrlich sein."),
         new("Tagesherausforderung", "Bitte um Feedback zu einer deiner Handlungen heute.", "Höre zu ohne dich zu rechtfertigen; kläre nur Details."),
         new("Tagesherausforderung", "Halte ein Gespräch mindestens 5 Minuten ohne Handy.", "Halte Augenkontakt und stelle Nachfragen."),
-        new("Tagesherausforderung", "Grüße als Erster drei Menschen am Tag.", "Stimme ruhig, Haltung offen, ohne Eile."),
+        new("Tagesherausforderung", "Grüße heute drei Menschen, bevor sie dich grüßen.", "Stimme ruhig, Haltung offen, ohne Eile."),
     ];
 
     public static DailyChallenge CreateDailyChallenge(string date)
     {
-        var seed = BuildSeed(date);
+        _ = DateHelpers.ParseIsoDate(date);
         var challengeId = $"challenge-{date}";
         var createdAt = DateTime.UtcNow.ToString("o", CultureInfo.InvariantCulture);
-        var practice = PickBySeed(PracticeTemplates, seed);
-        var quote = PickBySeed(QuoteTemplates, seed, offset: 1);
-        var social = PickBySeed(SocialTemplates, seed, offset: 2);
+        var practice = PickBySeed(PracticeTemplates, StableSeed("practice", date));
+        var quote = PickBySeed(QuoteTemplates, StableSeed("quote", date));
+        var social = PickBySeed(SocialTemplates, StableSeed("social", date));
 
         return new DailyChallenge
         {
@@ -175,17 +175,23 @@ public static class ChallengeFactory
         };
     }
 
-    private static int BuildSeed(string date)
+    // string.GetHashCode is randomized per process, so the same date would get different
+    // content after every launch. FNV-1a is stable across runs and platforms.
+    internal static uint StableSeed(string salt, string date)
     {
-        var parsed = DateHelpers.ParseIsoDate(date);
+        const uint offsetBasis = 2166136261;
+        const uint prime = 16777619;
+        var hash = offsetBasis;
 
-        return parsed.Year + ((parsed.Month - 1) * 31) + parsed.Day;
+        foreach (var symbol in $"{salt}:{date}")
+        {
+            hash ^= symbol;
+            hash *= prime;
+        }
+
+        return hash;
     }
 
-    private static T PickBySeed<T>(IReadOnlyList<T> templates, int seed, int offset = 0)
-    {
-        var index = Math.Abs(seed + offset) % templates.Count;
-
-        return templates[index];
-    }
+    private static T PickBySeed<T>(IReadOnlyList<T> templates, uint seed) =>
+        templates[(int)(seed % (uint)templates.Count)];
 }

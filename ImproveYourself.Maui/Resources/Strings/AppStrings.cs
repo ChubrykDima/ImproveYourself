@@ -7,11 +7,51 @@ namespace ImproveYourself.Maui.Resources.Strings;
 public static class AppStrings
 {
     private static IReadOnlyDictionary<string, string> _strings = new Dictionary<string, string>(StringComparer.Ordinal);
+    private static string _language = "en";
 
-    public static void Load(IReadOnlyDictionary<string, string> strings) => _strings = strings;
+    public static void Load(IReadOnlyDictionary<string, string> strings, string language = "en")
+    {
+        _strings = strings;
+        _language = language;
+    }
 
     private static string Get(string key) =>
         _strings.TryGetValue(key, out var value) ? value : key;
+
+    /// <summary>
+    /// Formats <paramref name="count"/> with the plural form stored under
+    /// <c>{key}_One</c>, <c>{key}_Few</c> or <c>{key}_Many</c>.
+    /// </summary>
+    public static string Plural(string key, int count)
+    {
+        var template = _strings.TryGetValue($"{key}_{GetPluralForm(_language, count)}", out var value)
+            ? value
+            : Get($"{key}_Many");
+
+        return string.Format(template, count);
+    }
+
+    internal static string GetPluralForm(string language, int count)
+    {
+        var absolute = Math.Abs(count);
+
+        if (language != "ru")
+        {
+            return absolute == 1 ? "One" : "Many";
+        }
+
+        var lastDigit = absolute % 10;
+        var lastTwoDigits = absolute % 100;
+
+        if (lastDigit == 1 && lastTwoDigits != 11)
+        {
+            return "One";
+        }
+
+        return lastDigit is >= 2 and <= 4 && lastTwoDigits is < 12 or > 14
+            ? "Few"
+            : "Many";
+    }
 
     // Common
     public static string OK => Get("OK");
@@ -31,7 +71,6 @@ public static class AppStrings
     public static string Welcome => Get("Welcome");
     public static string DefaultDisplayName => Get("DefaultDisplayName");
     public static string CurrentStreak => Get("CurrentStreak");
-    public static string DaysInRow => Get("DaysInRow");
     public static string MonthProgress => Get("MonthProgress");
     public static string MonthProgressFormat => Get("MonthProgressFormat");
     public static string MainFocusOfDay => Get("MainFocusOfDay");
@@ -117,6 +156,9 @@ public static class AppStrings
     public static string ProgressFormat => Get("ProgressFormat");
     public static string ChallengeCompleted => Get("ChallengeCompleted");
     public static string QuoteOfDay => Get("QuoteOfDay");
+    public static string ThoughtOfDay => Get("ThoughtOfDay");
+    public static string QuoteFormat => Get("QuoteFormat");
+    public static string QuoteAuthorProgram => Get("QuoteAuthorProgram");
     public static string TapToOpenNote => Get("TapToOpenNote");
     public static string TapToCloseNote => Get("TapToCloseNote");
     public static string NoteLabel => Get("NoteLabel");
@@ -126,7 +168,6 @@ public static class AppStrings
     // StatisticsPage
     public static string Statistics_Title => Get("Statistics_Title");
     public static string BestStreak => Get("BestStreak");
-    public static string Days => Get("Days");
     public static string WeekCompletion => Get("WeekCompletion");
     public static string DaysClosedFormat => Get("DaysClosedFormat");
     public static string WeeklyActivity => Get("WeeklyActivity");
@@ -262,4 +303,10 @@ public static class AppStrings
     public static string Focus_EyeContact => Get("Focus_EyeContact");
     public static string Focus_SocialAction => Get("Focus_SocialAction");
     public static string FocusDayReasonFormat => Get("FocusDayReasonFormat");
+    public static string PersonalFocusTipFormat => Get("PersonalFocusTipFormat");
+    public static string FocusTip_ConversationStart => Get("FocusTip_ConversationStart");
+    public static string FocusTip_OpinionExpression => Get("FocusTip_OpinionExpression");
+    public static string FocusTip_BodyCalm => Get("FocusTip_BodyCalm");
+    public static string FocusTip_EyeContact => Get("FocusTip_EyeContact");
+    public static string FocusTip_SocialAction => Get("FocusTip_SocialAction");
 }

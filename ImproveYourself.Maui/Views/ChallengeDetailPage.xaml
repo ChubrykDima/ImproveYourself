@@ -80,6 +80,7 @@
                                           <Label x:Name="QuoteAuthorLabel"
                                                     Text=""
                                                     Style="{StaticResource BodyLabelStyle}"
+                                                    FontSize="13"
                                                     IsVisible="False" />
                                           <Label x:Name="QuoteHintLabel"
                                                     Text=""

@@ -34,7 +34,6 @@ public partial class HomePage : ContentPage
         Title = AppStrings.HomePage_Title;
         WelcomeLabel.Text = AppStrings.Welcome;
         CurrentStreakLabel.Text = AppStrings.CurrentStreak;
-        DaysInRowLabel.Text = AppStrings.DaysInRow;
         MonthProgressLabel.Text = AppStrings.MonthProgress;
         StatisticsButton.Text = $"{AppStrings.StatisticsButtonTitle}\n{AppStrings.StatisticsButtonSubtitle}";
         CalendarButton.Text = $"{AppStrings.CalendarButtonTitle}\n{AppStrings.CalendarButtonSubtitle}";
@@ -48,6 +47,7 @@ public partial class HomePage : ContentPage
         AvatarInitialLabel.Text = name[..1].ToUpperInvariant();
 
         StreakValueLabel.Text = _appState.StreakSnapshot.CurrentStreakDays.ToString();
+        DaysInRowLabel.Text = AppStrings.Plural("DaysInRow", _appState.StreakSnapshot.CurrentStreakDays);
         MonthPercentLabel.Text = $"{_appState.MonthlyProgress.Percent}%";
         MonthHintLabel.Text = string.Format(AppStrings.MonthProgressFormat, _appState.MonthlyProgress.CompletedDays, _appState.MonthlyProgress.TargetDays);
         RemainingDaysLabel.Text = string.Format(AppStrings.RemainingDaysGoal, _appState.MonthlyProgress.RemainingDays);
@@ -81,12 +81,14 @@ public partial class HomePage : ContentPage
 
     private void RenderPersonalization()
     {
-        var profile = _appState.TodayChallenge is not null && ChallengePersonalizer.UsesStructuredProgram(_appState.TodayChallenge)
+        var focus = _appState.TodayChallenge is null
             ? null
-            : ChallengePersonalizer.CreateProfile(_appState.StartSelfAssessment);
+            : ChallengePersonalizer.GetDayFocus(_appState.TodayChallenge);
 
-        PersonalizationLabel.IsVisible = profile is not null;
-        PersonalizationLabel.Text = profile?.DailyReason ?? string.Empty;
+        PersonalizationLabel.IsVisible = focus is not null;
+        PersonalizationLabel.Text = focus is null
+            ? string.Empty
+            : string.Format(AppStrings.FocusDayReasonFormat, focus);
     }
 
     private async void OnOpenChallengeClicked(object? sender, EventArgs e)

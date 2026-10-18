@@ -8,15 +8,13 @@ public interface IChallengeRepository
 
     void ReloadBundledContent();
 
-    void RelocalizeChallenges(SelfAssessmentSnapshot? personalizationSnapshot);
+    void RelocalizeChallenges();
 
     DailyChallenge? GetChallengeByDate(string date);
 
-    DailyChallenge GetOrCreateChallenge(string date, SelfAssessmentSnapshot? personalizationSnapshot = null);
+    DailyChallenge GetOrCreateChallenge(string date);
 
     DailyChallenge GetChallengeForProgramDay(int programDay, SelfAssessmentSnapshot? personalizationSnapshot = null);
-
-    void ApplyPersonalization(SelfAssessmentSnapshot snapshot);
 
     DailyChallenge AdvanceChallengeStepStatus(string date, StepType stepType);
 

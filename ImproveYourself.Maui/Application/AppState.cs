@@ -176,11 +176,6 @@ public sealed class AppState : INotifyPropertyChanged
         StartSelfAssessment = _settingsService.ReadSelfAssessment(SelfAssessmentKind.Start);
         FinalSelfAssessment = _settingsService.ReadSelfAssessment(SelfAssessmentKind.Final);
 
-        if (StartSelfAssessment is not null)
-        {
-            _challengeRepository.ApplyPersonalization(StartSelfAssessment);
-        }
-
         SetCurrentProgramDayInternal(ResolveCurrentProgramDay());
 
         IsHydrated = true;
@@ -259,7 +254,9 @@ public sealed class AppState : INotifyPropertyChanged
         var before = _challengeRepository.GetChallengeForProgramDay(programDay, StartSelfAssessment);
         var previousChallengeStatus = before.Status;
         var previousStepStatus = before.Steps.FirstOrDefault(step => step.Type == stepType)?.Status;
-        var updated = _challengeRepository.AdvanceChallengeStepStatus(before.Date, stepType);
+        var updated = ChallengePersonalizer.Personalize(
+            _challengeRepository.AdvanceChallengeStepStatus(before.Date, stepType),
+            StartSelfAssessment);
         updated.ProgramDayNumber = programDay;
         var updatedStepStatus = updated.Steps.FirstOrDefault(step => step.Type == stepType)?.Status;
         var programDayValue = programDay.ToString();
@@ -292,7 +289,7 @@ public sealed class AppState : INotifyPropertyChanged
     public void ReloadAfterLanguageChange()
     {
         _challengeRepository.ReloadBundledContent();
-        _challengeRepository.RelocalizeChallenges(StartSelfAssessment);
+        _challengeRepository.RelocalizeChallenges();
 
         RefreshDerivedState();
 
@@ -480,7 +477,6 @@ public sealed class AppState : INotifyPropertyChanged
         if (snapshot.Kind == SelfAssessmentKind.Start)
         {
             StartSelfAssessment = snapshot;
-            _challengeRepository.ApplyPersonalization(snapshot);
 
             if (CurrentProgramDay > 0)
             {

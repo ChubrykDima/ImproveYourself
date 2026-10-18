@@ -51,7 +51,7 @@ public sealed class LocalizationService : ILocalizationService
         ChallengeTemplateLanguage.SetLanguage(language);
 
         var strings = LoadStrings(language);
-        AppStrings.Load(strings);
+        AppStrings.Load(strings, language);
 
         var culture = GetCultureForLanguage(language);
         CultureInfo.CurrentUICulture = culture;

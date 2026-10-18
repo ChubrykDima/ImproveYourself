@@ -8,6 +8,11 @@
   <ItemGroup>
     <Compile Include="../../ImproveYourself.Maui/Domain/*.cs" Link="Domain/%(Filename)%(Extension)" />
     <Compile Include="../../ImproveYourself.Maui/Resources/Strings/AppStrings.cs" Link="AppStrings.cs" />
-    <None Include="../../ImproveYourself.Maui/Resources/Raw/daily-challenges.ru.json" Link="course.json" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="../../ImproveYourself.Maui/Resources/Raw/daily-challenges.ru.json" Link="course.ru.json" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="../../ImproveYourself.Maui/Resources/Raw/daily-challenges.en.json" Link="course.en.json" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="../../ImproveYourself.Maui/Resources/Raw/daily-challenges.de.json" Link="course.de.json" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="../../ImproveYourself.Maui/Resources/Raw/strings/ru.json" Link="strings.ru.json" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="../../ImproveYourself.Maui/Resources/Raw/strings/en.json" Link="strings.en.json" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="../../ImproveYourself.Maui/Resources/Raw/strings/de.json" Link="strings.de.json" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 </Project>
