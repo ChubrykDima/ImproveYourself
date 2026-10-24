@@ -11,7 +11,10 @@ public static class DateHelpers
     public static string ToIsoDate(DateTime date) => date.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
 
     public static string ToLocalIsoDate(DateTimeOffset timestamp) =>
-        timestamp.ToLocalTime().ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+        ToIsoDate(timestamp, TimeZoneInfo.Local);
+
+    public static string ToIsoDate(DateTimeOffset timestamp, TimeZoneInfo timeZone) =>
+        TimeZoneInfo.ConvertTime(timestamp, timeZone).ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
 
     public static string AddDays(string isoDate, int days) =>
         ParseIsoDate(isoDate).AddDays(days).ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
