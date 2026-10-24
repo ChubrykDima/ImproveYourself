@@ -523,7 +523,7 @@ public sealed class AppState : INotifyPropertyChanged
     private void LoadDerived()
     {
         var completedDates = _challengeRepository.ListCompletedDates().ToList();
-        var todayIsoDate = DateHelpers.ToIsoDate(DateTime.UtcNow);
+        var todayIsoDate = DateHelpers.LocalTodayIsoDate;
         var streakSnapshot = ProgressCalculator.CalculateStreakSnapshot(completedDates, todayIsoDate);
         var completedProgramDays = Math.Min(completedDates.Count, DateHelpers.TargetMonthlyDays);
         var monthlyProgress = new MonthlyProgress

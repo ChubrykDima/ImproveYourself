@@ -22,6 +22,7 @@ public static class MauiProgram
 		builder.Services.AddSingleton<IChallengeRepository, SqliteChallengeRepository>();
 		builder.Services.AddSingleton<ISettingsService, PreferencesSettingsService>();
 		builder.Services.AddSingleton<IAuthTokenStore, SecureAuthTokenStore>();
+		builder.Services.AddSingleton<InstallationSessionGuard>();
 		builder.Services.AddSingleton<ILocalizationService, LocalizationService>();
 		builder.Services.AddSingleton<INotificationPreferenceService, NotificationPreferenceService>();
 		builder.Services.AddSingleton<IAuthService>(sp =>

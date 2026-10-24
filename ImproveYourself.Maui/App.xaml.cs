@@ -1,5 +1,6 @@
 ﻿using ImproveYourself.Maui.Application;
 using ImproveYourself.Maui.Domain;
+using ImproveYourself.Maui.Persistence;
 using ImproveYourself.Maui.Resources.Strings;
 using ImproveYourself.Maui.Theme;
 using ImproveYourself.Maui.Views;
@@ -13,6 +14,7 @@ public partial class App : Microsoft.Maui.Controls.Application
 	private readonly IBackendConnectionService _backendConnectionService;
 	private readonly IAnalyticsClient _analyticsClient;
 	private readonly IAuthService _authService;
+	private readonly InstallationSessionGuard _installationSessionGuard;
 	private readonly ILocalizationService _localizationService;
 	private Page _rootPage;
 	private Window? _window;
@@ -22,6 +24,7 @@ public partial class App : Microsoft.Maui.Controls.Application
 		IBackendConnectionService backendConnectionService,
 		IAnalyticsClient analyticsClient,
 		IAuthService authService,
+		InstallationSessionGuard installationSessionGuard,
 		ILocalizationService localizationService)
 	{
 		localizationService.Initialize();
@@ -31,6 +34,7 @@ public partial class App : Microsoft.Maui.Controls.Application
 		_backendConnectionService = backendConnectionService;
 		_analyticsClient = analyticsClient;
 		_authService = authService;
+		_installationSessionGuard = installationSessionGuard;
 		_localizationService = localizationService;
 		_localizationService.LanguageChanged += OnLanguageChanged;
 		_rootPage = BuildNavigationPage(new LoadingPage());
@@ -78,6 +82,7 @@ public partial class App : Microsoft.Maui.Controls.Application
 	{
 		try
 		{
+			await _installationSessionGuard.PrepareAsync();
 			await _appState.InitializeAsync();
 			await _authService.TryRestoreSessionAsync();
 			_ = _analyticsClient.TrackAsync(AnalyticsEventNames.AppOpened);

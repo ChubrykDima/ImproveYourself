@@ -167,4 +167,10 @@ Check(AppStrings.Plural("DaysCount", 1) == "1 day" && AppStrings.Plural("DaysCou
 LoadStrings("de");
 Check(AppStrings.Plural("StepsCount", 1) == "1 Schritt" && AppStrings.Plural("StepsCount", 3) == "3 Schritte", "de plurals");
 
+// Completion dates must use the user's calendar day, not the UTC day.
+var utcPlusTwo = TimeZoneInfo.CreateCustomTimeZone("UTC+02 test", TimeSpan.FromHours(2), "UTC+02 test", "UTC+02 test");
+var nearMidnightUtc = new DateTimeOffset(2026, 10, 24, 22, 30, 0, TimeSpan.Zero);
+Check(DateHelpers.ToIsoDate(nearMidnightUtc, utcPlusTwo) == "2026-10-25",
+    "Completion date must cross midnight in the user's time zone.");
+
 Console.WriteLine("PASS: one 30-day program in ru/en/de, stable IDs, additive personalization, completion metadata, factory seeds and plurals.");
