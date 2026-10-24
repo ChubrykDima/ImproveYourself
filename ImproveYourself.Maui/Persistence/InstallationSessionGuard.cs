@@ -27,7 +27,7 @@ public sealed class InstallationSessionGuard(IAuthTokenStore tokenStore)
             return;
         }
 
-        var isExistingInstallation = LegacyInstallationKeys.Any(Preferences.Default.ContainsKey);
+        var isExistingInstallation = LegacyInstallationKeys.Any(key => Preferences.Default.ContainsKey(key));
 
         if (!isExistingInstallation)
         {
