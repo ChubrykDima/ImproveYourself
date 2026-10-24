@@ -736,7 +736,7 @@ public sealed class SqliteChallengeRepository : IChallengeRepository
     private static string? GetCompletionIsoDate(DailyChallenge challenge)
     {
         return DateTimeOffset.TryParse(challenge.CompletedAt, out var timestamp)
-            ? timestamp.UtcDateTime.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)
+            ? DateHelpers.ToLocalIsoDate(timestamp)
             : null;
     }
 
