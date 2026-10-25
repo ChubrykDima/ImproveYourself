@@ -173,4 +173,21 @@ var nearMidnightUtc = new DateTimeOffset(2026, 10, 24, 22, 30, 0, TimeSpan.Zero)
 Check(DateHelpers.ToIsoDate(nearMidnightUtc, utcPlusTwo) == "2026-10-25",
     "Completion date must cross midnight in the user's time zone.");
 
+// A completed day unlocks the next program day only after the local calendar day changes.
+var pacingChallenge = new DailyChallenge
+{
+    ProgramDayNumber = 1,
+    Status = ChallengeStatus.Completed,
+    CompletedAt = DateTimeOffset.Now.ToString("O"),
+};
+Check(!ProgressCalculator.CanAdvanceToNextProgramDay(pacingChallenge),
+    "A challenge completed today must not unlock another challenge today.");
+pacingChallenge.CompletedAt = DateTimeOffset.Now.AddDays(-1).ToString("O");
+Check(ProgressCalculator.CanAdvanceToNextProgramDay(pacingChallenge),
+    "A completed challenge must unlock the next challenge on a later local day.");
+pacingChallenge.ProgramDayNumber = DateHelpers.TargetMonthlyDays;
+Check(ProgressCalculator.IsProgramCompleted(pacingChallenge)
+      && !ProgressCalculator.CanAdvanceToNextProgramDay(pacingChallenge),
+    "The final program day must be terminal.");
+
 Console.WriteLine("PASS: one 30-day program in ru/en/de, stable IDs, additive personalization, completion metadata, factory seeds and plurals.");

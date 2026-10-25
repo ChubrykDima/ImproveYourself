@@ -30,6 +30,32 @@ public static class ProgressCalculator
     public static bool IsChallengeCompleted(IReadOnlyList<ChallengeStep> steps) =>
         GetChallengeStatus(steps) == ChallengeStatus.Completed;
 
+    public static bool IsProgramCompleted(DailyChallenge? challenge) =>
+        challenge is not null
+        && challenge.ProgramDayNumber >= DateHelpers.TargetMonthlyDays
+        && challenge.Status == ChallengeStatus.Completed;
+
+    public static bool CanAdvanceToNextProgramDay(
+        DailyChallenge? challenge,
+        string? localToday = null)
+    {
+        if (challenge is null
+            || challenge.Status != ChallengeStatus.Completed
+            || challenge.ProgramDayNumber >= DateHelpers.TargetMonthlyDays)
+        {
+            return false;
+        }
+
+        if (!DateTimeOffset.TryParse(challenge.CompletedAt, out var completedAt))
+        {
+            // Preserve forward progress for legacy rows that predate completion timestamps.
+            return true;
+        }
+
+        var today = localToday ?? DateHelpers.LocalTodayIsoDate;
+        return string.CompareOrdinal(DateHelpers.ToLocalIsoDate(completedAt), today) < 0;
+    }
+
     public static StepStatus GetNextStepStatus(StepStatus status) => StepStatus.Completed;
 
     public static StreakSnapshot CalculateStreakSnapshot(
