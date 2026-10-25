@@ -62,6 +62,7 @@ public partial class HomePage : ContentPage
             ChallengeProgressBar.Progress = 0;
             ChallengeButton.Text = AppStrings.PleaseWait;
             ChallengeButton.IsEnabled = false;
+            ChallengeButton.IsVisible = true;
             return;
         }
 
@@ -97,6 +98,7 @@ public partial class HomePage : ContentPage
                     ? AppStrings.GoToNextDay
                     : AppStrings.OpenDailyChallenge;
         ChallengeButton.IsEnabled = !isCompleted || canAdvance;
+        ChallengeButton.IsVisible = !isProgramCompleted;
     }
 
     private void RenderPersonalization()
