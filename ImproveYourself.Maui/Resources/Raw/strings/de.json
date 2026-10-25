@@ -85,6 +85,8 @@
   "StartScore": "Start",
   "FinishScore": "Ende",
   "Shift": "Verschiebung",
+  "AssessmentQuestionsRemainingFormat": "Lege f\u00fcr jede Frage einen Wert fest. Verbleibend: {0}.",
+  "AssessmentQuestionChangeFormat": "{0}: {1} \u2192 {2} ({3}{4})",
   "Notifications_Title": "Erinnerungen",
   "PermissionNotGranted": "Berechtigung nicht erteilt",
   "EnableNotificationsLater": "Benachrichtigungen k\u00f6nnen sp\u00e4ter in den Einstellungen aktiviert werden.",

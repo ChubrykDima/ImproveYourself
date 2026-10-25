@@ -143,6 +143,8 @@ public static class AppStrings
     public static string StartScore => Get("StartScore");
     public static string FinishScore => Get("FinishScore");
     public static string Shift => Get("Shift");
+    public static string AssessmentQuestionsRemainingFormat => Get("AssessmentQuestionsRemainingFormat");
+    public static string AssessmentQuestionChangeFormat => Get("AssessmentQuestionChangeFormat");
     public static string Notifications_Title => Get("Notifications_Title");
     public static string PermissionNotGranted => Get("PermissionNotGranted");
     public static string EnableNotificationsLater => Get("EnableNotificationsLater");

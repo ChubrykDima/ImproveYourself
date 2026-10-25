@@ -85,6 +85,8 @@
   "StartScore": "Start",
   "FinishScore": "Finish",
   "Shift": "Shift",
+  "AssessmentQuestionsRemainingFormat": "Set a value for every question. Remaining: {0}.",
+  "AssessmentQuestionChangeFormat": "{0}: {1} → {2} ({3}{4})",
   "Notifications_Title": "Reminders",
   "PermissionNotGranted": "Permission not granted",
   "EnableNotificationsLater": "Notifications can be enabled later in settings.",

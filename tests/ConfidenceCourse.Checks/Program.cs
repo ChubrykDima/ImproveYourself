@@ -190,4 +190,12 @@ Check(ProgressCalculator.IsProgramCompleted(pacingChallenge)
       && !ProgressCalculator.CanAdvanceToNextProgramDay(pacingChallenge),
     "The final program day must be terminal.");
 
+// Final assessment comparison must retain each question's individual change.
+var finalSnapshot = SelfAssessmentSurvey.Create(SelfAssessmentKind.Final, [3, 2, 6, 4, 8]);
+var assessmentChanges = SelfAssessmentSurvey.Compare(snapshot, finalSnapshot);
+Check(assessmentChanges.Count == SelfAssessmentSurvey.Questions.Count,
+    "Assessment comparison must include every question.");
+Check(assessmentChanges.Select(change => change.Delta).SequenceEqual(new[] { 2, -1, 3, 1, 5 }),
+    "Assessment comparison lost per-question score changes.");
+
 Console.WriteLine("PASS: one 30-day program in ru/en/de, stable IDs, additive personalization, completion metadata, factory seeds and plurals.");
