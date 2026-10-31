@@ -529,14 +529,7 @@ public sealed class AppState : INotifyPropertyChanged
         var completedDates = _challengeRepository.ListCompletedDates().ToList();
         var todayIsoDate = DateHelpers.LocalTodayIsoDate;
         var streakSnapshot = ProgressCalculator.CalculateStreakSnapshot(completedDates, todayIsoDate);
-        var completedProgramDays = Math.Min(completedDates.Count, DateHelpers.TargetMonthlyDays);
-        var monthlyProgress = new MonthlyProgress
-        {
-            CompletedDays = completedProgramDays,
-            TargetDays = DateHelpers.TargetMonthlyDays,
-            Percent = (int)Math.Round(completedProgramDays / (double)DateHelpers.TargetMonthlyDays * 100, MidpointRounding.AwayFromZero),
-            RemainingDays = Math.Max(DateHelpers.TargetMonthlyDays - completedProgramDays, 0),
-        };
+        var monthlyProgress = ProgressCalculator.CalculateProgramProgress(completedDates.Count);
 
         var weekStart = DateHelpers.ParseIsoDate(todayIsoDate).AddDays(-6).ToString("yyyy-MM-dd");
         var weeklyChallenges = _challengeRepository.ListChallengesBetween(weekStart, todayIsoDate);

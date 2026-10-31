@@ -178,6 +178,8 @@ public static class AppStrings
     public static string DaysClosedFormat => Get("DaysClosedFormat");
     public static string WeeklyActivity => Get("WeeklyActivity");
     public static string CompletionRateFormat => Get("CompletionRateFormat");
+    public static string ProgramProgressFormat => Get("ProgramProgressFormat");
+    public static string TaskCategoriesPeriod => Get("TaskCategoriesPeriod");
     public static string TaskCategories => Get("TaskCategories");
     public static string MorningPractice => Get("MorningPractice");
     public static string DailyChallengeName => Get("DailyChallengeName");

@@ -173,6 +173,16 @@ var nearMidnightUtc = new DateTimeOffset(2026, 10, 24, 22, 30, 0, TimeSpan.Zero)
 Check(DateHelpers.ToIsoDate(nearMidnightUtc, utcPlusTwo) == "2026-10-25",
     "Completion date must cross midnight in the user's time zone.");
 
+var programProgress = ProgressCalculator.CalculateProgramProgress(3);
+Check(programProgress.CompletedDays == 3 && programProgress.Percent == 10 && programProgress.RemainingDays == 27,
+    "Program progress must be completed program days out of 30.");
+Check(ProgressCalculator.CalculateProgramProgress(30).Percent == 100, "A finished program is 100%.");
+Check(ProgressCalculator.CountDistinctDates(["2026-10-15", "2026-10-18", "2026-10-18", "2026-10-18"]) == 2,
+    "Calendar totals must count marked dates once.");
+Check(ProgressCalculator.MondayBasedWeekdayIndex("2026-10-22") == 3
+      && ProgressCalculator.MondayBasedWeekdayIndex("2026-10-25") == 6,
+    "Week chart labels must follow each date, not the column index.");
+
 // A completed day unlocks the next program day only after the local calendar day changes.
 var pacingChallenge = new DailyChallenge
 {

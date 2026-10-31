@@ -74,6 +74,37 @@ public static class ProgressCalculator
         };
     }
 
+    public static MonthlyProgress CalculateProgramProgress(
+        int completedProgramDays,
+        int targetDays = DateHelpers.TargetMonthlyDays)
+    {
+        var completedDays = Math.Clamp(completedProgramDays, 0, Math.Max(targetDays, 0));
+        var percent = targetDays <= 0
+            ? 0
+            : (int)Math.Round(completedDays / (double)targetDays * 100, MidpointRounding.AwayFromZero);
+
+        return new MonthlyProgress
+        {
+            CompletedDays = completedDays,
+            TargetDays = targetDays,
+            Percent = percent,
+            RemainingDays = Math.Max(targetDays - completedDays, 0),
+        };
+    }
+
+    public static int CountDistinctDates(IEnumerable<string> dates) =>
+        dates
+            .Where(date => !string.IsNullOrWhiteSpace(date))
+            .Distinct(StringComparer.Ordinal)
+            .Count();
+
+    public static int MondayBasedWeekdayIndex(string isoDate)
+    {
+        var day = DateHelpers.ParseIsoDate(isoDate).DayOfWeek;
+
+        return day == DayOfWeek.Sunday ? 6 : (int)day - 1;
+    }
+
     public static MonthlyProgress CalculateMonthlyProgress(
         IEnumerable<string> completedDates,
         DateTime? referenceDate = null,
