@@ -167,4 +167,35 @@ Check(AppStrings.Plural("DaysCount", 1) == "1 day" && AppStrings.Plural("DaysCou
 LoadStrings("de");
 Check(AppStrings.Plural("StepsCount", 1) == "1 Schritt" && AppStrings.Plural("StepsCount", 3) == "3 Schritte", "de plurals");
 
+// Completion dates must use the user's calendar day, not the UTC day.
+var utcPlusTwo = TimeZoneInfo.CreateCustomTimeZone("UTC+02 test", TimeSpan.FromHours(2), "UTC+02 test", "UTC+02 test");
+var nearMidnightUtc = new DateTimeOffset(2026, 10, 24, 22, 30, 0, TimeSpan.Zero);
+Check(DateHelpers.ToIsoDate(nearMidnightUtc, utcPlusTwo) == "2026-10-25",
+    "Completion date must cross midnight in the user's time zone.");
+
+// A completed day unlocks the next program day only after the local calendar day changes.
+var pacingChallenge = new DailyChallenge
+{
+    ProgramDayNumber = 1,
+    Status = ChallengeStatus.Completed,
+    CompletedAt = DateTimeOffset.Now.ToString("O"),
+};
+Check(!ProgressCalculator.CanAdvanceToNextProgramDay(pacingChallenge),
+    "A challenge completed today must not unlock another challenge today.");
+pacingChallenge.CompletedAt = DateTimeOffset.Now.AddDays(-1).ToString("O");
+Check(ProgressCalculator.CanAdvanceToNextProgramDay(pacingChallenge),
+    "A completed challenge must unlock the next challenge on a later local day.");
+pacingChallenge.ProgramDayNumber = DateHelpers.TargetMonthlyDays;
+Check(ProgressCalculator.IsProgramCompleted(pacingChallenge)
+      && !ProgressCalculator.CanAdvanceToNextProgramDay(pacingChallenge),
+    "The final program day must be terminal.");
+
+// Final assessment comparison must retain each question's individual change.
+var finalSnapshot = SelfAssessmentSurvey.Create(SelfAssessmentKind.Final, [3, 2, 6, 4, 8]);
+var assessmentChanges = SelfAssessmentSurvey.Compare(snapshot, finalSnapshot);
+Check(assessmentChanges.Count == SelfAssessmentSurvey.Questions.Count,
+    "Assessment comparison must include every question.");
+Check(assessmentChanges.Select(change => change.Delta).SequenceEqual(new[] { 2, -1, 3, 1, 5 }),
+    "Assessment comparison lost per-question score changes.");
+
 Console.WriteLine("PASS: one 30-day program in ru/en/de, stable IDs, additive personalization, completion metadata, factory seeds and plurals.");

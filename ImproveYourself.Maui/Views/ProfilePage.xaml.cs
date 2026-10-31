@@ -93,7 +93,7 @@ public partial class ProfilePage : ContentPage
         CalendarGrid.Children.Clear();
         CalendarGrid.RowDefinitions.Clear();
 
-        var today = DateTime.UtcNow.Date;
+        var today = DateTime.Today;
         var todayIsoDate = DateHelpers.ToIsoDate(today);
         var calendarDays = ProgressCalculator.ListCalendarDaysForMonth(today);
         var placeholders = GetLeadingPlaceholders(today);

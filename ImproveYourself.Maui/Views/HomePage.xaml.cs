@@ -62,21 +62,43 @@ public partial class HomePage : ContentPage
             ChallengeProgressBar.Progress = 0;
             ChallengeButton.Text = AppStrings.PleaseWait;
             ChallengeButton.IsEnabled = false;
+            ChallengeButton.IsVisible = true;
             return;
         }
 
         var completedSteps = ProgressCalculator.CountCompletedSteps(_appState.TodayChallenge.Steps);
         var totalSteps = Math.Max(_appState.TodayChallenge.Steps.Count, 1);
         var isCompleted = _appState.TodayChallenge.Status == ChallengeStatus.Completed;
+        var isProgramCompleted = _appState.IsProgramCompleted;
+        var canAdvance = _appState.CanAdvanceToNextDay;
         ChallengeLeadLabel.Text = string.Format(AppStrings.ProgramDayFormat, _appState.TodayChallenge.ProgramDayNumber);
-        ChallengeTitleLabel.Text = ChallengeTextLocalizer.GetDisplayTitle(_appState.TodayChallenge.Title);
-        ChallengeSubtitleLabel.Text = string.Format(AppStrings.ProgramDayStepsFormat, completedSteps, totalSteps);
-        RenderPersonalization();
+        ChallengeTitleLabel.Text = isProgramCompleted
+            ? AppStrings.ProgramCompletedTitle
+            : ChallengeTextLocalizer.GetDisplayTitle(_appState.TodayChallenge.Title);
+        ChallengeSubtitleLabel.Text = isProgramCompleted
+            ? AppStrings.ProgramCompletedMessage
+            : string.Format(AppStrings.ProgramDayStepsFormat, completedSteps, totalSteps);
+
+        if (isProgramCompleted)
+        {
+            PersonalizationLabel.IsVisible = false;
+            PersonalizationLabel.Text = string.Empty;
+        }
+        else
+        {
+            RenderPersonalization();
+        }
+
         ChallengeProgressBar.Progress = completedSteps / (double)totalSteps;
-        ChallengeButton.Text = isCompleted
-            ? AppStrings.GoToNextDay
-            : AppStrings.OpenDailyChallenge;
-        ChallengeButton.IsEnabled = true;
+        ChallengeButton.Text = isProgramCompleted
+            ? AppStrings.ProgramCompletedTitle
+            : isCompleted && !canAdvance
+                ? AppStrings.NextDayAvailableTomorrow
+                : isCompleted
+                    ? AppStrings.GoToNextDay
+                    : AppStrings.OpenDailyChallenge;
+        ChallengeButton.IsEnabled = !isCompleted || canAdvance;
+        ChallengeButton.IsVisible = !isProgramCompleted;
     }
 
     private void RenderPersonalization()
@@ -100,6 +122,11 @@ public partial class HomePage : ContentPage
 
         if (_appState.TodayChallenge.Status == ChallengeStatus.Completed)
         {
+            if (!_appState.CanAdvanceToNextDay)
+            {
+                return;
+            }
+
             var nextChallenge = _appState.AdvanceToNextDay();
             _appState.TrackChallengeOpened(nextChallenge);
             await Navigation.PushAsync(new ChallengeDetailPage(_appState, nextChallenge.ProgramDayNumber));

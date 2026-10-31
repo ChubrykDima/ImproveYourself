@@ -30,13 +30,39 @@ public static class ProgressCalculator
     public static bool IsChallengeCompleted(IReadOnlyList<ChallengeStep> steps) =>
         GetChallengeStatus(steps) == ChallengeStatus.Completed;
 
+    public static bool IsProgramCompleted(DailyChallenge? challenge) =>
+        challenge is not null
+        && challenge.ProgramDayNumber >= DateHelpers.TargetMonthlyDays
+        && challenge.Status == ChallengeStatus.Completed;
+
+    public static bool CanAdvanceToNextProgramDay(
+        DailyChallenge? challenge,
+        string? localToday = null)
+    {
+        if (challenge is null
+            || challenge.Status != ChallengeStatus.Completed
+            || challenge.ProgramDayNumber >= DateHelpers.TargetMonthlyDays)
+        {
+            return false;
+        }
+
+        if (!DateTimeOffset.TryParse(challenge.CompletedAt, out var completedAt))
+        {
+            // Preserve forward progress for legacy rows that predate completion timestamps.
+            return true;
+        }
+
+        var today = localToday ?? DateHelpers.LocalTodayIsoDate;
+        return string.CompareOrdinal(DateHelpers.ToLocalIsoDate(completedAt), today) < 0;
+    }
+
     public static StepStatus GetNextStepStatus(StepStatus status) => StepStatus.Completed;
 
     public static StreakSnapshot CalculateStreakSnapshot(
         IEnumerable<string> completedDates,
         string? referenceDate = null)
     {
-        var reference = referenceDate ?? DateHelpers.ToIsoDate(DateTime.UtcNow);
+        var reference = referenceDate ?? DateHelpers.LocalTodayIsoDate;
         var sorted = NormalizeAndSortDates(completedDates);
 
         return new StreakSnapshot
@@ -53,7 +79,7 @@ public static class ProgressCalculator
         DateTime? referenceDate = null,
         int targetDays = DateHelpers.TargetMonthlyDays)
     {
-        var reference = referenceDate ?? DateTime.UtcNow;
+        var reference = referenceDate ?? DateTime.Now;
         var monthKey = DateHelpers.MonthKeyFromDate(reference);
         var completedDays = completedDates
             .Where(date => !string.IsNullOrWhiteSpace(date))
@@ -76,7 +102,7 @@ public static class ProgressCalculator
         IEnumerable<DailyChallenge> challenges,
         string? referenceDate = null)
     {
-        var reference = DateHelpers.ParseIsoDate(referenceDate ?? DateHelpers.ToIsoDate(DateTime.UtcNow));
+        var reference = DateHelpers.ParseIsoDate(referenceDate ?? DateHelpers.LocalTodayIsoDate);
         var challengeList = challenges.ToList();
         var lookup = challengeList
             .GroupBy(challenge => challenge.Date, StringComparer.Ordinal)
@@ -144,7 +170,7 @@ public static class ProgressCalculator
         int periodDays = DateHelpers.TargetMonthlyDays,
         string? referenceDate = null)
     {
-        var reference = DateHelpers.ParseIsoDate(referenceDate ?? DateHelpers.ToIsoDate(DateTime.UtcNow));
+        var reference = DateHelpers.ParseIsoDate(referenceDate ?? DateHelpers.LocalTodayIsoDate);
         var periodStart = reference.AddDays(-(periodDays - 1));
 
         var completedInRange = NormalizeAndSortDates(completedDates)

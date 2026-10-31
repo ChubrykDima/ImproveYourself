@@ -163,6 +163,10 @@ public sealed class AppState : INotifyPropertyChanged
         && FinalSelfAssessment is null
         && CompletedDates.Count >= DateHelpers.TargetMonthlyDays;
 
+    public bool IsProgramCompleted => ProgressCalculator.IsProgramCompleted(TodayChallenge);
+
+    public bool CanAdvanceToNextDay => ProgressCalculator.CanAdvanceToNextProgramDay(TodayChallenge);
+
     public Task InitializeAsync()
     {
         _challengeRepository.Initialize();
@@ -236,7 +240,7 @@ public sealed class AppState : INotifyPropertyChanged
 
         if (TodayChallenge is not null
             && TodayChallenge.ProgramDayNumber == referenceDay
-            && TodayChallenge.Status != ChallengeStatus.Completed)
+            && !ProgressCalculator.CanAdvanceToNextProgramDay(TodayChallenge))
         {
             return TodayChallenge;
         }
@@ -523,7 +527,7 @@ public sealed class AppState : INotifyPropertyChanged
     private void LoadDerived()
     {
         var completedDates = _challengeRepository.ListCompletedDates().ToList();
-        var todayIsoDate = DateHelpers.ToIsoDate(DateTime.UtcNow);
+        var todayIsoDate = DateHelpers.LocalTodayIsoDate;
         var streakSnapshot = ProgressCalculator.CalculateStreakSnapshot(completedDates, todayIsoDate);
         var completedProgramDays = Math.Min(completedDates.Count, DateHelpers.TargetMonthlyDays);
         var monthlyProgress = new MonthlyProgress

@@ -53,15 +53,22 @@ public partial class ChallengeDetailPage : ContentPage
         var completedSteps = ProgressCalculator.CountCompletedSteps(_challenge.Steps);
         var totalSteps = Math.Max(_challenge.Steps.Count, 1);
         var isCompleted = _challenge.Status == ChallengeStatus.Completed;
+        var isProgramCompleted = ProgressCalculator.IsProgramCompleted(_challenge);
+        var canAdvance = ProgressCalculator.CanAdvanceToNextProgramDay(_challenge);
 
         DateLabel.Text = string.Format(AppStrings.ProgramDayFormat, _challenge.ProgramDayNumber);
         ChallengeTitleLabel.Text = ChallengeTextLocalizer.GetDisplayTitle(_challenge.Title);
         ProgressLabel.Text = string.Format(AppStrings.ProgressFormat, completedSteps, totalSteps);
         RenderPersonalization();
         ChallengeProgressBar.Progress = completedSteps / (double)totalSteps;
+        CompletedTextLabel.Text = isProgramCompleted
+            ? AppStrings.ProgramCompletedMessage
+            : canAdvance
+                ? AppStrings.ChallengeCompleted
+                : AppStrings.ChallengeCompletedToday;
         CompletedTextLabel.IsVisible = isCompleted;
-        NextDayButton.IsVisible = isCompleted;
-        NextDayButton.IsEnabled = isCompleted;
+        NextDayButton.IsVisible = canAdvance;
+        NextDayButton.IsEnabled = canAdvance;
         RenderQuoteSection(_challenge);
 
         foreach (var step in _challenge.Steps
@@ -288,7 +295,7 @@ public partial class ChallengeDetailPage : ContentPage
 
     private void OnOpenNextDayClicked(object? sender, EventArgs e)
     {
-        if (_challenge is null || _challenge.Status != ChallengeStatus.Completed)
+        if (!ProgressCalculator.CanAdvanceToNextProgramDay(_challenge))
         {
             return;
         }

@@ -10,6 +10,14 @@ public enum SelfAssessmentKind
 
 public sealed record SelfAssessmentQuestion(string Key, string Text);
 
+public sealed record SelfAssessmentChange(
+    SelfAssessmentQuestion Question,
+    int StartScore,
+    int FinalScore)
+{
+    public int Delta => FinalScore - StartScore;
+}
+
 public sealed class SelfAssessmentSnapshot
 {
     public SelfAssessmentKind Kind { get; set; }
@@ -68,4 +76,14 @@ public static class SelfAssessmentSurvey
             SocialActionReadiness = normalized[4],
         };
     }
+
+    public static IReadOnlyList<SelfAssessmentChange> Compare(
+        SelfAssessmentSnapshot start,
+        SelfAssessmentSnapshot final) =>
+        Questions
+            .Select((question, index) => new SelfAssessmentChange(
+                question,
+                start.Scores[index],
+                final.Scores[index]))
+            .ToList();
 }

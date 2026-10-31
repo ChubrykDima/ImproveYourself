@@ -76,6 +76,9 @@ public static class AppStrings
     public static string MainFocusOfDay => Get("MainFocusOfDay");
     public static string OpenDailyChallenge => Get("OpenDailyChallenge");
     public static string GoToNextDay => Get("GoToNextDay");
+    public static string NextDayAvailableTomorrow => Get("NextDayAvailableTomorrow");
+    public static string ProgramCompletedTitle => Get("ProgramCompletedTitle");
+    public static string ProgramCompletedMessage => Get("ProgramCompletedMessage");
     public static string PleaseWait => Get("PleaseWait");
     public static string PreparingChallenge => Get("PreparingChallenge");
     public static string TryOpenInSecond => Get("TryOpenInSecond");
@@ -140,6 +143,8 @@ public static class AppStrings
     public static string StartScore => Get("StartScore");
     public static string FinishScore => Get("FinishScore");
     public static string Shift => Get("Shift");
+    public static string AssessmentQuestionsRemainingFormat => Get("AssessmentQuestionsRemainingFormat");
+    public static string AssessmentQuestionChangeFormat => Get("AssessmentQuestionChangeFormat");
     public static string Notifications_Title => Get("Notifications_Title");
     public static string PermissionNotGranted => Get("PermissionNotGranted");
     public static string EnableNotificationsLater => Get("EnableNotificationsLater");
@@ -155,6 +160,7 @@ public static class AppStrings
     public static string ChallengeNotFound => Get("ChallengeNotFound");
     public static string ProgressFormat => Get("ProgressFormat");
     public static string ChallengeCompleted => Get("ChallengeCompleted");
+    public static string ChallengeCompletedToday => Get("ChallengeCompletedToday");
     public static string QuoteOfDay => Get("QuoteOfDay");
     public static string ThoughtOfDay => Get("ThoughtOfDay");
     public static string QuoteFormat => Get("QuoteFormat");

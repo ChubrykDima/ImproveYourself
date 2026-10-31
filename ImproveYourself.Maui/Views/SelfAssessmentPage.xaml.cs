@@ -11,6 +11,7 @@ public partial class SelfAssessmentPage : ContentPage
     private readonly Func<Task> _onCompletedAsync;
     private readonly bool _promptNotificationsOnCompletion;
     private readonly List<int> _scores;
+    private readonly HashSet<int> _answeredQuestions = [];
     private bool _isSubmitting;
 
     public SelfAssessmentPage(
@@ -29,6 +30,7 @@ public partial class SelfAssessmentPage : ContentPage
         Title = AppStrings.SelfAssessment_Title;
         RenderHeader();
         RenderQuestions();
+        UpdateSubmitState();
     }
 
     private void RenderHeader()
@@ -60,10 +62,10 @@ public partial class SelfAssessmentPage : ContentPage
             var question = SelfAssessmentSurvey.Questions[index];
             var valueLabel = new Label
             {
-                Text = _scores[questionIndex].ToString(),
+                Text = "—",
                 FontFamily = "OpenSansSemibold",
                 FontSize = 22,
-                TextColor = Color.FromArgb("#F5F7FB"),
+                TextColor = Color.FromArgb("#9EA8BD"),
                 HorizontalTextAlignment = TextAlignment.End,
                 VerticalTextAlignment = TextAlignment.Center,
             };
@@ -78,11 +80,20 @@ public partial class SelfAssessmentPage : ContentPage
                 ThumbColor = Color.FromArgb("#F5F7FB"),
             };
 
+            void MarkQuestionAnswered()
+            {
+                _answeredQuestions.Add(questionIndex);
+                valueLabel.Text = _scores[questionIndex].ToString();
+                valueLabel.TextColor = Color.FromArgb("#F5F7FB");
+                UpdateSubmitState();
+            }
+
+            slider.DragStarted += (_, _) => MarkQuestionAnswered();
             slider.ValueChanged += (_, args) =>
             {
                 var score = (int)Math.Round(args.NewValue, MidpointRounding.AwayFromZero);
                 _scores[questionIndex] = score;
-                valueLabel.Text = score.ToString();
+                MarkQuestionAnswered();
             };
 
             var header = new Grid
@@ -149,7 +160,7 @@ public partial class SelfAssessmentPage : ContentPage
 
     private async void OnSubmitClicked(object? sender, EventArgs e)
     {
-        if (_isSubmitting)
+        if (_isSubmitting || _answeredQuestions.Count != SelfAssessmentSurvey.Questions.Count)
         {
             return;
         }
@@ -177,9 +188,32 @@ public partial class SelfAssessmentPage : ContentPage
     {
         var delta = final.AverageScore - start.AverageScore;
         var direction = delta >= 0 ? "+" : string.Empty;
-        var message = string.Format(AppStrings.FinalComparisonFormat, start.AverageScore, final.AverageScore, direction, delta);
+        var summary = string.Format(AppStrings.FinalComparisonFormat, start.AverageScore, final.AverageScore, direction, delta);
+        var details = SelfAssessmentSurvey.Compare(start, final)
+            .Select(change =>
+            {
+                var changeDirection = change.Delta >= 0 ? "+" : string.Empty;
+                return string.Format(
+                    AppStrings.AssessmentQuestionChangeFormat,
+                    change.Question.Text,
+                    change.StartScore,
+                    change.FinalScore,
+                    changeDirection,
+                    change.Delta);
+            });
+        var message = $"{summary}\n\n{string.Join("\n", details)}";
 
         return DisplayAlertAsync(AppStrings.YourResult, message, AppStrings.Done);
+    }
+
+    private void UpdateSubmitState()
+    {
+        var remaining = SelfAssessmentSurvey.Questions.Count - _answeredQuestions.Count;
+        SubmitButton.IsEnabled = !_isSubmitting && remaining == 0;
+        AssessmentValidationLabel.IsVisible = remaining > 0;
+        AssessmentValidationLabel.Text = remaining > 0
+            ? string.Format(AppStrings.AssessmentQuestionsRemainingFormat, remaining)
+            : string.Empty;
     }
 
     private async Task PromptNotificationsAsync()
