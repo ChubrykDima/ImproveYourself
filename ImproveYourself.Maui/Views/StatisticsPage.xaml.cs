@@ -33,8 +33,9 @@ public partial class StatisticsPage : ContentPage
         WeekCompletionTitleLabel.Text = AppStrings.WeekCompletion;
         WeeklyActivityTitleLabel.Text = AppStrings.WeeklyActivity;
         TaskCategoriesTitleLabel.Text = AppStrings.TaskCategories;
-        MorningPracticeLabel.Text = AppStrings.MorningPractice;
-        DailyChallengeLabel.Text = AppStrings.DailyChallengeName;
+        TaskCategoriesPeriodLabel.Text = AppStrings.TaskCategoriesPeriod;
+        MorningPracticeLabel.Text = AppStrings.PracticeStep_Title;
+        DailyChallengeLabel.Text = AppStrings.SocialStep_Title;
         BackendStatsTitleLabel.Text = AppStrings.Backend;
     }
 
@@ -48,6 +49,11 @@ public partial class StatisticsPage : ContentPage
         var stats = _appState.WeeklyStats;
 
         WeekCompletedLabel.Text = string.Format(AppStrings.DaysClosedFormat, stats.TotalCompletedDays);
+        ProgramProgressLabel.Text = string.Format(
+            AppStrings.ProgramProgressFormat,
+            _appState.MonthlyProgress.Percent,
+            _appState.MonthlyProgress.CompletedDays,
+            _appState.MonthlyProgress.TargetDays);
         WeeklyCompletionRateLabel.Text = string.Format(AppStrings.CompletionRateFormat, stats.CompletionRate);
 
         PracticeValueLabel.Text = GetCategoryValue(stats, StepType.Practice).ToString();
@@ -120,7 +126,7 @@ public partial class StatisticsPage : ContentPage
             dayColumn.Children.Add(barHost);
             dayColumn.Children.Add(new Label
             {
-                Text = dayLabels[index],
+                Text = dayLabels[ProgressCalculator.MondayBasedWeekdayIndex(day.Date)],
                 FontFamily = "OpenSansSemibold",
                 FontSize = 12,
                 TextColor = Color.FromArgb("#9EA8BD"),

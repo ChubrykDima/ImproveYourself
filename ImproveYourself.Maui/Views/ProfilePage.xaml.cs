@@ -50,8 +50,8 @@ public partial class ProfilePage : ContentPage
         AvatarLabel.Text = name[..1].ToUpperInvariant();
 
         CurrentStreakMetricLabel.Text = _appState.StreakSnapshot.CurrentStreakDays.ToString();
-        TotalCompletedMetricLabel.Text = _appState.CompletedDates.Count.ToString();
-        CompletionRateMetricLabel.Text = $"{ProgressCalculator.CalculateRollingCompletionRate(_appState.CompletedDates)}%";
+        TotalCompletedMetricLabel.Text = ProgressCalculator.CountDistinctDates(_appState.CompletedDates).ToString();
+        CompletionRateMetricLabel.Text = $"{_appState.MonthlyProgress.Percent}%";
 
         RenderSelfAssessmentSummary();
         RenderCalendar();

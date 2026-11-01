@@ -61,6 +61,9 @@
                     <Label x:Name="WeeklyActivityTitleLabel"
                            Text=""
                            Style="{StaticResource SubtitleLabelStyle}" />
+                    <Label x:Name="ProgramProgressLabel"
+                           Text=""
+                           Style="{StaticResource BodyLabelStyle}" />
                     <Label x:Name="WeeklyCompletionRateLabel"
                            Text=""
                            Style="{StaticResource BodyLabelStyle}" />
@@ -72,6 +75,9 @@
                     <Label x:Name="TaskCategoriesTitleLabel"
                            Text=""
                            Style="{StaticResource SubtitleLabelStyle}" />
+                    <Label x:Name="TaskCategoriesPeriodLabel"
+                           Text=""
+                           Style="{StaticResource BodyLabelStyle}" />
 
                     <Grid ColumnDefinitions="*,Auto"
                           RowDefinitions="Auto,Auto"

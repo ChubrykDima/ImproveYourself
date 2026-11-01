@@ -642,7 +642,7 @@ public sealed class SqliteChallengeRepository : IChallengeRepository
     private static string NormalizeStepTitle(StepType stepType, string? title) => stepType switch
     {
         StepType.Practice => string.IsNullOrWhiteSpace(title) ? AppStrings.PracticeStep_Title : title,
-        StepType.Social => AppStrings.SocialStep_Title,
+        StepType.Social => string.IsNullOrWhiteSpace(title) ? AppStrings.SocialStep_Title : title,
         StepType.Quote => AppStrings.QuoteStep_Title,
         _ => string.IsNullOrWhiteSpace(title) ? AppStrings.StepOfDay : title,
     };
