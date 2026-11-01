@@ -33,4 +33,10 @@ public interface ISettingsService
     SelfAssessmentSnapshot? ReadSelfAssessment(SelfAssessmentKind kind);
 
     void WriteSelfAssessment(SelfAssessmentSnapshot snapshot);
+
+    void ClearSelfAssessment(SelfAssessmentKind kind);
+
+    string ReadLastSyncedUserId();
+
+    void WriteLastSyncedUserId(string value);
 }

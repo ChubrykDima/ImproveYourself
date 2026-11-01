@@ -25,4 +25,8 @@ public interface IChallengeRepository
     IReadOnlyList<DailyChallenge> ListAllChallenges();
 
     int GetCompletedChallengesCount();
+
+    void ApplyRemoteProgress(IReadOnlyList<RemoteProgramDay> remoteDays, bool authoritative);
+
+    void ResetProgress();
 }

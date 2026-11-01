@@ -18,6 +18,7 @@ public sealed class PreferencesSettingsService : ISettingsService
     private const string BackendClientIdKey = "backend.clientId";
     private const string StartSelfAssessmentKey = "selfAssessment.start";
     private const string FinalSelfAssessmentKey = "selfAssessment.final";
+    private const string LastSyncedUserIdKey = "backend.lastUserId";
 
     private static readonly JsonSerializerOptions JsonOptions = new()
     {
@@ -129,6 +130,15 @@ public sealed class PreferencesSettingsService : ISettingsService
         var json = JsonSerializer.Serialize(snapshot, JsonOptions);
         Preferences.Default.Set(GetSelfAssessmentKey(snapshot.Kind), json);
     }
+
+    public void ClearSelfAssessment(SelfAssessmentKind kind) =>
+        Preferences.Default.Remove(GetSelfAssessmentKey(kind));
+
+    public string ReadLastSyncedUserId() =>
+        Preferences.Default.Get(LastSyncedUserIdKey, string.Empty);
+
+    public void WriteLastSyncedUserId(string value) =>
+        Preferences.Default.Set(LastSyncedUserIdKey, value?.Trim() ?? string.Empty);
 
     private static string GetSelfAssessmentKey(SelfAssessmentKind kind) => kind switch
     {
