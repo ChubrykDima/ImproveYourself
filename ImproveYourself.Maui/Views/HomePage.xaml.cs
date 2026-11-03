@@ -25,7 +25,7 @@ public partial class HomePage : ContentPage
         _appState.RefreshDerivedState();
         RenderStaticLabels();
         Render();
-        _ = SyncBackendAndRenderAsync();
+        await SyncBackendAndRenderAsync();
         await TryOpenFinalAssessmentAsync();
     }
 
@@ -154,12 +154,8 @@ public partial class HomePage : ContentPage
 
     private async Task SyncBackendAndRenderAsync()
     {
-        var result = await _appState.SyncBackendAsync();
-
-        if (result.Succeeded && result.Stats is not null)
-        {
-            Render();
-        }
+        await _appState.SyncBackendAsync();
+        Render();
     }
 
     private async Task TryOpenFinalAssessmentAsync()

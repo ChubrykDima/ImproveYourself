@@ -32,8 +32,29 @@ public sealed record BackendSyncResult(
     string Message,
     BackendStatsSnapshot? Stats = null);
 
+public sealed record RemoteChallengesDownload(
+    bool IsConfigured,
+    bool Succeeded,
+    string Message,
+    IReadOnlyList<RemoteProgramDay> Challenges);
+
+public sealed record RemoteAssessmentsDownload(
+    bool IsConfigured,
+    bool Succeeded,
+    string Message,
+    SelfAssessmentSnapshot? Start,
+    SelfAssessmentSnapshot? Final);
+
 public interface IBackendSyncService
 {
+    Task<RemoteChallengesDownload> DownloadChallengesAsync(CancellationToken cancellationToken = default);
+
+    Task<RemoteAssessmentsDownload> DownloadSelfAssessmentsAsync(CancellationToken cancellationToken = default);
+
+    Task UploadSelfAssessmentsAsync(
+        IReadOnlyList<SelfAssessmentSnapshot> snapshots,
+        CancellationToken cancellationToken = default);
+
     Task<BackendSyncResult> SyncChallengesAsync(
         IReadOnlyList<DailyChallenge> challenges,
         CancellationToken cancellationToken = default);
@@ -99,6 +120,138 @@ public sealed class BackendConnectionService : IBackendConnectionService, IBacke
         catch (Exception ex)
         {
             return new BackendConnectionResult(true, false, false, false, string.Format(AppStrings.BackendConnectionFailedFormat, ex.Message));
+        }
+    }
+
+    public async Task<RemoteChallengesDownload> DownloadChallengesAsync(CancellationToken cancellationToken = default)
+    {
+        var (baseUri, errorMessage) = ReadBackendBaseUri();
+
+        if (baseUri is null)
+        {
+            return new RemoteChallengesDownload(false, false, errorMessage, []);
+        }
+
+        if (!_authService.IsLoggedIn)
+        {
+            return new RemoteChallengesDownload(true, false, AppStrings.AuthLoginRequired, []);
+        }
+
+        try
+        {
+            using var request = new HttpRequestMessage(HttpMethod.Get, new Uri(baseUri, "api/challenges"));
+            using var response = await _httpClient.SendAsync(request, cancellationToken);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                return new RemoteChallengesDownload(
+                    true,
+                    false,
+                    string.Format(AppStrings.BackendSyncFailedStatusFormat, (int)response.StatusCode),
+                    []);
+            }
+
+            var challenges = await response.Content.ReadFromJsonAsync<List<SyncDailyChallengeDto>>(ApiJsonOptions, cancellationToken)
+                ?? [];
+
+            return new RemoteChallengesDownload(
+                true,
+                true,
+                AppStrings.BackendSyncSucceeded,
+                challenges.Select(MapRemoteDay).ToList());
+        }
+        catch (TaskCanceledException)
+        {
+            return new RemoteChallengesDownload(true, false, AppStrings.BackendSyncTimeout, []);
+        }
+        catch (Exception ex)
+        {
+            return new RemoteChallengesDownload(
+                true,
+                false,
+                string.Format(AppStrings.BackendSyncFailedFormat, ex.Message),
+                []);
+        }
+    }
+
+    public async Task<RemoteAssessmentsDownload> DownloadSelfAssessmentsAsync(CancellationToken cancellationToken = default)
+    {
+        var (baseUri, errorMessage) = ReadBackendBaseUri();
+
+        if (baseUri is null)
+        {
+            return new RemoteAssessmentsDownload(false, false, errorMessage, null, null);
+        }
+
+        if (!_authService.IsLoggedIn)
+        {
+            return new RemoteAssessmentsDownload(true, false, AppStrings.AuthLoginRequired, null, null);
+        }
+
+        try
+        {
+            using var request = new HttpRequestMessage(HttpMethod.Get, new Uri(baseUri, "api/self-assessments"));
+            using var response = await _httpClient.SendAsync(request, cancellationToken);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                return new RemoteAssessmentsDownload(
+                    true,
+                    false,
+                    string.Format(AppStrings.BackendSyncFailedStatusFormat, (int)response.StatusCode),
+                    null,
+                    null);
+            }
+
+            var payload = await response.Content.ReadFromJsonAsync<SelfAssessmentsResponse>(ApiJsonOptions, cancellationToken);
+
+            return new RemoteAssessmentsDownload(
+                true,
+                true,
+                AppStrings.BackendSyncSucceeded,
+                MapAssessment(payload?.Start, SelfAssessmentKind.Start),
+                MapAssessment(payload?.Final, SelfAssessmentKind.Final));
+        }
+        catch (TaskCanceledException)
+        {
+            return new RemoteAssessmentsDownload(true, false, AppStrings.BackendSyncTimeout, null, null);
+        }
+        catch (Exception ex)
+        {
+            return new RemoteAssessmentsDownload(
+                true,
+                false,
+                string.Format(AppStrings.BackendSyncFailedFormat, ex.Message),
+                null,
+                null);
+        }
+    }
+
+    public async Task UploadSelfAssessmentsAsync(
+        IReadOnlyList<SelfAssessmentSnapshot> snapshots,
+        CancellationToken cancellationToken = default)
+    {
+        var (baseUri, _) = ReadBackendBaseUri();
+
+        if (baseUri is null || !_authService.IsLoggedIn)
+        {
+            return;
+        }
+
+        foreach (var snapshot in snapshots)
+        {
+            try
+            {
+                using var request = new HttpRequestMessage(HttpMethod.Put, new Uri(baseUri, "api/self-assessments"))
+                {
+                    Content = JsonContent.Create(MapAssessmentRequest(snapshot), options: ApiJsonOptions),
+                };
+                using var response = await _httpClient.SendAsync(request, cancellationToken);
+            }
+            catch
+            {
+                // A failed assessment upload must not discard challenge progress already stored locally.
+            }
         }
     }
 
@@ -209,6 +362,62 @@ public sealed class BackendConnectionService : IBackendConnectionService, IBacke
         return (baseUri, string.Empty);
     }
 
+    private static RemoteProgramDay MapRemoteDay(SyncDailyChallengeDto challenge) => new()
+    {
+        ProgramDayNumber = challenge.ProgramDayNumber,
+        CompletedAt = FormatTimestamp(challenge.CompletedAt),
+        Steps = challenge.Steps.Select(step => new RemoteProgramStep
+        {
+            Type = step.Type,
+            Status = step.Status,
+            CompletedAt = FormatTimestamp(step.CompletedAt),
+            UpdatedAt = FormatTimestamp(step.UpdatedAt) ?? string.Empty,
+        }).ToList(),
+    };
+
+    private static SelfAssessmentSnapshot? MapAssessment(SelfAssessmentDto? dto, SelfAssessmentKind kind)
+    {
+        if (dto is null)
+        {
+            return null;
+        }
+
+        return new SelfAssessmentSnapshot
+        {
+            Kind = kind,
+            CreatedAt = dto.CreatedAt.ToUniversalTime().ToString("o"),
+            ConversationStartComfort = ClampScore(dto.ConversationStartComfort),
+            OpinionExpressionEase = ClampScore(dto.OpinionExpressionEase),
+            BodyCalmUnderStress = ClampScore(dto.BodyCalmUnderStress),
+            EyeContactEase = ClampScore(dto.EyeContactEase),
+            SocialActionReadiness = ClampScore(dto.SocialActionReadiness),
+        };
+    }
+
+    private static SelfAssessmentUpsertRequest MapAssessmentRequest(SelfAssessmentSnapshot snapshot)
+    {
+        var createdAt = DateTimeOffset.TryParse(snapshot.CreatedAt, out var parsed)
+            ? parsed.ToUniversalTime()
+            : DateTimeOffset.UtcNow;
+
+        return new SelfAssessmentUpsertRequest(
+            snapshot.Kind,
+            createdAt,
+            ClampScore(snapshot.ConversationStartComfort),
+            ClampScore(snapshot.OpinionExpressionEase),
+            ClampScore(snapshot.BodyCalmUnderStress),
+            ClampScore(snapshot.EyeContactEase),
+            ClampScore(snapshot.SocialActionReadiness));
+    }
+
+    private static int ClampScore(int score) => Math.Clamp(score, 1, 10);
+
+    private static string? FormatTimestamp(DateTimeOffset? value) =>
+        value?.ToUniversalTime().ToString("o");
+
+    private static string FormatTimestamp(DateTimeOffset value) =>
+        value.ToUniversalTime().ToString("o");
+
     private static SyncDailyChallengeDto MapChallenge(string clientId, DailyChallenge challenge) => new(
         CreateStableGuid(clientId, challenge.Id),
         challenge.ProgramDayNumber,
@@ -252,6 +461,26 @@ public sealed class BackendConnectionService : IBackendConnectionService, IBacke
 
         return new Guid(bytes);
     }
+
+    private sealed record SelfAssessmentsResponse(SelfAssessmentDto? Start, SelfAssessmentDto? Final);
+
+    private sealed record SelfAssessmentDto(
+        SelfAssessmentKind Kind,
+        DateTimeOffset CreatedAt,
+        int ConversationStartComfort,
+        int OpinionExpressionEase,
+        int BodyCalmUnderStress,
+        int EyeContactEase,
+        int SocialActionReadiness);
+
+    private sealed record SelfAssessmentUpsertRequest(
+        SelfAssessmentKind Kind,
+        DateTimeOffset CreatedAt,
+        int ConversationStartComfort,
+        int OpinionExpressionEase,
+        int BodyCalmUnderStress,
+        int EyeContactEase,
+        int SocialActionReadiness);
 
     private sealed record SyncChallengesRequest(
         string ClientId,

@@ -86,4 +86,31 @@ public static class SelfAssessmentSurvey
                 start.Scores[index],
                 final.Scores[index]))
             .ToList();
+
+    public static SelfAssessmentSnapshot? ChooseLatest(
+        SelfAssessmentSnapshot? local,
+        SelfAssessmentSnapshot? remote)
+    {
+        if (local is null)
+        {
+            return remote;
+        }
+
+        if (remote is null)
+        {
+            return local;
+        }
+
+        if (!DateTimeOffset.TryParse(local.CreatedAt, out var localCreatedAt))
+        {
+            return remote;
+        }
+
+        if (!DateTimeOffset.TryParse(remote.CreatedAt, out var remoteCreatedAt))
+        {
+            return local;
+        }
+
+        return remoteCreatedAt > localCreatedAt ? remote : local;
+    }
 }

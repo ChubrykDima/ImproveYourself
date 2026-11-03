@@ -208,4 +208,59 @@ Check(assessmentChanges.Count == SelfAssessmentSurvey.Questions.Count,
 Check(assessmentChanges.Select(change => change.Delta).SequenceEqual(new[] { 2, -1, 3, 1, 5 }),
     "Assessment comparison lost per-question score changes.");
 
+var olderAssessment = SelfAssessmentSurvey.Create(SelfAssessmentKind.Start, [2, 2, 2, 2, 2]);
+olderAssessment.CreatedAt = "2026-10-01T00:00:00.0000000Z";
+var newerAssessment = SelfAssessmentSurvey.Create(SelfAssessmentKind.Start, [8, 8, 8, 8, 8]);
+newerAssessment.CreatedAt = "2026-10-20T00:00:00.0000000Z";
+Check(SelfAssessmentSurvey.ChooseLatest(null, newerAssessment) == newerAssessment,
+    "A remote self-assessment must fill an empty local one.");
+Check(SelfAssessmentSurvey.ChooseLatest(newerAssessment, olderAssessment) == newerAssessment,
+    "An older remote self-assessment must not replace a newer local one.");
+Check(SelfAssessmentSurvey.ChooseLatest(olderAssessment, newerAssessment) == newerAssessment,
+    "A newer remote self-assessment must replace the local copy.");
+
+var keptCompleted = CloudProgress.MergeStep(
+    new StepProgressState(StepStatus.Completed, "2026-10-01T00:00:00Z", "2026-10-01T00:00:00Z"),
+    new StepProgressState(StepStatus.NotStarted, null, "2026-11-01T00:00:00Z"),
+    authoritative: false);
+Check(keptCompleted.Status == StepStatus.Completed,
+    "A fresh install must not downgrade a completed step while merging.");
+var replaced = CloudProgress.MergeStep(
+    keptCompleted,
+    new StepProgressState(StepStatus.NotStarted, null, "2026-11-01T00:00:00Z"),
+    authoritative: true);
+Check(replaced.Status == StepStatus.NotStarted,
+    "Switching accounts must replace the previous account's step progress.");
+
+DailyChallenge Day(int number, ChallengeStatus status, string? completedAt) => new()
+{
+    ProgramDayNumber = number,
+    Status = status,
+    CompletedAt = completedAt,
+};
+var completedToday = new DateTimeOffset(2026, 11, 1, 12, 0, 0, TimeSpan.Zero);
+var today = DateHelpers.ToLocalIsoDate(completedToday);
+var yesterday = completedToday.AddDays(-1).ToString("o");
+Check(CloudProgress.ResolveProgramDay([], today) == 1,
+    "An empty program stays on day 1.");
+Check(CloudProgress.ResolveProgramDay(
+        [Day(1, ChallengeStatus.Completed, yesterday)],
+        today) == 2,
+    "A day completed before today restores the next program day.");
+Check(CloudProgress.ResolveProgramDay(
+        [Day(1, ChallengeStatus.Completed, completedToday.ToString("o"))],
+        today) == 1,
+    "A day completed today stays current until the next local day.");
+Check(CloudProgress.ResolveProgramDay(
+        [
+            Day(1, ChallengeStatus.Completed, yesterday),
+            Day(2, ChallengeStatus.InProgress, null),
+        ],
+        today) == 2,
+    "An in-progress day stays the current program day.");
+Check(CloudProgress.ResolveProgramDay(
+        [Day(30, ChallengeStatus.Completed, yesterday)],
+        today) == 30,
+    "A finished program stays on day 30.");
+
 Console.WriteLine("PASS: one 30-day program in ru/en/de, stable IDs, additive personalization, completion metadata, factory seeds and plurals.");

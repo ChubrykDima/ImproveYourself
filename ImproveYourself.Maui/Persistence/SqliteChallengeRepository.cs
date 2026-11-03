@@ -302,6 +302,164 @@ public sealed class SqliteChallengeRepository : IChallengeRepository
         return ListCompletedDates().Count;
     }
 
+    public void ApplyRemoteProgress(IReadOnlyList<RemoteProgramDay> remoteDays, bool authoritative)
+    {
+        Initialize();
+
+        var remoteByDay = remoteDays
+            .Where(day => day.ProgramDayNumber is >= 1 and <= DateHelpers.TargetMonthlyDays)
+            .GroupBy(day => day.ProgramDayNumber)
+            .ToDictionary(group => group.Key, group => group.Last());
+        var now = DateTime.UtcNow.ToString("o", CultureInfo.InvariantCulture);
+        var rows = _database.Query<DailyChallengeRecord>(
+            "SELECT id, date, program_day, title, status, created_at, updated_at, completed_at FROM daily_challenges ORDER BY program_day ASC");
+
+        _database.RunInTransaction(() =>
+        {
+            foreach (var row in rows)
+            {
+                if (!remoteByDay.TryGetValue(row.ProgramDayNumber, out var remoteDay))
+                {
+                    if (authoritative && row.Status.ToChallengeStatus() != ChallengeStatus.NotStarted)
+                    {
+                        ResetChallengeProgress(row.Id, now);
+                    }
+
+                    continue;
+                }
+
+                ApplyRemoteDay(row, remoteDay, authoritative, now);
+            }
+        });
+    }
+
+    public void ResetProgress()
+    {
+        Initialize();
+
+        var now = DateTime.UtcNow.ToString("o", CultureInfo.InvariantCulture);
+        _database.Execute(
+            "UPDATE challenge_steps SET status = ?, completed_at = NULL, updated_at = ?",
+            StepStatus.NotStarted.ToStorage(),
+            now);
+        _database.Execute(
+            "UPDATE daily_challenges SET status = ?, completed_at = NULL, updated_at = ?",
+            ChallengeStatus.NotStarted.ToStorage(),
+            now);
+    }
+
+    private void ApplyRemoteDay(
+        DailyChallengeRecord row,
+        RemoteProgramDay remoteDay,
+        bool authoritative,
+        string now)
+    {
+        var steps = _database.Table<ChallengeStepRecord>()
+            .Where(record => record.DailyChallengeId == row.Id)
+            .ToList();
+        var changed = false;
+
+        foreach (var step in steps)
+        {
+            var remoteStep = remoteDay.Steps
+                .Where(candidate => candidate.Type == step.Type.ToStepType())
+                .OrderByDescending(candidate => CloudProgress.StatusRank(candidate.Status))
+                .FirstOrDefault();
+
+            if (remoteStep is null)
+            {
+                if (!authoritative || step.Status.ToStepStatus() == StepStatus.NotStarted)
+                {
+                    continue;
+                }
+
+                _database.Execute(
+                    "UPDATE challenge_steps SET status = ?, completed_at = NULL, updated_at = ? WHERE id = ?",
+                    StepStatus.NotStarted.ToStorage(),
+                    now,
+                    step.Id);
+                step.Status = StepStatus.NotStarted.ToStorage();
+                step.CompletedAt = null;
+                changed = true;
+                continue;
+            }
+
+            var merged = CloudProgress.MergeStep(
+                new StepProgressState(step.Status.ToStepStatus(), step.CompletedAt, step.UpdatedAt),
+                new StepProgressState(
+                    remoteStep.Status,
+                    remoteStep.CompletedAt,
+                    string.IsNullOrWhiteSpace(remoteStep.UpdatedAt) ? now : remoteStep.UpdatedAt),
+                authoritative);
+
+            if (merged.Status == step.Status.ToStepStatus()
+                && string.Equals(merged.CompletedAt, step.CompletedAt, StringComparison.Ordinal))
+            {
+                continue;
+            }
+
+            _database.Execute(
+                "UPDATE challenge_steps SET status = ?, completed_at = ?, updated_at = ? WHERE id = ?",
+                merged.Status.ToStorage(),
+                string.IsNullOrWhiteSpace(merged.CompletedAt) ? null : merged.CompletedAt,
+                string.IsNullOrWhiteSpace(merged.UpdatedAt) ? now : merged.UpdatedAt,
+                step.Id);
+            step.Status = merged.Status.ToStorage();
+            step.CompletedAt = merged.CompletedAt;
+            changed = true;
+        }
+
+        var visibleSteps = steps
+            .Where(step => step.Type.ToStepType() != StepType.Quote)
+            .Select(step => new ChallengeStep { Status = step.Status.ToStepStatus() })
+            .ToList();
+        var status = ProgressCalculator.GetChallengeStatus(visibleSteps);
+        var remoteCompletedAt = remoteDay.CompletedAt
+            ?? steps
+                .Select(step => step.CompletedAt)
+                .Where(completedAt => !string.IsNullOrWhiteSpace(completedAt))
+                .OrderBy(completedAt => completedAt, StringComparer.Ordinal)
+                .LastOrDefault();
+        var completedAt = CloudProgress.MergeChallengeCompletedAt(
+            status,
+            row.CompletedAt,
+            remoteCompletedAt,
+            authoritative);
+
+        if (status == ChallengeStatus.Completed && string.IsNullOrWhiteSpace(completedAt))
+        {
+            completedAt = now;
+        }
+
+        if (!changed
+            && status == row.Status.ToChallengeStatus()
+            && string.Equals(completedAt, row.CompletedAt, StringComparison.Ordinal))
+        {
+            return;
+        }
+
+        _database.Execute(
+            "UPDATE daily_challenges SET status = ?, completed_at = ?, updated_at = ? WHERE id = ?",
+            status.ToStorage(),
+            completedAt,
+            now,
+            row.Id);
+    }
+
+    private void ResetChallengeProgress(string challengeId, string now)
+    {
+        _database.Execute(
+            "UPDATE challenge_steps SET status = ?, completed_at = NULL, updated_at = ? WHERE daily_challenge_id = ?",
+            StepStatus.NotStarted.ToStorage(),
+            now,
+            challengeId);
+        _database.Execute(
+            "UPDATE daily_challenges SET status = ?, completed_at = NULL, updated_at = ? WHERE id = ?",
+            ChallengeStatus.NotStarted.ToStorage(),
+            now,
+            challengeId);
+    }
+
     private DailyChallenge? GetBundledChallenge(string date)
     {
         if (!_bundledChallenges.TryGetValue(date, out var challenge))

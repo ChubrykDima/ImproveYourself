@@ -359,11 +359,29 @@ public sealed class AppState : INotifyPropertyChanged
             : AppStrings.BackendSaved;
     }
 
-    public Task<AuthOperationResult> RegisterAsync(string email, string password, CancellationToken cancellationToken = default) =>
-        _authService.RegisterAsync(email, password, cancellationToken);
+    public async Task<AuthOperationResult> RegisterAsync(string email, string password, CancellationToken cancellationToken = default)
+    {
+        var result = await _authService.RegisterAsync(email, password, cancellationToken);
 
-    public Task<AuthOperationResult> LoginAsync(string email, string password, CancellationToken cancellationToken = default) =>
-        _authService.LoginAsync(email, password, cancellationToken);
+        if (result.Succeeded)
+        {
+            await SyncBackendAsync(force: true, cancellationToken);
+        }
+
+        return result;
+    }
+
+    public async Task<AuthOperationResult> LoginAsync(string email, string password, CancellationToken cancellationToken = default)
+    {
+        var result = await _authService.LoginAsync(email, password, cancellationToken);
+
+        if (result.Succeeded)
+        {
+            await SyncBackendAsync(force: true, cancellationToken);
+        }
+
+        return result;
+    }
 
     public Task<AuthOperationResult> RequestPasswordResetAsync(string email, CancellationToken cancellationToken = default) =>
         _authService.RequestPasswordResetAsync(email, cancellationToken);
@@ -378,8 +396,26 @@ public sealed class AppState : INotifyPropertyChanged
     public Task<AccountExportResult> ExportAccountAsync(CancellationToken cancellationToken = default) =>
         _authService.ExportAccountAsync(cancellationToken);
 
-    public Task<AuthOperationResult> DeleteAccountAsync(CancellationToken cancellationToken = default) =>
-        _authService.DeleteAccountAsync(cancellationToken);
+    public async Task<AuthOperationResult> DeleteAccountAsync(CancellationToken cancellationToken = default)
+    {
+        var result = await _authService.DeleteAccountAsync(cancellationToken);
+
+        if (!result.Succeeded)
+        {
+            return result;
+        }
+
+        _settingsService.ClearSelfAssessment(SelfAssessmentKind.Start);
+        _settingsService.ClearSelfAssessment(SelfAssessmentKind.Final);
+        _settingsService.WriteLastSyncedUserId(string.Empty);
+        _challengeRepository.ResetProgress();
+        StartSelfAssessment = null;
+        FinalSelfAssessment = null;
+        SetCurrentProgramDayInternal(1);
+        OnPropertyChanged(nameof(HasStartSelfAssessment));
+
+        return result;
+    }
 
     public Task LogoutAsync(CancellationToken cancellationToken = default) =>
         _authService.LogoutAsync(cancellationToken);
@@ -420,9 +456,76 @@ public sealed class AppState : INotifyPropertyChanged
 
         try
         {
+            var localChallenges = _challengeRepository.ListAllChallenges();
+            var beforeProgramDay = CloudProgress.ResolveProgramDay(localChallenges);
+            var hadLocalProgress = CurrentProgramDay > 1
+                || localChallenges.Any(challenge => challenge.Status != ChallengeStatus.NotStarted);
+            var download = await _backendSyncService.DownloadChallengesAsync(cancellationToken);
+            var userId = _authService.UserId?.ToString("D") ?? string.Empty;
+            var previousUserId = _settingsService.ReadLastSyncedUserId();
+            var switchingAccount = !string.IsNullOrWhiteSpace(previousUserId)
+                && !string.IsNullOrWhiteSpace(userId)
+                && !string.Equals(previousUserId, userId, StringComparison.OrdinalIgnoreCase);
+
+            if (switchingAccount && !download.Succeeded)
+            {
+                BackendSyncMessage = download.Message;
+
+                return new BackendSyncResult(download.IsConfigured, false, download.Message, BackendStats);
+            }
+
+            var assessmentsDownloaded = false;
+
+            if (download.Succeeded)
+            {
+                _challengeRepository.ApplyRemoteProgress(download.Challenges, switchingAccount);
+                assessmentsDownloaded = await RestoreSelfAssessmentsAsync(
+                    switchingAccount,
+                    !hadLocalProgress,
+                    cancellationToken);
+
+                if (!string.IsNullOrWhiteSpace(userId))
+                {
+                    _settingsService.WriteLastSyncedUserId(userId);
+                }
+
+                var restoredDay = CloudProgress.ResolveProgramDay(_challengeRepository.ListAllChallenges());
+
+                if (switchingAccount || !hadLocalProgress || restoredDay != beforeProgramDay)
+                {
+                    SetCurrentProgramDayInternal(restoredDay);
+                }
+                else
+                {
+                    TodayChallenge = _challengeRepository.GetChallengeForProgramDay(CurrentProgramDay, StartSelfAssessment);
+                    LoadDerived();
+                }
+            }
+
             var challenges = _challengeRepository.ListAllChallenges();
             var result = await _backendSyncService.SyncChallengesAsync(challenges, cancellationToken);
-            _lastBackendSyncUtc = DateTimeOffset.UtcNow;
+
+            if (result.Succeeded && (assessmentsDownloaded || (hadLocalProgress && !switchingAccount)))
+            {
+                var snapshots = new List<SelfAssessmentSnapshot>();
+
+                if (StartSelfAssessment is not null)
+                {
+                    snapshots.Add(StartSelfAssessment);
+                }
+
+                if (FinalSelfAssessment is not null)
+                {
+                    snapshots.Add(FinalSelfAssessment);
+                }
+
+                await _backendSyncService.UploadSelfAssessmentsAsync(snapshots, cancellationToken);
+            }
+
+            if (result.Succeeded && download.Succeeded)
+            {
+                _lastBackendSyncUtc = DateTimeOffset.UtcNow;
+            }
 
             if (result.IsConfigured || !string.IsNullOrWhiteSpace(BackendBaseUrl))
             {
@@ -490,11 +593,88 @@ public sealed class AppState : INotifyPropertyChanged
             OnPropertyChanged(nameof(HasStartSelfAssessment));
             OnPropertyChanged(nameof(ShouldShowStartSelfAssessment));
             OnPropertyChanged(nameof(ShouldShowFinalSelfAssessment));
+        }
+        else
+        {
+            FinalSelfAssessment = snapshot;
+            OnPropertyChanged(nameof(ShouldShowFinalSelfAssessment));
+        }
+
+        _ = _backendSyncService.UploadSelfAssessmentsAsync([snapshot]);
+    }
+
+    private async Task<bool> RestoreSelfAssessmentsAsync(
+        bool authoritative,
+        bool preferRemote,
+        CancellationToken cancellationToken)
+    {
+        var download = await _backendSyncService.DownloadSelfAssessmentsAsync(cancellationToken);
+
+        if (!download.Succeeded)
+        {
+            return false;
+        }
+
+        ApplyRestoredAssessment(SelfAssessmentKind.Start, download.Start, authoritative, preferRemote);
+        ApplyRestoredAssessment(SelfAssessmentKind.Final, download.Final, authoritative, preferRemote);
+        OnPropertyChanged(nameof(HasStartSelfAssessment));
+        OnPropertyChanged(nameof(ShouldShowStartSelfAssessment));
+        OnPropertyChanged(nameof(ShouldShowFinalSelfAssessment));
+        return true;
+    }
+
+    private void ApplyRestoredAssessment(
+        SelfAssessmentKind kind,
+        SelfAssessmentSnapshot? remote,
+        bool authoritative,
+        bool preferRemote)
+    {
+        var current = kind == SelfAssessmentKind.Start ? StartSelfAssessment : FinalSelfAssessment;
+        var chosen = authoritative
+            ? remote
+            : preferRemote && remote is not null
+                ? remote
+                : SelfAssessmentSurvey.ChooseLatest(current, remote);
+
+        if (chosen is null)
+        {
+            if (!authoritative || current is null)
+            {
+                return;
+            }
+
+            _settingsService.ClearSelfAssessment(kind);
+
+            if (kind == SelfAssessmentKind.Start)
+            {
+                StartSelfAssessment = null;
+            }
+            else
+            {
+                FinalSelfAssessment = null;
+            }
+
             return;
         }
 
-        FinalSelfAssessment = snapshot;
-        OnPropertyChanged(nameof(ShouldShowFinalSelfAssessment));
+        if (current is not null
+            && current.CreatedAt == chosen.CreatedAt
+            && current.Scores.SequenceEqual(chosen.Scores))
+        {
+            return;
+        }
+
+        chosen.Kind = kind;
+        _settingsService.WriteSelfAssessment(chosen);
+
+        if (kind == SelfAssessmentKind.Start)
+        {
+            StartSelfAssessment = chosen;
+        }
+        else
+        {
+            FinalSelfAssessment = chosen;
+        }
     }
 
     private int ResolveCurrentProgramDay()

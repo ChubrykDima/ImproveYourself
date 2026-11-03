@@ -14,6 +14,8 @@ public interface IAuthService
 
     string? AccessToken { get; }
 
+    Guid? UserId { get; }
+
     event EventHandler? AuthStateChanged;
 
     Task<AuthOperationResult> RegisterAsync(string email, string password, CancellationToken cancellationToken = default);
@@ -65,6 +67,8 @@ public sealed class AuthService : IAuthService
     public string? UserEmail => _currentTokens?.Email;
 
     public string? AccessToken => _currentTokens?.AccessToken;
+
+    public Guid? UserId => _currentTokens?.UserId;
 
     public event EventHandler? AuthStateChanged;
 
