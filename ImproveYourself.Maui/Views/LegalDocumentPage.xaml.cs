@@ -1,3 +1,4 @@
+using ImproveYourself.Maui.Domain;
 using ImproveYourself.Maui.Legal;
 using ImproveYourself.Maui.Resources.Strings;
 
@@ -12,13 +13,13 @@ public partial class LegalDocumentPage : ContentPage
     public static LegalDocumentPage PrivacyPolicy() =>
         new(
             AppStrings.LegalPrivacyTitle,
-            LegalDocuments.PrivacyPolicyBody,
+            LegalDocumentText.Privacy(ChallengeTemplateLanguage.Current),
             LegalUrls.HasPrivacyPolicyUrl ? LegalUrls.PrivacyPolicy : null);
 
     public static LegalDocumentPage TermsOfService() =>
         new(
             AppStrings.LegalTermsTitle,
-            LegalDocuments.TermsOfServiceBody,
+            LegalDocumentText.Terms(ChallengeTemplateLanguage.Current),
             LegalUrls.HasTermsOfServiceUrl ? LegalUrls.TermsOfService : null);
 
     private LegalDocumentPage(string title, string body, string? externalUrl)

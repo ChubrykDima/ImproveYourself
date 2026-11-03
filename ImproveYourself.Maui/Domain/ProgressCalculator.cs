@@ -56,7 +56,19 @@ public static class ProgressCalculator
         return string.CompareOrdinal(DateHelpers.ToLocalIsoDate(completedAt), today) < 0;
     }
 
-    public static StepStatus GetNextStepStatus(StepStatus status) => StepStatus.Completed;
+    public static StepStatus GetNextStepStatus(StepStatus status) =>
+        status == StepStatus.Completed ? StepStatus.NotStarted : StepStatus.Completed;
+
+    public static bool IsStepBlocked(IReadOnlyList<ChallengeStep> steps, StepType stepType)
+    {
+        var visible = steps
+            .Where(step => step.Type != StepType.Quote)
+            .OrderBy(step => step.SortOrder)
+            .ToList();
+        var index = visible.FindIndex(step => step.Type == stepType);
+
+        return index > 0 && visible.Take(index).Any(step => step.Status != StepStatus.Completed);
+    }
 
     public static StreakSnapshot CalculateStreakSnapshot(
         IEnumerable<string> completedDates,

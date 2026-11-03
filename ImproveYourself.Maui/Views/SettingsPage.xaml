@@ -17,6 +17,8 @@
 
                     <Entry x:Name="NameEntry"
                            MaxLength="24"
+                           IsSpellCheckEnabled="False"
+                           IsTextPredictionEnabled="False"
                            Placeholder=""
                            PlaceholderColor="{StaticResource ColorTextSecondary}"
                            FontFamily="OpenSansSemibold"
@@ -24,6 +26,9 @@
                            TextColor="{StaticResource ColorTextPrimary}"
                            BackgroundColor="{StaticResource ColorFrame}"
                            HeightRequest="52" />
+
+                    <Label x:Name="NameLengthHintLabel"
+                           Style="{StaticResource BodyLabelStyle}" />
 
                     <Button x:Name="SaveNameButton"
                             Text=""
@@ -83,19 +88,6 @@
             </Border>
 
             <Border Style="{StaticResource CardBorderStyle}">
-                <VerticalStackLayout Spacing="6">
-                    <Label x:Name="OfflineFirstTitleLabel"
-                           FontFamily="OpenSansSemibold"
-                           FontSize="18"
-                           TextColor="{StaticResource ColorAccent}" />
-                    <Label x:Name="OfflineFirstDescLabel"
-                           Text=""
-                           Style="{StaticResource BodyLabelStyle}"
-                           LineBreakMode="WordWrap" />
-                </VerticalStackLayout>
-            </Border>
-
-            <Border Style="{StaticResource CardBorderStyle}">
                 <VerticalStackLayout Spacing="10">
                     <Label x:Name="AccountSectionLabel"
                            Text=""
@@ -121,6 +113,10 @@
                             Style="{StaticResource PrimaryButtonStyle}"
                             Clicked="OnSyncClicked" />
 
+                    <Label x:Name="SyncStatusLabel"
+                           Style="{StaticResource BodyLabelStyle}"
+                           LineBreakMode="WordWrap" />
+
                     <Button x:Name="LogoutButton"
                             Clicked="OnLogoutClicked" />
 
@@ -128,6 +124,10 @@
                             Clicked="OnExportAccountClicked" />
 
                     <Button x:Name="DeleteAccountButton"
+                            TextColor="#FF6B6B"
+                            BackgroundColor="Transparent"
+                            BorderColor="#FF6B6B"
+                            BorderWidth="1"
                             Clicked="OnDeleteAccountClicked" />
                 </VerticalStackLayout>
             </Border>

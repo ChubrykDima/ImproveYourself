@@ -36,7 +36,17 @@ public interface ISettingsService
 
     void ClearSelfAssessment(SelfAssessmentKind kind);
 
+    string ReadAssessmentDraft(SelfAssessmentKind kind);
+
+    void WriteAssessmentDraft(SelfAssessmentKind kind, string json);
+
+    void ClearAssessmentDraft(SelfAssessmentKind kind);
+
     string ReadLastSyncedUserId();
 
     void WriteLastSyncedUserId(string value);
+
+    IReadOnlyList<string> ReadRegressedStepIds();
+
+    void WriteRegressedStepIds(IReadOnlyList<string> stepIds);
 }

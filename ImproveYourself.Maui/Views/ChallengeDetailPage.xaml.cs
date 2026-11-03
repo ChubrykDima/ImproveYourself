@@ -11,6 +11,7 @@ public partial class ChallengeDetailPage : ContentPage
     private DailyChallenge? _challenge;
     private bool _isQuoteNoteVisible;
     private bool _isOpeningFinalAssessment;
+    private bool _isAdvancing;
 
     public ChallengeDetailPage(AppState appState, int programDay)
     {
@@ -262,11 +263,18 @@ public partial class ChallengeDetailPage : ContentPage
             });
         }
 
+        var isBlocked = _challenge is not null
+            && !isCompleted
+            && ProgressCalculator.IsStepBlocked(_challenge.Steps, step.Type);
         var button = new Button
         {
-            Text = isCompleted ? AppStrings.ActionCompleted : AppStrings.ActionMarkCompleted,
-            Style = (Style)Microsoft.Maui.Controls.Application.Current!.Resources[isCompleted ? "GhostButtonStyle" : "PrimaryButtonStyle"],
-            IsEnabled = !isCompleted,
+            Text = isCompleted
+                ? AppStrings.ActionUndo
+                : isBlocked
+                    ? AppStrings.StepLockedUntilPrevious
+                    : AppStrings.ActionMarkCompleted,
+            Style = (Style)Microsoft.Maui.Controls.Application.Current!.Resources[isCompleted || isBlocked ? "GhostButtonStyle" : "PrimaryButtonStyle"],
+            IsEnabled = !isBlocked,
         };
 
         button.Clicked += async (_, _) => await OnAdvanceStep(step.Type);
@@ -279,31 +287,51 @@ public partial class ChallengeDetailPage : ContentPage
 
     private async Task OnAdvanceStep(StepType stepType)
     {
-        if (_challenge is null)
+        if (_isAdvancing || _challenge is null)
         {
             return;
         }
 
-        _challenge = _appState.AdvanceStep(_challenge.ProgramDayNumber, stepType);
-        _currentProgramDay = _challenge.ProgramDayNumber;
-        Render();
-        _ = _appState.SyncBackendAsync();
-        await TryOpenFinalAssessmentAsync();
+        _isAdvancing = true;
 
-        return;
+        try
+        {
+            _challenge = _appState.AdvanceStep(_challenge.ProgramDayNumber, stepType);
+            _currentProgramDay = _challenge.ProgramDayNumber;
+            Render();
+            await _appState.SyncBackendAsync(force: true);
+            _challenge = _appState.EnsureChallengeForProgramDay(_currentProgramDay);
+            Render();
+            await TryOpenFinalAssessmentAsync();
+        }
+        finally
+        {
+            _isAdvancing = false;
+        }
     }
 
-    private void OnOpenNextDayClicked(object? sender, EventArgs e)
+    private async void OnOpenNextDayClicked(object? sender, EventArgs e)
     {
-        if (!ProgressCalculator.CanAdvanceToNextProgramDay(_challenge))
+        if (_isAdvancing || !ProgressCalculator.CanAdvanceToNextProgramDay(_challenge))
         {
             return;
         }
 
-        _challenge = _appState.AdvanceToNextDay();
-        _currentProgramDay = _challenge.ProgramDayNumber;
-        Render();
-        _ = _appState.SyncBackendAsync();
+        _isAdvancing = true;
+
+        try
+        {
+            _challenge = _appState.AdvanceToNextDay();
+            _currentProgramDay = _challenge.ProgramDayNumber;
+            Render();
+            await _appState.SyncBackendAsync(force: true);
+            _challenge = _appState.EnsureChallengeForProgramDay(_currentProgramDay);
+            Render();
+        }
+        finally
+        {
+            _isAdvancing = false;
+        }
     }
 
     private async Task TryOpenFinalAssessmentAsync()

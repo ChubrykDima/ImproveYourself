@@ -299,12 +299,7 @@ public sealed class BackendConnectionService : IBackendConnectionService, IBacke
             }
 
             var stats = await GetStatsAsync(baseUri, cancellationToken);
-            var message = stats is null
-                ? AppStrings.BackendSyncSucceeded
-                : string.Format(
-                    AppStrings.BackendSyncSucceededWithStatsFormat,
-                    AppStrings.Plural("DaysCount", stats.TotalChallengesCompleted),
-                    AppStrings.Plural("StepsCount", stats.TotalStepsCompleted));
+            var message = AppStrings.BackendSyncSucceeded;
 
             return new BackendSyncResult(true, true, message, stats);
         }

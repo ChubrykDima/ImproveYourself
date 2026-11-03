@@ -44,7 +44,7 @@ public partial class HomePage : ContentPage
     {
         var name = ShortName(_appState.DisplayName);
         GreetingNameLabel.Text = name;
-        AvatarInitialLabel.Text = name[..1].ToUpperInvariant();
+        AvatarInitialLabel.Text = AccountInput.FirstGrapheme(name).ToUpperInvariant();
 
         StreakValueLabel.Text = _appState.StreakSnapshot.CurrentStreakDays.ToString();
         DaysInRowLabel.Text = AppStrings.Plural("DaysInRow", _appState.StreakSnapshot.CurrentStreakDays);

@@ -1,12 +1,23 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:ios="clr-namespace:Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;assembly=Microsoft.Maui.Controls"
              x:Class="ImproveYourself.Maui.Views.SelfAssessmentPage"
              NavigationPage.HasNavigationBar="False"
+             ios:Page.UseSafeArea="True"
              BackgroundColor="{StaticResource ColorBackground}">
     <ScrollView>
         <VerticalStackLayout Padding="22,16,22,30"
                              Spacing="16">
+            <Button x:Name="BackButton"
+                    Text=""
+                    HorizontalOptions="Start"
+                    BackgroundColor="Transparent"
+                    TextColor="{StaticResource ColorTextSecondary}"
+                    FontFamily="OpenSansRegular"
+                    FontSize="15"
+                    IsVisible="False"
+                    Clicked="OnBackClicked" />
             <HorizontalStackLayout x:Name="ProgressDots"
                                    Spacing="6"
                                    IsVisible="False">
@@ -62,6 +73,21 @@
                     Style="{StaticResource PrimaryButtonStyle}"
                     IsEnabled="False"
                     Clicked="OnSubmitClicked" />
+
+            <Border x:Name="ResultBorder"
+                    Style="{StaticResource CardBorderStyle}"
+                    Padding="22"
+                    IsVisible="False">
+                <VerticalStackLayout Spacing="12">
+                    <Label x:Name="ResultTitleLabel"
+                           Style="{StaticResource TitleLabelStyle}" />
+                    <Label x:Name="ResultBodyLabel"
+                           Style="{StaticResource BodyLabelStyle}" />
+                    <Button x:Name="ResultContinueButton"
+                            Style="{StaticResource PrimaryButtonStyle}"
+                            Clicked="OnResultContinueClicked" />
+                </VerticalStackLayout>
+            </Border>
         </VerticalStackLayout>
     </ScrollView>
 </ContentPage>

@@ -7,6 +7,7 @@ namespace ImproveYourself.Maui.Views;
 public partial class ProfilePage : ContentPage
 {
     private readonly AppState _appState;
+    private DateTime _visibleMonth = DateTime.Today;
 
     public ProfilePage(AppState appState)
     {
@@ -47,7 +48,7 @@ public partial class ProfilePage : ContentPage
             : _appState.DisplayName.Trim();
 
         DisplayNameLabel.Text = name;
-        AvatarLabel.Text = name[..1].ToUpperInvariant();
+        AvatarLabel.Text = AccountInput.FirstGrapheme(name).ToUpperInvariant();
 
         CurrentStreakMetricLabel.Text = _appState.StreakSnapshot.CurrentStreakDays.ToString();
         TotalCompletedMetricLabel.Text = ProgressCalculator.CountDistinctDates(_appState.CompletedDates).ToString();
@@ -88,6 +89,37 @@ public partial class ProfilePage : ContentPage
         SelfAssessmentDeltaLabel.IsVisible = true;
     }
 
+    private void OnPreviousMonthClicked(object? sender, EventArgs e)
+    {
+        _visibleMonth = _visibleMonth.AddMonths(-1);
+        RenderCalendar();
+    }
+
+    private void OnNextMonthClicked(object? sender, EventArgs e)
+    {
+        var next = _visibleMonth.AddMonths(1);
+        var current = DateTime.Today;
+
+        if (next.Year > current.Year || (next.Year == current.Year && next.Month > current.Month))
+        {
+            return;
+        }
+
+        _visibleMonth = next;
+        RenderCalendar();
+    }
+
+    private async void OnCalendarDayTapped(string isoDate)
+    {
+        var completed = _appState.CompletedProgramDaysOn(isoDate);
+        var title = DateHelpers.ToDisplayDate(isoDate);
+        var message = completed.Count == 0
+            ? string.Format(AppStrings.CalendarDayEmptyFormat, title)
+            : string.Format(AppStrings.CalendarDayCompletedFormat, title) + "\n" + string.Join("\n", completed);
+
+        await DisplayAlertAsync(title, message, AppStrings.OK);
+    }
+
     private void RenderCalendar()
     {
         CalendarGrid.Children.Clear();
@@ -95,8 +127,11 @@ public partial class ProfilePage : ContentPage
 
         var today = DateTime.Today;
         var todayIsoDate = DateHelpers.ToIsoDate(today);
-        var calendarDays = ProgressCalculator.ListCalendarDaysForMonth(today);
-        var placeholders = GetLeadingPlaceholders(today);
+        var month = new DateTime(_visibleMonth.Year, _visibleMonth.Month, 1);
+        CalendarMonthLabel.Text = month.ToString("MMMM yyyy", System.Globalization.CultureInfo.CurrentCulture);
+        NextMonthButton.IsEnabled = month.Year < today.Year || (month.Year == today.Year && month.Month < today.Month);
+        var calendarDays = ProgressCalculator.ListCalendarDaysForMonth(month);
+        var placeholders = GetLeadingPlaceholders(month);
 
         var cells = new List<string>();
         cells.AddRange(Enumerable.Repeat(string.Empty, placeholders));
@@ -143,8 +178,10 @@ public partial class ProfilePage : ContentPage
                 WidthRequest = 38,
                 HeightRequest = 38,
                 StrokeShape = new Microsoft.Maui.Controls.Shapes.RoundRectangle { CornerRadius = 12 },
-                StrokeThickness = 1,
-                Stroke = isToday ? Color.FromArgb("#F5F7FB") : Colors.Transparent,
+                StrokeThickness = isToday ? 2 : 1,
+                Stroke = isToday
+                    ? Color.FromArgb("#F5F7FB")
+                    : isCompleted ? Color.FromArgb("#FF8A3D") : Colors.Transparent,
                 BackgroundColor = isCompleted ? Color.FromRgba(255, 138, 61, 64) : Color.FromArgb("#101520"),
                 Content = new Label
                 {
@@ -156,11 +193,10 @@ public partial class ProfilePage : ContentPage
                     VerticalTextAlignment = TextAlignment.Center,
                 },
             };
-
-            if (isCompleted)
-            {
-                cell.Stroke = Color.FromArgb("#FF8A3D");
-            }
+            var tappedDate = isoDate;
+            var tap = new TapGestureRecognizer();
+            tap.Tapped += (_, _) => OnCalendarDayTapped(tappedDate);
+            cell.GestureRecognizers.Add(tap);
 
             CalendarGrid.Add(cell, column, row);
         }

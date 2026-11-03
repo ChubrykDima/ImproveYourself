@@ -1,3 +1,4 @@
+using System.Text.Json;
 using ImproveYourself.Maui.Application;
 using ImproveYourself.Maui.Domain;
 using ImproveYourself.Maui.Resources.Strings;
@@ -28,9 +29,25 @@ public partial class SelfAssessmentPage : ContentPage
         _scores = Enumerable.Repeat(5, SelfAssessmentSurvey.Questions.Count).ToList();
 
         Title = AppStrings.SelfAssessment_Title;
+        RestoreDraft();
         RenderHeader();
         RenderQuestions();
         UpdateSubmitState();
+    }
+
+    protected override void OnAppearing()
+    {
+        base.OnAppearing();
+        BackButton.Text = AppStrings.Back;
+        BackButton.IsVisible = Navigation.NavigationStack.Count > 1;
+    }
+
+    private async void OnBackClicked(object? sender, EventArgs e)
+    {
+        if (Navigation.NavigationStack.Count > 1)
+        {
+            await Navigation.PopAsync();
+        }
     }
 
     private void RenderHeader()
@@ -60,12 +77,13 @@ public partial class SelfAssessmentPage : ContentPage
         {
             var questionIndex = index;
             var question = SelfAssessmentSurvey.Questions[index];
+            var answered = _answeredQuestions.Contains(questionIndex);
             var valueLabel = new Label
             {
-                Text = "—",
+                Text = answered ? _scores[questionIndex].ToString() : "—",
                 FontFamily = "OpenSansSemibold",
                 FontSize = 22,
-                TextColor = Color.FromArgb("#9EA8BD"),
+                TextColor = Color.FromArgb(answered ? "#F5F7FB" : "#9EA8BD"),
                 HorizontalTextAlignment = TextAlignment.End,
                 VerticalTextAlignment = TextAlignment.Center,
             };
@@ -86,6 +104,7 @@ public partial class SelfAssessmentPage : ContentPage
                 valueLabel.Text = _scores[questionIndex].ToString();
                 valueLabel.TextColor = Color.FromArgb("#F5F7FB");
                 UpdateSubmitState();
+                PersistDraft();
             }
 
             slider.DragStarted += (_, _) => MarkQuestionAnswered();
@@ -167,24 +186,46 @@ public partial class SelfAssessmentPage : ContentPage
 
         _isSubmitting = true;
         SubmitButton.IsEnabled = false;
+        var finished = false;
 
-        var snapshot = SelfAssessmentSurvey.Create(_kind, _scores);
-        _appState.SaveSelfAssessment(snapshot);
-
-        if (_kind == SelfAssessmentKind.Final && _appState.StartSelfAssessment is not null)
+        try
         {
-            await ShowFinalComparisonAsync(_appState.StartSelfAssessment, snapshot);
-        }
+            var snapshot = SelfAssessmentSurvey.Create(_kind, _scores);
+            _appState.SaveSelfAssessment(snapshot);
+            _appState.ClearAssessmentDraft(_kind);
 
-        if (_promptNotificationsOnCompletion)
+            if (_kind == SelfAssessmentKind.Final && _appState.StartSelfAssessment is not null)
+            {
+                ShowFinalResult(_appState.StartSelfAssessment, snapshot);
+                finished = true;
+                return;
+            }
+
+            if (_promptNotificationsOnCompletion)
+            {
+                await PromptNotificationsAsync();
+            }
+
+            await _onCompletedAsync();
+            finished = true;
+        }
+        finally
         {
-            await PromptNotificationsAsync();
+            if (!finished)
+            {
+                _isSubmitting = false;
+                UpdateSubmitState();
+            }
         }
+    }
 
+    private async void OnResultContinueClicked(object? sender, EventArgs e)
+    {
+        ResultContinueButton.IsEnabled = false;
         await _onCompletedAsync();
     }
 
-    private Task ShowFinalComparisonAsync(SelfAssessmentSnapshot start, SelfAssessmentSnapshot final)
+    private void ShowFinalResult(SelfAssessmentSnapshot start, SelfAssessmentSnapshot final)
     {
         var delta = final.AverageScore - start.AverageScore;
         var direction = delta >= 0 ? "+" : string.Empty;
@@ -201,10 +242,62 @@ public partial class SelfAssessmentPage : ContentPage
                     changeDirection,
                     change.Delta);
             });
-        var message = $"{summary}\n\n{string.Join("\n", details)}";
 
-        return DisplayAlertAsync(AppStrings.YourResult, message, AppStrings.Done);
+        QuestionsContainer.IsVisible = false;
+        SubmitButton.IsVisible = false;
+        AssessmentValidationLabel.IsVisible = false;
+        ResultTitleLabel.Text = AppStrings.ProgramCongratulationsTitle;
+        ResultBodyLabel.Text = $"{AppStrings.ProgramCongratulationsBody}\n\n{summary}\n\n{string.Join("\n", details)}";
+        ResultContinueButton.Text = AppStrings.Done;
+        ResultBorder.IsVisible = true;
     }
+
+    private void PersistDraft()
+    {
+        var draft = JsonSerializer.Serialize(new AssessmentDraft(
+            _scores.ToArray(),
+            _answeredQuestions.OrderBy(index => index).ToArray()));
+        _appState.WriteAssessmentDraft(_kind, draft);
+    }
+
+    private void RestoreDraft()
+    {
+        var json = _appState.ReadAssessmentDraft(_kind);
+
+        if (string.IsNullOrWhiteSpace(json))
+        {
+            return;
+        }
+
+        try
+        {
+            var draft = JsonSerializer.Deserialize<AssessmentDraft>(json);
+
+            if (draft?.Scores is null || draft.Scores.Length != _scores.Count)
+            {
+                return;
+            }
+
+            for (var index = 0; index < _scores.Count; index += 1)
+            {
+                _scores[index] = Math.Clamp(draft.Scores[index], 1, 10);
+            }
+
+            foreach (var index in draft.Answered ?? [])
+            {
+                if (index >= 0 && index < _scores.Count)
+                {
+                    _answeredQuestions.Add(index);
+                }
+            }
+        }
+        catch
+        {
+            // A broken draft should not block a fresh assessment.
+        }
+    }
+
+    private sealed record AssessmentDraft(int[] Scores, int[] Answered);
 
     private void UpdateSubmitState()
     {
@@ -218,9 +311,13 @@ public partial class SelfAssessmentPage : ContentPage
 
     private async Task PromptNotificationsAsync()
     {
-        var choice = await DisplayActionSheetAsync(AppStrings.Notifications_Title, AppStrings.Later, null, AppStrings.Enable);
+        var enable = await DisplayAlertAsync(
+            AppStrings.Notifications_Title,
+            AppStrings.RemindersPrompt,
+            AppStrings.Enable,
+            AppStrings.Later);
 
-        if (choice != AppStrings.Enable)
+        if (!enable)
         {
             return;
         }

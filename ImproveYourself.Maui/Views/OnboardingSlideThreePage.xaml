@@ -74,6 +74,8 @@
                    HorizontalTextAlignment="Center" />
             <Entry x:Name="DisplayNameEntry"
                    MaxLength="24"
+                   IsSpellCheckEnabled="False"
+                   IsTextPredictionEnabled="False"
                    Placeholder=""
                    PlaceholderColor="{StaticResource ColorTextSecondary}"
                    TextColor="{StaticResource ColorTextPrimary}"

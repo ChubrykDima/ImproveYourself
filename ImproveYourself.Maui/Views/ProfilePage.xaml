@@ -31,11 +31,12 @@
                            HorizontalTextAlignment="Center" />
 
                     <Grid ColumnDefinitions="*,*,*"
-                          ColumnSpacing="10"
-                          Margin="0,6,0,0">
+                          ColumnSpacing="16"
+                          Margin="0,10,0,0">
                         <VerticalStackLayout Grid.Column="0"
                                              HorizontalOptions="Center"
-                                             Spacing="2">
+                                             Padding="4,0"
+                                             Spacing="8">
                             <Label x:Name="CurrentStreakMetricLabel"
                                    Text="0"
                                    Style="{StaticResource SubtitleLabelStyle}"
@@ -43,12 +44,14 @@
                             <Label x:Name="CurrentStreakMetricTitleLabel"
                                    Text=""
                                    Style="{StaticResource BodyLabelStyle}"
+                                   LineBreakMode="WordWrap"
                                    HorizontalTextAlignment="Center" />
                         </VerticalStackLayout>
 
                         <VerticalStackLayout Grid.Column="1"
                                              HorizontalOptions="Center"
-                                             Spacing="2">
+                                             Padding="4,0"
+                                             Spacing="8">
                             <Label x:Name="TotalCompletedMetricLabel"
                                    Text="0"
                                    Style="{StaticResource SubtitleLabelStyle}"
@@ -56,12 +59,14 @@
                             <Label x:Name="AllChallengesLabel"
                                    Text=""
                                    Style="{StaticResource BodyLabelStyle}"
+                                   LineBreakMode="WordWrap"
                                    HorizontalTextAlignment="Center" />
                         </VerticalStackLayout>
 
                         <VerticalStackLayout Grid.Column="2"
                                              HorizontalOptions="Center"
-                                             Spacing="2">
+                                             Padding="4,0"
+                                             Spacing="8">
                             <Label x:Name="CompletionRateMetricLabel"
                                    Text="0%"
                                    Style="{StaticResource SubtitleLabelStyle}"
@@ -69,6 +74,7 @@
                             <Label x:Name="CompletionRateTitleLabel"
                                    Text=""
                                    Style="{StaticResource BodyLabelStyle}"
+                                   LineBreakMode="WordWrap"
                                    HorizontalTextAlignment="Center" />
                         </VerticalStackLayout>
                     </Grid>
@@ -96,9 +102,33 @@
 
             <Border Style="{StaticResource CardBorderStyle}">
                 <VerticalStackLayout Spacing="12">
+                    <Grid ColumnDefinitions="Auto,*,Auto"
+                          ColumnSpacing="8">
+                        <Button x:Name="PreviousMonthButton"
+                                Text="‹"
+                                BackgroundColor="Transparent"
+                                TextColor="{StaticResource ColorTextPrimary}"
+                                FontSize="24"
+                                Clicked="OnPreviousMonthClicked" />
+                        <Label x:Name="CalendarMonthLabel"
+                               Grid.Column="1"
+                               Text=""
+                               Style="{StaticResource SubtitleLabelStyle}"
+                               HorizontalTextAlignment="Center"
+                               VerticalTextAlignment="Center" />
+                        <Button x:Name="NextMonthButton"
+                                Grid.Column="2"
+                                Text="›"
+                                BackgroundColor="Transparent"
+                                TextColor="{StaticResource ColorTextPrimary}"
+                                FontSize="24"
+                                Clicked="OnNextMonthClicked" />
+                    </Grid>
+
                     <Label x:Name="MonthActivityTitleLabel"
                            Text=""
-                           Style="{StaticResource SubtitleLabelStyle}" />
+                           Style="{StaticResource SubtitleLabelStyle}"
+                           IsVisible="False" />
 
                     <Grid ColumnDefinitions="*,*,*,*,*,*,*">
                         <Label x:Name="DayMonLabel" Grid.Column="0" Text="" Style="{StaticResource BodyLabelStyle}" HorizontalTextAlignment="Center" />

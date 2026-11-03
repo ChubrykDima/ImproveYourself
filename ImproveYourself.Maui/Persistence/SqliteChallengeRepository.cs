@@ -243,6 +243,13 @@ public sealed class SqliteChallengeRepository : IChallengeRepository
                 updatedAt,
                 updated.Id);
         }
+        else
+        {
+            _database.Execute(
+                "UPDATE daily_challenges SET completed_at = NULL, updated_at = ? WHERE id = ?",
+                updatedAt,
+                updated.Id);
+        }
 
         return GetOrCreateChallenge(date);
     }
@@ -302,7 +309,10 @@ public sealed class SqliteChallengeRepository : IChallengeRepository
         return ListCompletedDates().Count;
     }
 
-    public void ApplyRemoteProgress(IReadOnlyList<RemoteProgramDay> remoteDays, bool authoritative)
+    public void ApplyRemoteProgress(
+        IReadOnlyList<RemoteProgramDay> remoteDays,
+        bool authoritative,
+        IReadOnlySet<string>? locallyRegressedStepIds = null)
     {
         Initialize();
 
@@ -328,7 +338,7 @@ public sealed class SqliteChallengeRepository : IChallengeRepository
                     continue;
                 }
 
-                ApplyRemoteDay(row, remoteDay, authoritative, now);
+                ApplyRemoteDay(row, remoteDay, authoritative, locallyRegressedStepIds, now);
             }
         });
     }
@@ -352,6 +362,7 @@ public sealed class SqliteChallengeRepository : IChallengeRepository
         DailyChallengeRecord row,
         RemoteProgramDay remoteDay,
         bool authoritative,
+        IReadOnlySet<string>? locallyRegressedStepIds,
         string now)
     {
         var steps = _database.Table<ChallengeStepRecord>()
@@ -384,8 +395,13 @@ public sealed class SqliteChallengeRepository : IChallengeRepository
                 continue;
             }
 
+            var localStatus = step.Status.ToStepStatus();
             var merged = CloudProgress.MergeStep(
-                new StepProgressState(step.Status.ToStepStatus(), step.CompletedAt, step.UpdatedAt),
+                new StepProgressState(
+                    localStatus,
+                    step.CompletedAt,
+                    step.UpdatedAt,
+                    locallyRegressedStepIds?.Contains(step.Id) == true && localStatus != StepStatus.Completed),
                 new StepProgressState(
                     remoteStep.Status,
                     remoteStep.CompletedAt,

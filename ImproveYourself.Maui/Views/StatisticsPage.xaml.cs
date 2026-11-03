@@ -79,8 +79,7 @@ public partial class StatisticsPage : ContentPage
         BackendStatsLabel.Text = string.Format(
             AppStrings.BackendStatsFormat,
             AppStrings.Plural("DaysCount", backendStats.TotalChallengesCompleted),
-            AppStrings.Plural("StepsCount", backendStats.TotalStepsCompleted),
-            _appState.BackendSyncMessage);
+            AppStrings.Plural("StepsCount", backendStats.TotalStepsCompleted));
     }
 
     private void RenderWeeklyBars(IReadOnlyList<WeeklyDayStat> days)

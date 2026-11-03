@@ -18,6 +18,7 @@ public partial class App : Microsoft.Maui.Controls.Application
 	private readonly ILocalizationService _localizationService;
 	private Page _rootPage;
 	private Window? _window;
+	private bool _reopenSettingsAfterLanguageChange;
 
 	public App(
 		AppState appState,
@@ -49,13 +50,23 @@ public partial class App : Microsoft.Maui.Controls.Application
 		return _window;
 	}
 
+	public void ReopenSettingsAfterLanguageChange() => _reopenSettingsAfterLanguageChange = true;
+
 	public void ReloadNavigation()
 	{
+		var reopenSettings = _reopenSettingsAfterLanguageChange;
+		_reopenSettingsAfterLanguageChange = false;
 		_appState.ReloadAfterLanguageChange();
 
 		if (_appState.OnboardingCompleted)
 		{
-			SetRootPage(BuildNavigationPage(new HomePage(_appState, _backendConnectionService, _localizationService)));
+			var navigation = BuildNavigationPage(new HomePage(_appState, _backendConnectionService, _localizationService));
+			SetRootPage(navigation);
+
+			if (reopenSettings)
+			{
+				_ = navigation.PushAsync(new SettingsPage(_appState, _backendConnectionService, _localizationService));
+			}
 		}
 		else
 		{
