@@ -7,7 +7,6 @@ public partial class OnboardingSlideTwoPage : ContentPage
 {
     private readonly AppState _appState;
     private readonly Func<Task> _navigateToHomeAsync;
-    private bool _isNavigating;
 
     public OnboardingSlideTwoPage(AppState appState, Func<Task> navigateToHomeAsync)
     {
@@ -24,30 +23,51 @@ public partial class OnboardingSlideTwoPage : ContentPage
     protected override void OnAppearing()
     {
         base.OnAppearing();
-        _isNavigating = false;
-        NextButton.IsEnabled = true;
+        SetNavigationEnabled(false);
+        OnboardingNavigationGate.RunWhenIdle(() => SetNavigationEnabled(true));
     }
 
     private async void OnBackClicked(object? sender, EventArgs e)
     {
-        if (_isNavigating)
+        if (!OnboardingNavigationGate.TryEnter())
         {
             return;
         }
 
-        _isNavigating = true;
-        await Navigation.PopAsync();
+        SetNavigationEnabled(false);
+
+        try
+        {
+            await Navigation.PopAsync();
+        }
+        finally
+        {
+            OnboardingNavigationGate.Exit();
+        }
     }
 
     private async void OnNextClicked(object? sender, EventArgs e)
     {
-        if (_isNavigating)
+        if (!OnboardingNavigationGate.TryEnter())
         {
             return;
         }
 
-        _isNavigating = true;
-        NextButton.IsEnabled = false;
-        await Navigation.PushAsync(new OnboardingSlideThreePage(_appState, _navigateToHomeAsync));
+        SetNavigationEnabled(false);
+
+        try
+        {
+            await Navigation.PushAsync(new OnboardingSlideThreePage(_appState, _navigateToHomeAsync));
+        }
+        finally
+        {
+            OnboardingNavigationGate.Exit();
+        }
+    }
+
+    private void SetNavigationEnabled(bool enabled)
+    {
+        BackButton.IsEnabled = enabled;
+        NextButton.IsEnabled = enabled;
     }
 }

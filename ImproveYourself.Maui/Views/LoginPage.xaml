@@ -4,9 +4,11 @@
              x:Class="ImproveYourself.Maui.Views.LoginPage"
              HideSoftInputOnTapped="True"
              BackgroundColor="{StaticResource ColorBackground}">
-    <ScrollView x:Name="FormScroll">
+    <ScrollView x:Name="FormScroll"
+                Orientation="Vertical">
         <VerticalStackLayout Padding="22,16,22,30"
-                             Spacing="16">
+                             Spacing="16"
+                             HorizontalOptions="Fill">
             <Border Style="{StaticResource CardBorderStyle}">
                 <VerticalStackLayout Spacing="10">
                     <Label x:Name="TitleLabel"

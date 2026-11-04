@@ -47,6 +47,7 @@
   "OfflineFirstDescription": "Alle Fortschritts-, Serien- und Kalenderdaten werden lokal gespeichert und funktionieren ohne Internet.",
   "Backend": "Cloud-Sync",
   "BackendDescription": "Melde dich an, um Fortschritt zu sichern und Analysen zu senden.",
+  "BackendSignedInDescription": "Fortschritt und Analysen werden im Konto gespeichert.",
   "SaveButton": "Speichern",
   "CheckButton": "Prüfen",
   "BackendNotConfigured": "Backend nicht konfiguriert.",

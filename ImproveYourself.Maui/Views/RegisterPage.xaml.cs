@@ -50,7 +50,7 @@ public partial class RegisterPage : ContentPage
             StatusLabel.Text = validation;
             EmailEntry.Unfocus();
             PasswordEntry.Unfocus();
-            await FormScroll.ScrollToAsync(StatusLabel, ScrollToPosition.End, true);
+            await AuthFormScroll.RevealStatusAsync(FormScroll, StatusLabel);
             return;
         }
 
@@ -65,7 +65,7 @@ public partial class RegisterPage : ContentPage
         StatusLabel.Text = result.Message;
         EmailEntry.Unfocus();
         PasswordEntry.Unfocus();
-        await FormScroll.ScrollToAsync(StatusLabel, ScrollToPosition.End, true);
+        await AuthFormScroll.RevealStatusAsync(FormScroll, StatusLabel);
 
         if (result.Succeeded)
         {

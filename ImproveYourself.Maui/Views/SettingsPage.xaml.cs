@@ -106,12 +106,7 @@ public partial class SettingsPage : ContentPage
             SyncButton.IsVisible = true;
             ExportAccountButton.IsVisible = true;
             DeleteAccountButton.IsVisible = true;
-            SyncStatusLabel.Text = _appState.BackendStats is null
-                ? _appState.BackendSyncMessage
-                : string.Format(
-                    AppStrings.BackendStatsFormat,
-                    AppStrings.Plural("DaysCount", _appState.BackendStats.TotalChallengesCompleted),
-                    AppStrings.Plural("StepsCount", _appState.BackendStats.TotalStepsCompleted));
+            SyncStatusLabel.Text = FormatAccountSyncStatus();
         }
         else
         {
@@ -126,11 +121,12 @@ public partial class SettingsPage : ContentPage
             SyncStatusLabel.Text = string.Empty;
         }
 
-        BackendStatusLabel.Text = !string.IsNullOrWhiteSpace(_appState.BackendSyncMessage)
-            ? _appState.BackendSyncMessage
-            : string.IsNullOrWhiteSpace(_appState.BackendBaseUrl)
-                ? AppStrings.BackendNotConfigured
-                : AppStrings.BackendSaved;
+        BackendDescLabel.Text = _appState.IsLoggedIn
+            ? AppStrings.BackendSignedInDescription
+            : AppStrings.BackendDescription;
+        BackendStatusLabel.Text = string.IsNullOrWhiteSpace(_appState.BackendBaseUrl)
+            ? AppStrings.BackendNotConfigured
+            : AppStrings.BackendSaved;
 
         var currentLanguage = LanguageOptions.FirstOrDefault(l => l.Code == _localizationService.CurrentLanguage);
         LanguageCurrentLabel.Text = currentLanguage.Label ?? _localizationService.CurrentLanguage;
@@ -228,8 +224,6 @@ public partial class SettingsPage : ContentPage
                 Title = AppStrings.AuthExportTitle,
                 File = new ShareFile(filePath),
             });
-
-            await DisplayAlertAsync(AppStrings.AuthExportTitle, AppStrings.AuthExportSucceeded, AppStrings.OK);
         }
         catch (Exception)
         {
@@ -318,15 +312,31 @@ public partial class SettingsPage : ContentPage
         await Navigation.PushAsync(LegalDocumentPage.TermsOfService());
     }
 
+    private string FormatAccountSyncStatus()
+    {
+        var lines = new List<string>();
+
+        if (!string.IsNullOrWhiteSpace(_appState.BackendSyncMessage))
+        {
+            lines.Add(_appState.BackendSyncMessage);
+        }
+
+        if (_appState.BackendStats is not null)
+        {
+            lines.Add(string.Format(
+                AppStrings.BackendStatsFormat,
+                AppStrings.Plural("DaysCount", _appState.BackendStats.TotalChallengesCompleted),
+                AppStrings.Plural("StepsCount", _appState.BackendStats.TotalStepsCompleted)));
+        }
+
+        return string.Join("\n", lines);
+    }
+
     private async void OnSyncClicked(object? sender, EventArgs e)
     {
         SyncStatusLabel.Text = AppStrings.BackendVerifiedSyncing;
-        var syncResult = await _appState.SyncBackendAsync(force: true);
+        await _appState.SyncBackendAsync(force: true);
         SyncFromState();
-        if (!syncResult.Succeeded)
-        {
-            SyncStatusLabel.Text = syncResult.Message;
-        }
     }
 
     private async void OnSaveBackendClicked(object? sender, EventArgs e)

@@ -88,9 +88,9 @@ public sealed class OnboardingAccountPage : ContentPage
 
         _waitingForAuth = false;
         _advanced = false;
-        _createButton.IsEnabled = true;
-        _signInButton.IsEnabled = true;
-        _skipButton.IsEnabled = true;
+        _createButton.IsEnabled = false;
+        _signInButton.IsEnabled = false;
+        _skipButton.IsEnabled = false;
 
         if (_appState.IsLoggedIn)
         {
@@ -98,6 +98,13 @@ public sealed class OnboardingAccountPage : ContentPage
             _signInButton.IsVisible = false;
             _skipButton.Text = AppStrings.OnboardingAccount_Continue;
         }
+
+        OnboardingNavigationGate.RunWhenIdle(() =>
+        {
+            _createButton.IsEnabled = true;
+            _signInButton.IsEnabled = true;
+            _skipButton.IsEnabled = true;
+        });
     }
 
     private async Task OpenAuthAsync(Page page)

@@ -106,6 +106,7 @@ public static class AppStrings
     public static string OfflineFirstDescription => Get("OfflineFirstDescription");
     public static string Backend => Get("Backend");
     public static string BackendDescription => Get("BackendDescription");
+    public static string BackendSignedInDescription => Get("BackendSignedInDescription");
     public static string SaveButton => Get("SaveButton");
     public static string CheckButton => Get("CheckButton");
     public static string BackendNotConfigured => Get("BackendNotConfigured");

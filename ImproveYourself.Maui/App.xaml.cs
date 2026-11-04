@@ -70,7 +70,7 @@ public partial class App : Microsoft.Maui.Controls.Application
 		}
 		else
 		{
-			SetRootPage(BuildNavigationPage(new OnboardingSlideOnePage(_appState, NavigateToHomeAsync)));
+			SetRootPage(BuildNavigationPage(CreateOnboardingPage()));
 		}
 	}
 
@@ -115,7 +115,7 @@ public partial class App : Microsoft.Maui.Controls.Application
 				return;
 			}
 
-			SetRootPage(BuildNavigationPage(new OnboardingSlideOnePage(_appState, NavigateToHomeAsync)));
+			SetRootPage(BuildNavigationPage(CreateOnboardingPage()));
 			});
 		}
 		catch
@@ -125,6 +125,29 @@ public partial class App : Microsoft.Maui.Controls.Application
 				SetRootPage(BuildNavigationPage(new LoadingPage(AppStrings.AppInitError)));
 			});
 		}
+	}
+
+	private Page CreateOnboardingPage()
+	{
+		if (HasStartAssessmentDraft())
+		{
+			return new SelfAssessmentPage(
+				_appState,
+				SelfAssessmentKind.Start,
+				CompleteOnboardingAndGoHomeAsync,
+				promptNotificationsOnCompletion: true);
+		}
+
+		return new OnboardingSlideOnePage(_appState, NavigateToHomeAsync);
+	}
+
+	private bool HasStartAssessmentDraft() =>
+		!string.IsNullOrWhiteSpace(_appState.ReadAssessmentDraft(SelfAssessmentKind.Start));
+
+	private async Task CompleteOnboardingAndGoHomeAsync()
+	{
+		await _appState.CompleteOnboardingAsync(_appState.DisplayName);
+		await NavigateToHomeAsync();
 	}
 
 	private Task NavigateToHomeAsync()

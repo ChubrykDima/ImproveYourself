@@ -47,6 +47,7 @@
   "OfflineFirstDescription": "All progress, streaks, and calendar data are stored locally and work without internet.",
   "Backend": "Cloud sync",
   "BackendDescription": "Sign in to back up progress and send analytics to the server.",
+  "BackendSignedInDescription": "Progress and analytics are saved to your account.",
   "SaveButton": "Save",
   "CheckButton": "Check",
   "BackendNotConfigured": "Backend not configured.",

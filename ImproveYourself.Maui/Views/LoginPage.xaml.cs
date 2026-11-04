@@ -51,7 +51,7 @@ public partial class LoginPage : ContentPage
         StatusLabel.Text = result.Message;
         EmailEntry.Unfocus();
         PasswordEntry.Unfocus();
-        await FormScroll.ScrollToAsync(StatusLabel, ScrollToPosition.End, true);
+        await AuthFormScroll.RevealStatusAsync(FormScroll, StatusLabel);
 
         if (result.Succeeded)
         {
