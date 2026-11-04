@@ -380,7 +380,7 @@ public partial class SettingsPage : ContentPage
             return;
         }
 
-        if (Application.Current is App app)
+        if (Microsoft.Maui.Controls.Application.Current is App app)
         {
             app.ReopenSettingsAfterLanguageChange();
         }
