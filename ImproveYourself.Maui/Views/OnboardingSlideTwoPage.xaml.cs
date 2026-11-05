@@ -7,6 +7,7 @@ public partial class OnboardingSlideTwoPage : ContentPage
 {
     private readonly AppState _appState;
     private readonly Func<Task> _navigateToHomeAsync;
+    private bool _ready;
 
     public OnboardingSlideTwoPage(AppState appState, Func<Task> navigateToHomeAsync)
     {
@@ -23,13 +24,12 @@ public partial class OnboardingSlideTwoPage : ContentPage
     protected override void OnAppearing()
     {
         base.OnAppearing();
-        SetNavigationEnabled(false);
-        OnboardingNavigationGate.RunWhenIdle(() => SetNavigationEnabled(true));
+        ArmWhenTransitionEnds();
     }
 
     private async void OnBackClicked(object? sender, EventArgs e)
     {
-        if (!OnboardingNavigationGate.TryEnter())
+        if (!TryBeginNavigation())
         {
             return;
         }
@@ -42,13 +42,13 @@ public partial class OnboardingSlideTwoPage : ContentPage
         }
         finally
         {
-            OnboardingNavigationGate.Exit();
+            await OnboardingNavigationGate.ExitAfterTransitionAsync();
         }
     }
 
     private async void OnNextClicked(object? sender, EventArgs e)
     {
-        if (!OnboardingNavigationGate.TryEnter())
+        if (!TryBeginNavigation())
         {
             return;
         }
@@ -61,8 +61,30 @@ public partial class OnboardingSlideTwoPage : ContentPage
         }
         finally
         {
-            OnboardingNavigationGate.Exit();
+            await OnboardingNavigationGate.ExitAfterTransitionAsync();
         }
+    }
+
+    private bool TryBeginNavigation()
+    {
+        if (!_ready || !OnboardingNavigationGate.TryEnter())
+        {
+            return false;
+        }
+
+        _ready = false;
+        return true;
+    }
+
+    private void ArmWhenTransitionEnds()
+    {
+        _ready = false;
+        SetNavigationEnabled(false);
+        OnboardingNavigationGate.RunWhenIdle(() =>
+        {
+            SetNavigationEnabled(true);
+            Dispatcher.Dispatch(() => _ready = true);
+        });
     }
 
     private void SetNavigationEnabled(bool enabled)

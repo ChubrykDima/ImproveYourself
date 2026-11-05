@@ -37,16 +37,19 @@ public sealed class OnboardingAccountPage : ContentPage
         _createButton = new Button
         {
             Text = AppStrings.OnboardingAccount_Create,
+            IsEnabled = false,
             Style = (Style)Microsoft.Maui.Controls.Application.Current.Resources["PrimaryButtonStyle"],
         };
         _signInButton = new Button
         {
             Text = AppStrings.OnboardingAccount_SignIn,
+            IsEnabled = false,
             Style = (Style)Microsoft.Maui.Controls.Application.Current.Resources["GhostButtonStyle"],
         };
         _skipButton = new Button
         {
             Text = AppStrings.OnboardingAccount_Skip,
+            IsEnabled = false,
             BackgroundColor = Colors.Transparent,
             TextColor = Color.FromArgb("#9EA8BD"),
             FontFamily = "OpenSansRegular",
@@ -101,9 +104,12 @@ public sealed class OnboardingAccountPage : ContentPage
 
         OnboardingNavigationGate.RunWhenIdle(() =>
         {
-            _createButton.IsEnabled = true;
-            _signInButton.IsEnabled = true;
-            _skipButton.IsEnabled = true;
+            Dispatcher.Dispatch(() =>
+            {
+                _createButton.IsEnabled = true;
+                _signInButton.IsEnabled = true;
+                _skipButton.IsEnabled = true;
+            });
         });
     }
 

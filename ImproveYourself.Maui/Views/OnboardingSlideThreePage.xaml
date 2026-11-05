@@ -92,6 +92,7 @@
               VerticalOptions="End">
             <Button x:Name="BackButton"
                     Text=""
+                    IsEnabled="False"
                     BackgroundColor="Transparent"
                     TextColor="{StaticResource ColorTextSecondary}"
                     FontFamily="OpenSansRegular"
@@ -100,6 +101,7 @@
             <Button x:Name="FinishButton"
                     Grid.Column="1"
                     Text=""
+                    IsEnabled="False"
                     Style="{StaticResource PrimaryButtonStyle}"
                     Clicked="OnFinishClicked" />
         </Grid>

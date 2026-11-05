@@ -7,6 +7,7 @@ public partial class OnboardingSlideOnePage : ContentPage
 {
     private readonly AppState _appState;
     private readonly Func<Task> _navigateToHomeAsync;
+    private bool _ready;
 
     public OnboardingSlideOnePage(AppState appState, Func<Task> navigateToHomeAsync)
     {
@@ -22,17 +23,23 @@ public partial class OnboardingSlideOnePage : ContentPage
     protected override void OnAppearing()
     {
         base.OnAppearing();
+        _ready = false;
         NextButton.IsEnabled = false;
-        OnboardingNavigationGate.RunWhenIdle(() => NextButton.IsEnabled = true);
+        OnboardingNavigationGate.RunWhenIdle(() =>
+        {
+            NextButton.IsEnabled = true;
+            Dispatcher.Dispatch(() => _ready = true);
+        });
     }
 
     private async void OnNextClicked(object? sender, EventArgs e)
     {
-        if (!OnboardingNavigationGate.TryEnter())
+        if (!_ready || !OnboardingNavigationGate.TryEnter())
         {
             return;
         }
 
+        _ready = false;
         NextButton.IsEnabled = false;
 
         try
@@ -41,7 +48,7 @@ public partial class OnboardingSlideOnePage : ContentPage
         }
         finally
         {
-            OnboardingNavigationGate.Exit();
+            await OnboardingNavigationGate.ExitAfterTransitionAsync();
         }
     }
 }
