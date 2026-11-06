@@ -59,7 +59,7 @@ foreach (var (language, days) in courses)
     Check(days.SelectMany(day => day.Steps).Select(step => step.Id).Distinct().Count() == 90,
         $"[{language}] Step IDs must remain unique.");
     Check(days.SelectMany(day => day.Steps.Select(step => step.Id).Prepend(day.Id)).SequenceEqual(referenceIds),
-        $"[{language}] Day and step IDs must match the Russian program so progress survives a language switch.");
+        $"[{language}] Day and step IDs must match the Russian program.");
     Check(days.Select(day => day.Steps.Single(step => step.Type == StepType.Quote).QuoteNote)
               .Where(note => !string.IsNullOrWhiteSpace(note)).Distinct().Count() == 30,
         $"[{language}] Every day needs its own quote note.");
@@ -127,6 +127,45 @@ Check(personalizedCompleted.Status == ChallengeStatus.Completed
       && personalizedCompleted.CompletedAt == completed.CompletedAt
       && personalizedCompleted.Steps.All(step => step.Status == StepStatus.Completed && step.CompletedAt == completed.CompletedAt),
     "Completion metadata changed.");
+
+// The checkmark belongs to the assignment text, not merely the stable step id.
+var russianPractice = courses["ru"][0].Steps.Single(step => step.Type == StepType.Practice);
+var englishPractice = courses["en"][0].Steps.Single(step => step.Type == StepType.Practice);
+Check(russianPractice.Id == englishPractice.Id, "Language copies must keep the practice step id.");
+Check(!StepTaskIdentity.SameAssignment(russianPractice, englishPractice),
+    "A translated assignment must not count as the task that was completed.");
+Check(StepTaskIdentity.SameAssignment(russianPractice, russianPractice),
+    "The same assignment text must keep its completion.");
+
+var completedSocial = courses["ru"][0].Steps.Single(step => step.Type == StepType.Social);
+completedSocial.Status = StepStatus.Completed;
+var courseKey = StepTaskIdentity.VisibleKey(completedSocial);
+completedSocial.CompletionTask = courseKey;
+var hint = ChallengePersonalizer.CurrentHint(snapshot);
+var hinted = ChallengePersonalizer.Personalize(courses["ru"][0], snapshot)
+    .Steps.Single(step => step.Type == StepType.Social);
+Check(hinted.Status == StepStatus.Completed, "Personalization must not strip a completion by itself.");
+Check(StepTaskIdentity.CompletionBelongsTo(hinted, hint),
+    "The completed wording keeps its mark when that text is shown again.");
+var recordedHint = StepTaskIdentity.VisibleKey(hinted);
+hinted.CompletionTask = recordedHint;
+Check(StepTaskIdentity.CompletionBelongsTo(hinted, hint),
+    "The same personalization hint must keep the completion.");
+var otherSnapshot = new SelfAssessmentSnapshot
+{
+    ConversationStartComfort = 3, OpinionExpressionEase = 3, BodyCalmUnderStress = 3,
+    EyeContactEase = 1, SocialActionReadiness = 3,
+};
+var otherHint = ChallengePersonalizer.CurrentHint(otherSnapshot);
+var other = ChallengePersonalizer.Personalize(courses["ru"][0], otherSnapshot)
+    .Steps.Single(step => step.Type == StepType.Social);
+other.CompletionTask = recordedHint;
+Check(!StepTaskIdentity.CompletionBelongsTo(other, otherHint),
+    "A different personalization hint is not the completed task.");
+other.CompletionTask = courseKey;
+Check(StepTaskIdentity.CompletionBelongsTo(other, otherHint),
+    "A wording recorded before hints were stored stays with that assignment.");
+completedSocial.CompletionTask = null;
 
 // Factory fallback: deterministic and not limited to a handful of combinations.
 static string FactoryContent(string date)

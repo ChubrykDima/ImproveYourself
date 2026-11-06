@@ -52,6 +52,9 @@ public sealed class ChallengeStep
     public string? CompletedAt { get; set; }
 
     public string UpdatedAt { get; set; } = string.Empty;
+
+    // Text of the assignment at the moment it was marked completed.
+    public string? CompletionTask { get; set; }
 }
 
 public sealed class DailyChallenge

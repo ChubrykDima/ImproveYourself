@@ -258,19 +258,27 @@ public sealed class AppState : INotifyPropertyChanged
         var before = _challengeRepository.GetChallengeForProgramDay(programDay, StartSelfAssessment);
         var previousChallengeStatus = before.Status;
         var previousStepStatus = before.Steps.FirstOrDefault(step => step.Type == stepType)?.Status;
-        var updated = ChallengePersonalizer.Personalize(
-            _challengeRepository.AdvanceChallengeStepStatus(before.Date, stepType),
+        var nextStatus = ProgressCalculator.GetNextStepStatus(previousStepStatus ?? StepStatus.NotStarted);
+        var projected = ChallengePersonalizer.Personalize(
+            _challengeRepository.AdvanceChallengeStepStatus(before.Date, stepType, nextStatus),
             StartSelfAssessment);
+        var projectedStep = projected.Steps.FirstOrDefault(step => step.Type == stepType);
+
+        if (projectedStep is not null && previousStepStatus != nextStatus)
+        {
+            var taskKey = nextStatus == StepStatus.Completed
+                ? StepTaskIdentity.VisibleKey(projectedStep)
+                : null;
+            _challengeRepository.RememberStepTask(projectedStep.Id, taskKey);
+            SetStepRegression(
+                projectedStep.Id,
+                nextStatus == StepStatus.NotStarted && previousStepStatus == StepStatus.Completed);
+        }
+
+        var updated = _challengeRepository.GetChallengeForProgramDay(programDay, StartSelfAssessment);
         updated.ProgramDayNumber = programDay;
         var updatedStep = updated.Steps.FirstOrDefault(step => step.Type == stepType);
         var updatedStepStatus = updatedStep?.Status;
-
-        if (updatedStep is not null && previousStepStatus != updatedStepStatus)
-        {
-            SetStepRegression(
-                updatedStep.Id,
-                updatedStepStatus == StepStatus.NotStarted && previousStepStatus == StepStatus.Completed);
-        }
 
         var programDayValue = programDay.ToString();
         TrackStepTransition(programDayValue, stepType, previousStepStatus, updatedStepStatus);

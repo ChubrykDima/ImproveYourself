@@ -45,6 +45,15 @@ public static class ChallengePersonalizer
             GetFocusTip(weakest.Focus));
     }
 
+    public static string? CurrentHint(SelfAssessmentSnapshot? snapshot)
+    {
+        var profile = CreateProfile(snapshot);
+
+        return profile is null
+            ? null
+            : string.Format(AppStrings.PersonalFocusTipFormat, profile.Title, profile.Tip);
+    }
+
     public static string? GetDayFocus(DailyChallenge challenge)
     {
         var steps = challenge.Steps.OrderBy(step => step.SortOrder).ToList();
@@ -145,6 +154,7 @@ public static class ChallengePersonalizer
         Status = step.Status,
         CompletedAt = step.CompletedAt,
         UpdatedAt = step.UpdatedAt,
+        CompletionTask = step.CompletionTask,
     };
 
     private sealed record FocusCandidate(SelfAssessmentFocus Focus, int Score, int Priority);

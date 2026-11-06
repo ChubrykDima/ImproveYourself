@@ -10,13 +10,15 @@ public interface IChallengeRepository
 
     void RelocalizeChallenges();
 
+    void RememberStepTask(string stepId, string? taskKey);
+
     DailyChallenge? GetChallengeByDate(string date);
 
     DailyChallenge GetOrCreateChallenge(string date);
 
     DailyChallenge GetChallengeForProgramDay(int programDay, SelfAssessmentSnapshot? personalizationSnapshot = null);
 
-    DailyChallenge AdvanceChallengeStepStatus(string date, StepType stepType);
+    DailyChallenge AdvanceChallengeStepStatus(string date, StepType stepType, StepStatus nextStatus);
 
     IReadOnlyList<string> ListCompletedDates();
 
