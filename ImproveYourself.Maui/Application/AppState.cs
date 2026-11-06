@@ -262,7 +262,16 @@ public sealed class AppState : INotifyPropertyChanged
             _challengeRepository.AdvanceChallengeStepStatus(before.Date, stepType),
             StartSelfAssessment);
         updated.ProgramDayNumber = programDay;
-        var updatedStepStatus = updated.Steps.FirstOrDefault(step => step.Type == stepType)?.Status;
+        var updatedStep = updated.Steps.FirstOrDefault(step => step.Type == stepType);
+        var updatedStepStatus = updatedStep?.Status;
+
+        if (updatedStep is not null && previousStepStatus != updatedStepStatus)
+        {
+            SetStepRegression(
+                updatedStep.Id,
+                updatedStepStatus == StepStatus.NotStarted && previousStepStatus == StepStatus.Completed);
+        }
+
         var programDayValue = programDay.ToString();
         TrackStepTransition(programDayValue, stepType, previousStepStatus, updatedStepStatus);
         TrackChallengeTransition(programDayValue, previousChallengeStatus, updated.Status);
@@ -408,6 +417,7 @@ public sealed class AppState : INotifyPropertyChanged
         _settingsService.ClearSelfAssessment(SelfAssessmentKind.Start);
         _settingsService.ClearSelfAssessment(SelfAssessmentKind.Final);
         _settingsService.WriteLastSyncedUserId(string.Empty);
+        _settingsService.WriteRegressedStepIds([]);
         _challengeRepository.ResetProgress();
         StartSelfAssessment = null;
         FinalSelfAssessment = null;
@@ -417,8 +427,80 @@ public sealed class AppState : INotifyPropertyChanged
         return result;
     }
 
-    public Task LogoutAsync(CancellationToken cancellationToken = default) =>
-        _authService.LogoutAsync(cancellationToken);
+    public async Task LogoutAsync(CancellationToken cancellationToken = default)
+    {
+        await _authService.LogoutAsync(cancellationToken);
+        BackendSyncMessage = string.Empty;
+        BackendStats = null;
+    }
+
+    public string ReadAssessmentDraft(SelfAssessmentKind kind) =>
+        _settingsService.ReadAssessmentDraft(kind);
+
+    public void WriteAssessmentDraft(SelfAssessmentKind kind, string json) =>
+        _settingsService.WriteAssessmentDraft(kind, json);
+
+    public void ClearAssessmentDraft(SelfAssessmentKind kind) =>
+        _settingsService.ClearAssessmentDraft(kind);
+
+    private HashSet<string> ReadRegressedStepIds() =>
+        _settingsService.ReadRegressedStepIds().ToHashSet(StringComparer.Ordinal);
+
+    private void SetStepRegression(string stepId, bool regressed)
+    {
+        if (string.IsNullOrWhiteSpace(stepId))
+        {
+            return;
+        }
+
+        var ids = ReadRegressedStepIds();
+
+        if (regressed)
+        {
+            ids.Add(stepId);
+        }
+        else
+        {
+            ids.Remove(stepId);
+        }
+
+        _settingsService.WriteRegressedStepIds(ids.ToList());
+    }
+
+    private void PruneRegressedSteps()
+    {
+        var ids = ReadRegressedStepIds();
+
+        if (ids.Count == 0)
+        {
+            return;
+        }
+
+        var steps = _challengeRepository.ListAllChallenges()
+            .SelectMany(challenge => challenge.Steps)
+            .ToDictionary(step => step.Id, StringComparer.Ordinal);
+        var kept = ids
+            .Where(id => steps.TryGetValue(id, out var step) && step.Status != StepStatus.Completed)
+            .ToList();
+
+        if (kept.Count != ids.Count)
+        {
+            _settingsService.WriteRegressedStepIds(kept);
+        }
+    }
+
+    public IReadOnlyList<string> CompletedProgramDaysOn(string isoDate)
+    {
+        return _challengeRepository.ListAllChallenges()
+            .Where(challenge => challenge.Status == ChallengeStatus.Completed
+                && DateTimeOffset.TryParse(challenge.CompletedAt, out var completedAt)
+                && string.Equals(DateHelpers.ToLocalIsoDate(completedAt), isoDate, StringComparison.Ordinal))
+            .OrderBy(challenge => challenge.ProgramDayNumber)
+            .Select(challenge => string.Format(
+                AppStrings.ProgramDayFormat,
+                challenge.ProgramDayNumber))
+            .ToList();
+    }
 
     public async Task<BackendSyncResult> SyncBackendAsync(bool force = false, CancellationToken cancellationToken = default)
     {
@@ -478,7 +560,16 @@ public sealed class AppState : INotifyPropertyChanged
 
             if (download.Succeeded)
             {
-                _challengeRepository.ApplyRemoteProgress(download.Challenges, switchingAccount);
+                if (switchingAccount)
+                {
+                    _settingsService.WriteRegressedStepIds([]);
+                }
+
+                _challengeRepository.ApplyRemoteProgress(
+                    download.Challenges,
+                    switchingAccount,
+                    switchingAccount ? null : ReadRegressedStepIds());
+                PruneRegressedSteps();
                 assessmentsDownloaded = await RestoreSelfAssessmentsAsync(
                     switchingAccount,
                     !hadLocalProgress,

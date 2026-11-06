@@ -644,10 +644,45 @@ public sealed class AuthService : IAuthService
     {
         try
         {
-            var payload = await response.Content.ReadFromJsonAsync<Dictionary<string, object>>(ApiJsonOptions, cancellationToken);
-            if (payload is not null && payload.TryGetValue("error", out var error) && error is not null)
+            var body = await response.Content.ReadAsStringAsync(cancellationToken);
+
+            if (!string.IsNullOrWhiteSpace(body))
             {
-                return error.ToString() ?? AppStrings.AuthFailed;
+                using var document = JsonDocument.Parse(body);
+                var root = document.RootElement;
+
+                if (root.TryGetProperty("error", out var error) && error.ValueKind == JsonValueKind.String)
+                {
+                    var message = MapServerValidationMessage(error.GetString());
+
+                    if (!string.IsNullOrWhiteSpace(message))
+                    {
+                        return message;
+                    }
+                }
+
+                if (root.TryGetProperty("errors", out var errors) && errors.ValueKind == JsonValueKind.Object)
+                {
+                    foreach (var property in errors.EnumerateObject())
+                    {
+                        if (property.Name.Contains("email", StringComparison.OrdinalIgnoreCase))
+                        {
+                            return AppStrings.AuthEmailInvalid;
+                        }
+
+                        if (property.Name.Contains("password", StringComparison.OrdinalIgnoreCase))
+                        {
+                            return AppStrings.AuthPasswordTooShort;
+                        }
+                    }
+                }
+
+                if (root.TryGetProperty("title", out var title)
+                    && title.ValueKind == JsonValueKind.String
+                    && title.GetString() is "Validation failed." or "One or more validation errors occurred.")
+                {
+                    return AppStrings.AuthEmailInvalid;
+                }
             }
         }
         catch
@@ -661,6 +696,27 @@ public sealed class AuthService : IAuthService
             System.Net.HttpStatusCode.Conflict => AppStrings.AuthEmailAlreadyRegistered,
             _ => AppStrings.AuthFailed,
         };
+    }
+
+    private static string? MapServerValidationMessage(string? message)
+    {
+        if (string.IsNullOrWhiteSpace(message))
+        {
+            return null;
+        }
+
+        if (message.Contains("password", StringComparison.OrdinalIgnoreCase))
+        {
+            return AppStrings.AuthPasswordTooShort;
+        }
+
+        if (message.Contains("email", StringComparison.OrdinalIgnoreCase)
+            || message.Contains("Validation failed", StringComparison.OrdinalIgnoreCase))
+        {
+            return AppStrings.AuthEmailInvalid;
+        }
+
+        return message;
     }
 
     private static bool ShouldClearSessionOnRefreshFailure(HttpStatusCode statusCode) =>

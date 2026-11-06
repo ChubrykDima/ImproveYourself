@@ -231,6 +231,18 @@ var replaced = CloudProgress.MergeStep(
     authoritative: true);
 Check(replaced.Status == StepStatus.NotStarted,
     "Switching accounts must replace the previous account's step progress.");
+var undone = CloudProgress.MergeStep(
+    new StepProgressState(StepStatus.NotStarted, null, "2026-11-02T00:00:00Z", LocalRegression: true),
+    new StepProgressState(StepStatus.Completed, "2026-11-01T00:00:00Z", "2026-11-01T00:00:00Z"),
+    authoritative: false);
+Check(undone.Status == StepStatus.NotStarted,
+    "An explicit undo must survive a sync that still has the step completed.");
+var freshInstall = CloudProgress.MergeStep(
+    new StepProgressState(StepStatus.NotStarted, null, "2026-11-02T00:00:00Z"),
+    new StepProgressState(StepStatus.Completed, "2026-11-01T00:00:00Z", "2026-11-01T00:00:00Z"),
+    authoritative: false);
+Check(freshInstall.Status == StepStatus.Completed,
+    "A new install must still restore a completed remote step.");
 
 DailyChallenge Day(int number, ChallengeStatus status, string? completedAt) => new()
 {
@@ -262,5 +274,31 @@ Check(CloudProgress.ResolveProgramDay(
         [Day(30, ChallengeStatus.Completed, yesterday)],
         today) == 30,
     "A finished program stays on day 30.");
+
+LoadStrings("en");
+Check(AccountInput.ValidateRegistration("", "12345678") == AppStrings.AuthEmailRequired, "Empty registration email must be rejected.");
+Check(AccountInput.ValidateRegistration("abc", "1") == AppStrings.AuthEmailInvalid, "A malformed email must be rejected before the server.");
+Check(AccountInput.ValidateRegistration("имя@example.com", "12345678") == AppStrings.AuthEmailInvalid, "A non-ASCII email must be rejected on the client.");
+Check(AccountInput.ValidateRegistration("person@example.com", "1") == AppStrings.AuthPasswordTooShort, "A short password must be rejected on the client.");
+Check(AccountInput.ValidateRegistration("person@example.com", "12345678") is null, "A valid email and password must pass client validation.");
+Check(AccountInput.ValidateDisplayName("   ") == AppStrings.NameRequired, "A blank name must not be saved.");
+Check(AccountInput.FirstGrapheme("🙂Ada") == "🙂", "The avatar must use the first grapheme, including emoji.");
+Check(ProgressCalculator.GetNextStepStatus(StepStatus.Completed) == StepStatus.NotStarted, "A completed step must be undoable.");
+Check(ProgressCalculator.GetNextStepStatus(StepStatus.NotStarted) == StepStatus.Completed, "An open step must still be completable.");
+var orderedSteps = new List<ChallengeStep>
+{
+    new() { Type = StepType.Practice, SortOrder = 1, Status = StepStatus.NotStarted },
+    new() { Type = StepType.Social, SortOrder = 2, Status = StepStatus.NotStarted },
+};
+Check(ProgressCalculator.IsStepBlocked(orderedSteps, StepType.Social), "The second step stays locked until the first is done.");
+orderedSteps[0].Status = StepStatus.Completed;
+Check(!ProgressCalculator.IsStepBlocked(orderedSteps, StepType.Social), "The second step opens after the first is done.");
+foreach (var (language, phrase) in new[] { ("en", "Two simple steps"), ("ru", "Два простых шага"), ("de", "Zwei einfache Schritte") })
+{
+    LoadStrings(language);
+    Check(AppStrings.Onboarding2_Body.Contains(phrase), $"[{language}] Onboarding must describe two steps.");
+    Check(!AppStrings.Onboarding2_Body.Contains("Three") && !AppStrings.Onboarding2_Body.Contains("Три ") && !AppStrings.Onboarding2_Body.Contains("Drei "),
+        $"[{language}] Onboarding must not promise three steps.");
+}
 
 Console.WriteLine("PASS: one 30-day program in ru/en/de, stable IDs, additive personalization, completion metadata, factory seeds and plurals.");

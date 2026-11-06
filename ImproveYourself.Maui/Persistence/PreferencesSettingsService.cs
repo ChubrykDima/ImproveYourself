@@ -19,6 +19,9 @@ public sealed class PreferencesSettingsService : ISettingsService
     private const string StartSelfAssessmentKey = "selfAssessment.start";
     private const string FinalSelfAssessmentKey = "selfAssessment.final";
     private const string LastSyncedUserIdKey = "backend.lastUserId";
+    private const string StartAssessmentDraftKey = "selfAssessment.draft.start";
+    private const string FinalAssessmentDraftKey = "selfAssessment.draft.final";
+    private const string RegressedStepIdsKey = "progress.regressedStepIds";
 
     private static readonly JsonSerializerOptions JsonOptions = new()
     {
@@ -134,11 +137,62 @@ public sealed class PreferencesSettingsService : ISettingsService
     public void ClearSelfAssessment(SelfAssessmentKind kind) =>
         Preferences.Default.Remove(GetSelfAssessmentKey(kind));
 
+    public string ReadAssessmentDraft(SelfAssessmentKind kind) =>
+        Preferences.Default.Get(GetAssessmentDraftKey(kind), string.Empty);
+
+    public void WriteAssessmentDraft(SelfAssessmentKind kind, string json) =>
+        Preferences.Default.Set(GetAssessmentDraftKey(kind), json ?? string.Empty);
+
+    public void ClearAssessmentDraft(SelfAssessmentKind kind) =>
+        Preferences.Default.Remove(GetAssessmentDraftKey(kind));
+
     public string ReadLastSyncedUserId() =>
         Preferences.Default.Get(LastSyncedUserIdKey, string.Empty);
 
     public void WriteLastSyncedUserId(string value) =>
         Preferences.Default.Set(LastSyncedUserIdKey, value?.Trim() ?? string.Empty);
+
+    public IReadOnlyList<string> ReadRegressedStepIds()
+    {
+        var json = Preferences.Default.Get(RegressedStepIdsKey, string.Empty);
+
+        if (string.IsNullOrWhiteSpace(json))
+        {
+            return [];
+        }
+
+        try
+        {
+            return JsonSerializer.Deserialize<List<string>>(json) ?? [];
+        }
+        catch
+        {
+            return [];
+        }
+    }
+
+    public void WriteRegressedStepIds(IReadOnlyList<string> stepIds)
+    {
+        var distinct = stepIds
+            .Where(id => !string.IsNullOrWhiteSpace(id))
+            .Distinct(StringComparer.Ordinal)
+            .ToArray();
+
+        if (distinct.Length == 0)
+        {
+            Preferences.Default.Remove(RegressedStepIdsKey);
+            return;
+        }
+
+        Preferences.Default.Set(RegressedStepIdsKey, JsonSerializer.Serialize(distinct));
+    }
+
+    private static string GetAssessmentDraftKey(SelfAssessmentKind kind) => kind switch
+    {
+        SelfAssessmentKind.Start => StartAssessmentDraftKey,
+        SelfAssessmentKind.Final => FinalAssessmentDraftKey,
+        _ => StartAssessmentDraftKey,
+    };
 
     private static string GetSelfAssessmentKey(SelfAssessmentKind kind) => kind switch
     {

@@ -1,4 +1,5 @@
 using ImproveYourself.Maui.Application;
+using ImproveYourself.Maui.Domain;
 using ImproveYourself.Maui.Resources.Strings;
 
 namespace ImproveYourself.Maui.Views;
@@ -18,6 +19,7 @@ public partial class RegisterPage : ContentPage
     {
         base.OnAppearing();
         RenderStaticLabels();
+        PasswordField.Configure(PasswordEntry);
     }
 
     private void RenderStaticLabels()
@@ -27,6 +29,7 @@ public partial class RegisterPage : ContentPage
         DescriptionLabel.Text = AppStrings.AuthRegisterDescription;
         EmailEntry.Placeholder = AppStrings.AuthEmailPlaceholder;
         PasswordEntry.Placeholder = AppStrings.AuthPasswordPlaceholder;
+        PasswordRulesLabel.Text = AppStrings.AuthPasswordRules;
         RegisterButton.Text = AppStrings.AuthRegisterButton;
         LegalHintLabel.Text = AppStrings.AuthRegisterLegalHint;
         PrivacyPolicyButton.Text = AppStrings.LegalPrivacyTitle;
@@ -40,6 +43,17 @@ public partial class RegisterPage : ContentPage
             return;
         }
 
+        var validation = AccountInput.ValidateRegistration(EmailEntry.Text, PasswordEntry.Text);
+
+        if (validation is not null)
+        {
+            StatusLabel.Text = validation;
+            EmailEntry.Unfocus();
+            PasswordEntry.Unfocus();
+            await AuthFormScroll.RevealStatusAsync(FormScroll, StatusLabel);
+            return;
+        }
+
         _isSubmitting = true;
         RegisterButton.IsEnabled = false;
         StatusLabel.Text = AppStrings.AuthWorking;
@@ -49,6 +63,9 @@ public partial class RegisterPage : ContentPage
             PasswordEntry.Text ?? string.Empty);
 
         StatusLabel.Text = result.Message;
+        EmailEntry.Unfocus();
+        PasswordEntry.Unfocus();
+        await AuthFormScroll.RevealStatusAsync(FormScroll, StatusLabel);
 
         if (result.Succeeded)
         {

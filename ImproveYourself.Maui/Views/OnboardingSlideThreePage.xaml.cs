@@ -8,6 +8,8 @@ public partial class OnboardingSlideThreePage : ContentPage
 {
     private readonly AppState _appState;
     private readonly Func<Task> _navigateToHomeAsync;
+    private bool _isFinishing;
+    private bool _ready;
 
     public OnboardingSlideThreePage(AppState appState, Func<Task> navigateToHomeAsync)
     {
@@ -21,27 +23,108 @@ public partial class OnboardingSlideThreePage : ContentPage
         DisplayNameEntry.Placeholder = AppStrings.EnterNamePlaceholder;
         DisplayNameEntry.Text = _appState.DisplayName;
         BackButton.Text = AppStrings.Back;
-        FinishButton.Text = AppStrings.GoToSelfAssessment;
+        FinishButton.Text = AppStrings.Next;
+    }
+
+    protected override void OnAppearing()
+    {
+        base.OnAppearing();
+        ArmWhenTransitionEnds();
     }
 
     private async void OnBackClicked(object? sender, EventArgs e)
     {
-        await Navigation.PopAsync();
+        if (!TryBeginNavigation())
+        {
+            return;
+        }
+
+        SetNavigationEnabled(false);
+
+        try
+        {
+            await Navigation.PopAsync();
+        }
+        finally
+        {
+            await OnboardingNavigationGate.ExitAfterTransitionAsync();
+        }
     }
 
     private async void OnFinishClicked(object? sender, EventArgs e)
     {
-        var displayName = DisplayNameEntry.Text ?? string.Empty;
+        if (!_ready || _isFinishing)
+        {
+            return;
+        }
+
+        var validation = AccountInput.ValidateDisplayName(DisplayNameEntry.Text);
+
+        if (validation is not null)
+        {
+            _isFinishing = true;
+            FinishButton.IsEnabled = false;
+
+            try
+            {
+                await DisplayAlertAsync(AppStrings.Profile, validation, AppStrings.OK);
+            }
+            finally
+            {
+                _isFinishing = false;
+                OnboardingNavigationGate.RunWhenIdle(() => FinishButton.IsEnabled = true);
+            }
+
+            return;
+        }
+
+        if (!OnboardingNavigationGate.TryEnter())
+        {
+            return;
+        }
+
+        _ready = false;
+        _isFinishing = true;
+        SetNavigationEnabled(false);
+        var displayName = DisplayNameEntry.Text?.Trim() ?? string.Empty;
         _appState.UpdateDisplayName(displayName);
 
-        await Navigation.PushAsync(new SelfAssessmentPage(
-            _appState,
-            SelfAssessmentKind.Start,
-            async () =>
-            {
-                await _appState.CompleteOnboardingAsync(displayName);
-                await _navigateToHomeAsync();
-            },
-            promptNotificationsOnCompletion: true));
+        try
+        {
+            await Navigation.PushAsync(new OnboardingAccountPage(_appState, _navigateToHomeAsync, displayName));
+        }
+        finally
+        {
+            _isFinishing = false;
+            await OnboardingNavigationGate.ExitAfterTransitionAsync();
+        }
+    }
+
+    private bool TryBeginNavigation()
+    {
+        if (!_ready || !OnboardingNavigationGate.TryEnter())
+        {
+            return false;
+        }
+
+        _ready = false;
+        return true;
+    }
+
+    private void ArmWhenTransitionEnds()
+    {
+        _ready = false;
+        SetNavigationEnabled(false);
+        OnboardingNavigationGate.RunWhenIdle(() =>
+        {
+            SetNavigationEnabled(true);
+            Dispatcher.Dispatch(() => _ready = true);
+        });
+    }
+
+    private void SetNavigationEnabled(bool enabled)
+    {
+        BackButton.IsEnabled = enabled;
+        FinishButton.IsEnabled = enabled;
     }
 }

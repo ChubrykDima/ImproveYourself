@@ -106,6 +106,7 @@ public static class AppStrings
     public static string OfflineFirstDescription => Get("OfflineFirstDescription");
     public static string Backend => Get("Backend");
     public static string BackendDescription => Get("BackendDescription");
+    public static string BackendSignedInDescription => Get("BackendSignedInDescription");
     public static string SaveButton => Get("SaveButton");
     public static string CheckButton => Get("CheckButton");
     public static string BackendNotConfigured => Get("BackendNotConfigured");
@@ -124,6 +125,13 @@ public static class AppStrings
     public static string Onboarding1_Body => Get("Onboarding1_Body");
     public static string Onboarding2_Title => Get("Onboarding2_Title");
     public static string Onboarding2_Body => Get("Onboarding2_Body");
+    public static string OnboardingAccount_Title => Get("OnboardingAccount_Title");
+    public static string OnboardingAccount_Body => Get("OnboardingAccount_Body");
+    public static string OnboardingAccount_Create => Get("OnboardingAccount_Create");
+    public static string OnboardingAccount_SignIn => Get("OnboardingAccount_SignIn");
+    public static string OnboardingAccount_Skip => Get("OnboardingAccount_Skip");
+    public static string OnboardingAccount_Continue => Get("OnboardingAccount_Continue");
+    public static string RemindersPrompt => Get("RemindersPrompt");
     public static string Onboarding3_Title => Get("Onboarding3_Title");
     public static string Onboarding3_Body => Get("Onboarding3_Body");
     public static string HowToAddress => Get("HowToAddress");
@@ -201,6 +209,10 @@ public static class AppStrings
     public static string MonthActivity => Get("MonthActivity");
     public static string AllChallenges => Get("AllChallenges");
     public static string CompletionRateLabel => Get("CompletionRateLabel");
+    public static string CalendarDayCompletedFormat => Get("CalendarDayCompletedFormat");
+    public static string CalendarDayEmptyFormat => Get("CalendarDayEmptyFormat");
+    public static string ProgramCongratulationsTitle => Get("ProgramCongratulationsTitle");
+    public static string ProgramCongratulationsBody => Get("ProgramCongratulationsBody");
 
     // TypeMappings — step statuses and actions
     public static string StatusNotStarted => Get("StatusNotStarted");
@@ -209,6 +221,8 @@ public static class AppStrings
     public static string ActionStart => Get("ActionStart");
     public static string ActionMarkCompleted => Get("ActionMarkCompleted");
     public static string ActionCompleted => Get("ActionCompleted");
+    public static string ActionUndo => Get("ActionUndo");
+    public static string StepLockedUntilPrevious => Get("StepLockedUntilPrevious");
 
     // SelfAssessment questions
     public static string Question_Conversation => Get("Question_Conversation");
@@ -238,6 +252,13 @@ public static class AppStrings
 
     public static string AuthAccountSection => Get("AuthAccountSection");
     public static string AuthAccountDescription => Get("AuthAccountDescription");
+    public static string AuthAccountSignedInDescription => Get("AuthAccountSignedInDescription");
+    public static string AuthEmailInvalid => Get("AuthEmailInvalid");
+    public static string AuthPasswordRules => Get("AuthPasswordRules");
+    public static string AuthLogoutConfirmTitle => Get("AuthLogoutConfirmTitle");
+    public static string AuthLogoutConfirmMessage => Get("AuthLogoutConfirmMessage");
+    public static string NameRequired => Get("NameRequired");
+    public static string NameLengthHint => Get("NameLengthHint");
     public static string AuthLoginTitle => Get("AuthLoginTitle");
     public static string AuthLoginDescription => Get("AuthLoginDescription");
     public static string AuthRegisterTitle => Get("AuthRegisterTitle");

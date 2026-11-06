@@ -7,6 +7,7 @@ public partial class OnboardingSlideTwoPage : ContentPage
 {
     private readonly AppState _appState;
     private readonly Func<Task> _navigateToHomeAsync;
+    private bool _ready;
 
     public OnboardingSlideTwoPage(AppState appState, Func<Task> navigateToHomeAsync)
     {
@@ -20,13 +21,75 @@ public partial class OnboardingSlideTwoPage : ContentPage
         NextButton.Text = AppStrings.Next;
     }
 
+    protected override void OnAppearing()
+    {
+        base.OnAppearing();
+        ArmWhenTransitionEnds();
+    }
+
     private async void OnBackClicked(object? sender, EventArgs e)
     {
-        await Navigation.PopAsync();
+        if (!TryBeginNavigation())
+        {
+            return;
+        }
+
+        SetNavigationEnabled(false);
+
+        try
+        {
+            await Navigation.PopAsync();
+        }
+        finally
+        {
+            await OnboardingNavigationGate.ExitAfterTransitionAsync();
+        }
     }
 
     private async void OnNextClicked(object? sender, EventArgs e)
     {
-        await Navigation.PushAsync(new OnboardingSlideThreePage(_appState, _navigateToHomeAsync));
+        if (!TryBeginNavigation())
+        {
+            return;
+        }
+
+        SetNavigationEnabled(false);
+
+        try
+        {
+            await Navigation.PushAsync(new OnboardingSlideThreePage(_appState, _navigateToHomeAsync));
+        }
+        finally
+        {
+            await OnboardingNavigationGate.ExitAfterTransitionAsync();
+        }
+    }
+
+    private bool TryBeginNavigation()
+    {
+        if (!_ready || !OnboardingNavigationGate.TryEnter())
+        {
+            return false;
+        }
+
+        _ready = false;
+        return true;
+    }
+
+    private void ArmWhenTransitionEnds()
+    {
+        _ready = false;
+        SetNavigationEnabled(false);
+        OnboardingNavigationGate.RunWhenIdle(() =>
+        {
+            SetNavigationEnabled(true);
+            Dispatcher.Dispatch(() => _ready = true);
+        });
+    }
+
+    private void SetNavigationEnabled(bool enabled)
+    {
+        BackButton.IsEnabled = enabled;
+        NextButton.IsEnabled = enabled;
     }
 }

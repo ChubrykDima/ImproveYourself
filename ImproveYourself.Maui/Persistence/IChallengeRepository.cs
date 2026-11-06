@@ -26,7 +26,10 @@ public interface IChallengeRepository
 
     int GetCompletedChallengesCount();
 
-    void ApplyRemoteProgress(IReadOnlyList<RemoteProgramDay> remoteDays, bool authoritative);
+    void ApplyRemoteProgress(
+        IReadOnlyList<RemoteProgramDay> remoteDays,
+        bool authoritative,
+        IReadOnlySet<string>? locallyRegressedStepIds = null);
 
     void ResetProgress();
 }

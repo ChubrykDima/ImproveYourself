@@ -18,6 +18,7 @@ public partial class LoginPage : ContentPage
     {
         base.OnAppearing();
         RenderStaticLabels();
+        PasswordField.Configure(PasswordEntry);
     }
 
     private void RenderStaticLabels()
@@ -48,6 +49,9 @@ public partial class LoginPage : ContentPage
             PasswordEntry.Text ?? string.Empty);
 
         StatusLabel.Text = result.Message;
+        EmailEntry.Unfocus();
+        PasswordEntry.Unfocus();
+        await AuthFormScroll.RevealStatusAsync(FormScroll, StatusLabel);
 
         if (result.Succeeded)
         {

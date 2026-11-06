@@ -74,6 +74,8 @@
                    HorizontalTextAlignment="Center" />
             <Entry x:Name="DisplayNameEntry"
                    MaxLength="24"
+                   IsSpellCheckEnabled="False"
+                   IsTextPredictionEnabled="False"
                    Placeholder=""
                    PlaceholderColor="{StaticResource ColorTextSecondary}"
                    TextColor="{StaticResource ColorTextPrimary}"
@@ -90,6 +92,7 @@
               VerticalOptions="End">
             <Button x:Name="BackButton"
                     Text=""
+                    IsEnabled="False"
                     BackgroundColor="Transparent"
                     TextColor="{StaticResource ColorTextSecondary}"
                     FontFamily="OpenSansRegular"
@@ -98,6 +101,7 @@
             <Button x:Name="FinishButton"
                     Grid.Column="1"
                     Text=""
+                    IsEnabled="False"
                     Style="{StaticResource PrimaryButtonStyle}"
                     Clicked="OnFinishClicked" />
         </Grid>

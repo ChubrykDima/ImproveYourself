@@ -2,10 +2,13 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="ImproveYourself.Maui.Views.LoginPage"
+             HideSoftInputOnTapped="True"
              BackgroundColor="{StaticResource ColorBackground}">
-    <ScrollView>
+    <ScrollView x:Name="FormScroll"
+                Orientation="Vertical">
         <VerticalStackLayout Padding="22,16,22,30"
-                             Spacing="16">
+                             Spacing="16"
+                             HorizontalOptions="Fill">
             <Border Style="{StaticResource CardBorderStyle}">
                 <VerticalStackLayout Spacing="10">
                     <Label x:Name="TitleLabel"
@@ -25,6 +28,8 @@
 
                     <Entry x:Name="PasswordEntry"
                            IsPassword="True"
+                           IsSpellCheckEnabled="False"
+                           IsTextPredictionEnabled="False"
                            PlaceholderColor="{StaticResource ColorTextSecondary}"
                            FontFamily="OpenSansRegular"
                            FontSize="15"

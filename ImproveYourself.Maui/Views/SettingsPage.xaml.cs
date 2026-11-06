@@ -1,6 +1,7 @@
 using System.ComponentModel;
 using ImproveYourself.Maui;
 using ImproveYourself.Maui.Application;
+using ImproveYourself.Maui.Domain;
 using ImproveYourself.Maui.Resources.Strings;
 
 namespace ImproveYourself.Maui.Views;
@@ -47,7 +48,10 @@ public partial class SettingsPage : ContentPage
 
     private void OnAppStatePropertyChanged(object? sender, PropertyChangedEventArgs args)
     {
-        if (args.PropertyName is nameof(AppState.IsLoggedIn) or nameof(AppState.UserEmail) or nameof(AppState.BackendSyncMessage))
+        if (args.PropertyName is nameof(AppState.IsLoggedIn)
+            or nameof(AppState.UserEmail)
+            or nameof(AppState.BackendSyncMessage)
+            or nameof(AppState.BackendStats))
         {
             MainThread.BeginInvokeOnMainThread(SyncFromState);
         }
@@ -59,14 +63,13 @@ public partial class SettingsPage : ContentPage
         ProfileSectionLabel.Text = AppStrings.Profile;
         GreetingNameLabel.Text = AppStrings.GreetingName;
         NameEntry.Placeholder = AppStrings.EnterNamePlaceholder;
+        NameLengthHintLabel.Text = AppStrings.NameLengthHint;
         SaveNameButton.Text = AppStrings.SaveName;
         LanguageSectionLabel.Text = AppStrings.LanguageSection;
         LanguagePickerButton.Text = AppStrings.LanguageSection;
         RemindersSectionLabel.Text = AppStrings.Reminders;
         ReminderDescLabel.Text = AppStrings.ReminderDescription;
         EnableNotificationsLabel.Text = AppStrings.EnableNotifications;
-        OfflineFirstTitleLabel.Text = AppStrings.OfflineFirstTitle;
-        OfflineFirstDescLabel.Text = AppStrings.OfflineFirstDescription;
         AccountSectionLabel.Text = AppStrings.AuthAccountSection;
         AccountDescLabel.Text = AppStrings.AuthAccountDescription;
         LoginButton.Text = AppStrings.AuthLoginButton;
@@ -95,6 +98,7 @@ public partial class SettingsPage : ContentPage
 
         if (_appState.IsLoggedIn)
         {
+            AccountDescLabel.Text = AppStrings.AuthAccountSignedInDescription;
             AccountStatusLabel.Text = string.Format(AppStrings.AuthLoggedInAsFormat, _appState.UserEmail);
             LoginButton.IsVisible = false;
             RegisterAccountButton.IsVisible = false;
@@ -102,9 +106,11 @@ public partial class SettingsPage : ContentPage
             SyncButton.IsVisible = true;
             ExportAccountButton.IsVisible = true;
             DeleteAccountButton.IsVisible = true;
+            SyncStatusLabel.Text = FormatAccountSyncStatus();
         }
         else
         {
+            AccountDescLabel.Text = AppStrings.AuthAccountDescription;
             AccountStatusLabel.Text = AppStrings.AuthNotLoggedIn;
             LoginButton.IsVisible = true;
             RegisterAccountButton.IsVisible = true;
@@ -112,13 +118,15 @@ public partial class SettingsPage : ContentPage
             SyncButton.IsVisible = false;
             ExportAccountButton.IsVisible = false;
             DeleteAccountButton.IsVisible = false;
+            SyncStatusLabel.Text = string.Empty;
         }
 
-        BackendStatusLabel.Text = !string.IsNullOrWhiteSpace(_appState.BackendSyncMessage)
-            ? _appState.BackendSyncMessage
-            : string.IsNullOrWhiteSpace(_appState.BackendBaseUrl)
-                ? AppStrings.BackendNotConfigured
-                : AppStrings.BackendSaved;
+        BackendDescLabel.Text = _appState.IsLoggedIn
+            ? AppStrings.BackendSignedInDescription
+            : AppStrings.BackendDescription;
+        BackendStatusLabel.Text = string.IsNullOrWhiteSpace(_appState.BackendBaseUrl)
+            ? AppStrings.BackendNotConfigured
+            : AppStrings.BackendSaved;
 
         var currentLanguage = LanguageOptions.FirstOrDefault(l => l.Code == _localizationService.CurrentLanguage);
         LanguageCurrentLabel.Text = currentLanguage.Label ?? _localizationService.CurrentLanguage;
@@ -127,6 +135,14 @@ public partial class SettingsPage : ContentPage
 
     private async void OnSaveNameClicked(object? sender, EventArgs e)
     {
+        var validation = AccountInput.ValidateDisplayName(NameEntry.Text);
+
+        if (validation is not null)
+        {
+            await DisplayAlertAsync(AppStrings.Profile, validation, AppStrings.OK);
+            return;
+        }
+
         _appState.UpdateDisplayName(NameEntry.Text ?? string.Empty);
         await DisplayAlertAsync(AppStrings.Saved_Title, AppStrings.NameUpdated, AppStrings.OK);
     }
@@ -168,6 +184,17 @@ public partial class SettingsPage : ContentPage
 
     private async void OnLogoutClicked(object? sender, EventArgs e)
     {
+        var confirmed = await DisplayAlertAsync(
+            AppStrings.AuthLogoutConfirmTitle,
+            AppStrings.AuthLogoutConfirmMessage,
+            AppStrings.AuthLogoutButton,
+            AppStrings.Back);
+
+        if (!confirmed)
+        {
+            return;
+        }
+
         await _appState.LogoutAsync();
         SyncFromState();
     }
@@ -175,7 +202,6 @@ public partial class SettingsPage : ContentPage
     private async void OnExportAccountClicked(object? sender, EventArgs e)
     {
         ExportAccountButton.IsEnabled = false;
-        BackendStatusLabel.Text = AppStrings.AuthWorking;
         string? filePath = null;
 
         try
@@ -184,13 +210,13 @@ public partial class SettingsPage : ContentPage
 
             if (!result.Succeeded || string.IsNullOrWhiteSpace(result.JsonPayload))
             {
-                BackendStatusLabel.Text = result.Message;
                 await DisplayAlertAsync(AppStrings.AuthExportTitle, result.Message, AppStrings.OK);
                 return;
             }
 
-            var fileName = $"improveyourself-export-{DateTime.UtcNow:yyyyMMdd-HHmmss}.json";
+            var fileName = $"improveyourself-export-{DateTime.Now:yyyyMMdd-HHmmss}.json";
             filePath = Path.Combine(FileSystem.CacheDirectory, fileName);
+            DeletePreviousExports(filePath);
             await File.WriteAllTextAsync(filePath, result.JsonPayload);
 
             await Share.Default.RequestAsync(new ShareFileRequest
@@ -198,12 +224,9 @@ public partial class SettingsPage : ContentPage
                 Title = AppStrings.AuthExportTitle,
                 File = new ShareFile(filePath),
             });
-
-            BackendStatusLabel.Text = AppStrings.AuthExportSucceeded;
         }
         catch (Exception)
         {
-            BackendStatusLabel.Text = AppStrings.AuthExportFailed;
             await DisplayAlertAsync(AppStrings.AuthExportTitle, AppStrings.AuthExportFailed, AppStrings.OK);
         }
         finally
@@ -238,12 +261,10 @@ public partial class SettingsPage : ContentPage
         }
 
         DeleteAccountButton.IsEnabled = false;
-        BackendStatusLabel.Text = AppStrings.AuthWorking;
 
         try
         {
             var result = await _appState.DeleteAccountAsync();
-            BackendStatusLabel.Text = result.Message;
             SyncFromState();
 
             await DisplayAlertAsync(AppStrings.AuthDeleteAccountTitle, result.Message, AppStrings.OK);
@@ -251,6 +272,33 @@ public partial class SettingsPage : ContentPage
         finally
         {
             DeleteAccountButton.IsEnabled = true;
+        }
+    }
+
+    private static void DeletePreviousExports(string currentPath)
+    {
+        var directory = Path.GetDirectoryName(currentPath);
+
+        if (string.IsNullOrWhiteSpace(directory) || !Directory.Exists(directory))
+        {
+            return;
+        }
+
+        foreach (var path in Directory.EnumerateFiles(directory, "improveyourself-export-*.json"))
+        {
+            if (string.Equals(path, currentPath, StringComparison.Ordinal))
+            {
+                continue;
+            }
+
+            try
+            {
+                File.Delete(path);
+            }
+            catch
+            {
+                // A previous share sheet may still be holding the file.
+            }
         }
     }
 
@@ -264,11 +312,31 @@ public partial class SettingsPage : ContentPage
         await Navigation.PushAsync(LegalDocumentPage.TermsOfService());
     }
 
+    private string FormatAccountSyncStatus()
+    {
+        var lines = new List<string>();
+
+        if (!string.IsNullOrWhiteSpace(_appState.BackendSyncMessage))
+        {
+            lines.Add(_appState.BackendSyncMessage);
+        }
+
+        if (_appState.BackendStats is not null)
+        {
+            lines.Add(string.Format(
+                AppStrings.BackendStatsFormat,
+                AppStrings.Plural("DaysCount", _appState.BackendStats.TotalChallengesCompleted),
+                AppStrings.Plural("StepsCount", _appState.BackendStats.TotalStepsCompleted)));
+        }
+
+        return string.Join("\n", lines);
+    }
+
     private async void OnSyncClicked(object? sender, EventArgs e)
     {
-        BackendStatusLabel.Text = AppStrings.BackendVerifiedSyncing;
-        var syncResult = await _appState.SyncBackendAsync(force: true);
-        BackendStatusLabel.Text = syncResult.Message;
+        SyncStatusLabel.Text = AppStrings.BackendVerifiedSyncing;
+        await _appState.SyncBackendAsync(force: true);
+        SyncFromState();
     }
 
     private async void OnSaveBackendClicked(object? sender, EventArgs e)
@@ -320,6 +388,11 @@ public partial class SettingsPage : ContentPage
         if (string.IsNullOrEmpty(selected.Code) || selected.Code == _localizationService.CurrentLanguage)
         {
             return;
+        }
+
+        if (Microsoft.Maui.Controls.Application.Current is App app)
+        {
+            app.ReopenSettingsAfterLanguageChange();
         }
 
         _localizationService.SetLanguage(selected.Code);

@@ -1,6 +1,10 @@
 namespace ImproveYourself.Maui.Domain;
 
-public readonly record struct StepProgressState(StepStatus Status, string? CompletedAt, string UpdatedAt);
+public readonly record struct StepProgressState(
+    StepStatus Status,
+    string? CompletedAt,
+    string UpdatedAt,
+    bool LocalRegression = false);
 
 public sealed class RemoteProgramStep
 {
@@ -33,6 +37,15 @@ public static class CloudProgress
 
     public static StepProgressState MergeStep(StepProgressState local, StepProgressState remote, bool authoritative)
     {
+        // The server keeps the furthest progress, so a fresh device must still accept a
+        // completed remote step. An explicit undo on this device is the exception.
+        if (!authoritative
+            && local.LocalRegression
+            && StatusRank(remote.Status) > StatusRank(local.Status))
+        {
+            return local;
+        }
+
         if (authoritative || StatusRank(remote.Status) > StatusRank(local.Status))
         {
             return remote;

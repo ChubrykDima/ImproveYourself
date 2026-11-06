@@ -2,10 +2,13 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="ImproveYourself.Maui.Views.RegisterPage"
+             HideSoftInputOnTapped="True"
              BackgroundColor="{StaticResource ColorBackground}">
-    <ScrollView>
+    <ScrollView x:Name="FormScroll"
+                Orientation="Vertical">
         <VerticalStackLayout Padding="22,16,22,30"
-                             Spacing="16">
+                             Spacing="16"
+                             HorizontalOptions="Fill">
             <Border Style="{StaticResource CardBorderStyle}">
                 <VerticalStackLayout Spacing="10">
                     <Label x:Name="TitleLabel"
@@ -25,12 +28,17 @@
 
                     <Entry x:Name="PasswordEntry"
                            IsPassword="True"
+                           IsSpellCheckEnabled="False"
+                           IsTextPredictionEnabled="False"
                            PlaceholderColor="{StaticResource ColorTextSecondary}"
                            FontFamily="OpenSansRegular"
                            FontSize="15"
                            TextColor="{StaticResource ColorTextPrimary}"
                            BackgroundColor="{StaticResource ColorFrame}"
                            HeightRequest="52" />
+
+                    <Label x:Name="PasswordRulesLabel"
+                           Style="{StaticResource BodyLabelStyle}" />
 
                     <Button x:Name="RegisterButton"
                             Style="{StaticResource PrimaryButtonStyle}"
@@ -40,14 +48,12 @@
                            Style="{StaticResource BodyLabelStyle}"
                            LineBreakMode="WordWrap" />
 
-                    <Grid ColumnDefinitions="*,*"
-                          ColumnSpacing="10">
-                        <Button x:Name="PrivacyPolicyButton"
-                                Clicked="OnPrivacyPolicyClicked" />
-                        <Button Grid.Column="1"
-                                x:Name="TermsButton"
-                                Clicked="OnTermsClicked" />
-                    </Grid>
+                    <Button x:Name="PrivacyPolicyButton"
+                            LineBreakMode="WordWrap"
+                            Clicked="OnPrivacyPolicyClicked" />
+                    <Button x:Name="TermsButton"
+                            LineBreakMode="WordWrap"
+                            Clicked="OnTermsClicked" />
 
                     <Label x:Name="StatusLabel"
                            Style="{StaticResource BodyLabelStyle}"
