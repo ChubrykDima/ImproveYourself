@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project>
+  <PropertyGroup>
+    <!-- Copy this file to sentry.local.props and paste your DSN from Sentry → Settings → Client Keys. -->
+    <SentryDsn>https://YOUR_KEY@oYOUR_ORG.ingest.sentry.io/YOUR_PROJECT</SentryDsn>
+  </PropertyGroup>
+</Project>

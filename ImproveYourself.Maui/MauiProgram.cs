@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using ImproveYourself.Maui.Application;
 using ImproveYourself.Maui.Persistence;
+using Microsoft.Maui.ApplicationModel;
 
 namespace ImproveYourself.Maui;
 
@@ -11,9 +12,27 @@ public static class MauiProgram
 		SQLitePCL.Batteries_V2.Init();
 
 		var builder = MauiApp.CreateBuilder();
-		builder
-			.UseMauiApp<App>()
-			.ConfigureFonts(fonts =>
+		builder.UseMauiApp<App>();
+
+		var sentryDsn = SentryDsnResolver.Resolve();
+		if (!string.IsNullOrWhiteSpace(sentryDsn))
+		{
+			builder.UseSentry(options =>
+			{
+				options.Dsn = sentryDsn;
+				options.SendDefaultPii = false;
+				options.TracesSampleRate = 0.1;
+				options.Release = $"{AppInfo.Current.VersionString}+{AppInfo.Current.BuildString}";
+#if DEBUG
+				options.Debug = true;
+				options.Environment = "development";
+#else
+				options.Environment = "production";
+#endif
+			});
+		}
+
+		builder.ConfigureFonts(fonts =>
 			{
 				fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
 				fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
