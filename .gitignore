@@ -20,6 +20,9 @@ packages/
 # macOS
 .DS_Store
 
+# Sentry DSN (local build only)
+ImproveYourself.Maui/sentry.local.props
+
 # MAUI/Xcode generated artifacts
 **/project.xcworkspace/
 **/xcuserdata/
