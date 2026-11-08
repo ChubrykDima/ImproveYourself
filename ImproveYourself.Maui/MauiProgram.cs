@@ -1,7 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using ImproveYourself.Maui.Application;
 using ImproveYourself.Maui.Persistence;
-using Microsoft.Maui.ApplicationModel;
 
 namespace ImproveYourself.Maui;
 
@@ -14,22 +13,34 @@ public static class MauiProgram
 		var builder = MauiApp.CreateBuilder();
 		builder.UseMauiApp<App>();
 
-		var sentryDsn = SentryDsnResolver.Resolve();
+		var sentryDsn = SentryDsnResolver.ResolveDsn();
 		if (!string.IsNullOrWhiteSpace(sentryDsn))
 		{
-			builder.UseSentry(options =>
+			try
 			{
-				options.Dsn = sentryDsn;
-				options.SendDefaultPii = false;
-				options.TracesSampleRate = 0.1;
-				options.Release = $"{AppInfo.Current.VersionString}+{AppInfo.Current.BuildString}";
+				builder.UseSentry(options =>
+				{
+					options.Dsn = sentryDsn;
+					options.SendDefaultPii = false;
+					options.TracesSampleRate = 0;
+					var release = SentryDsnResolver.ResolveRelease();
+					if (!string.IsNullOrWhiteSpace(release))
+					{
+						options.Release = release;
+					}
+
 #if DEBUG
-				options.Debug = true;
-				options.Environment = "development";
+					options.Debug = true;
+					options.Environment = "development";
 #else
-				options.Environment = "production";
+					options.Environment = "production";
 #endif
-			});
+				});
+			}
+			catch (Exception ex)
+			{
+				System.Diagnostics.Trace.WriteLine($"Sentry initialization failed: {ex}");
+			}
 		}
 
 		builder.ConfigureFonts(fonts =>
