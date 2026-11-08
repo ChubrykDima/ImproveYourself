@@ -36,8 +36,8 @@
 		<ApplicationId>com.chubrykdima.improveyourself</ApplicationId>
 
 		<!-- Versions -->
-		<ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
-		<ApplicationVersion>1</ApplicationVersion>
+		<ApplicationDisplayVersion>1.1.1</ApplicationDisplayVersion>
+		<ApplicationVersion>5</ApplicationVersion>
 
 		<!-- To develop, package, and publish an app to the Microsoft Store, see: https://aka.ms/MauiTemplateUnpackaged -->
 		<WindowsPackageType>None</WindowsPackageType>
@@ -53,6 +53,10 @@
 		<AssemblyAttribute Include="System.Reflection.AssemblyMetadataAttribute">
 			<_Parameter1>SentryDsn</_Parameter1>
 			<_Parameter2>$(SentryDsn)</_Parameter2>
+		</AssemblyAttribute>
+		<AssemblyAttribute Include="System.Reflection.AssemblyMetadataAttribute">
+			<_Parameter1>SentryRelease</_Parameter1>
+			<_Parameter2>$(ApplicationDisplayVersion)+$(ApplicationVersion)</_Parameter2>
 		</AssemblyAttribute>
 	</ItemGroup>
 

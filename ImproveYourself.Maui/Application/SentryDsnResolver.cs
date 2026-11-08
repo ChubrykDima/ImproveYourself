@@ -4,10 +4,14 @@ namespace ImproveYourself.Maui.Application;
 
 internal static class SentryDsnResolver
 {
-    private const string AssemblyMetadataKey = "SentryDsn";
+    private const string DsnMetadataKey = "SentryDsn";
+    private const string ReleaseMetadataKey = "SentryRelease";
     private const string EnvironmentVariableName = "SENTRY_DSN";
 
-    public static string? Resolve()
+    private static readonly string? CachedDsn = ReadAssemblyMetadata(DsnMetadataKey);
+    private static readonly string? CachedRelease = ReadAssemblyMetadata(ReleaseMetadataKey);
+
+    public static string? ResolveDsn()
     {
         var fromEnvironment = Environment.GetEnvironmentVariable(EnvironmentVariableName);
         if (!string.IsNullOrWhiteSpace(fromEnvironment))
@@ -15,11 +19,18 @@ internal static class SentryDsnResolver
             return fromEnvironment.Trim();
         }
 
-        var fromAssembly = typeof(SentryDsnResolver).Assembly
+        return CachedDsn;
+    }
+
+    public static string? ResolveRelease() => CachedRelease;
+
+    private static string? ReadAssemblyMetadata(string key)
+    {
+        var value = typeof(SentryDsnResolver).Assembly
             .GetCustomAttributes<AssemblyMetadataAttribute>()
-            .FirstOrDefault(attribute => attribute.Key == AssemblyMetadataKey)
+            .FirstOrDefault(attribute => attribute.Key == key)
             ?.Value;
 
-        return string.IsNullOrWhiteSpace(fromAssembly) ? null : fromAssembly.Trim();
+        return string.IsNullOrWhiteSpace(value) ? null : value.Trim();
     }
 }
