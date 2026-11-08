@@ -49,6 +49,10 @@
 		<TargetPlatformMinVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</TargetPlatformMinVersion>
 	</PropertyGroup>
 
+	<PropertyGroup Condition="$(TargetFramework.Contains('-ios')) and '$(Configuration)' == 'Release'">
+		<MtouchNoSymbolStrip>true</MtouchNoSymbolStrip>
+	</PropertyGroup>
+
 	<ItemGroup Condition="'$(SentryDsn)' != ''">
 		<AssemblyAttribute Include="System.Reflection.AssemblyMetadataAttribute">
 			<_Parameter1>SentryDsn</_Parameter1>
