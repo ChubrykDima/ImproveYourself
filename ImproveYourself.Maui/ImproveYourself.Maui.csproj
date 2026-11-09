@@ -36,8 +36,8 @@
 		<ApplicationId>com.chubrykdima.improveyourself</ApplicationId>
 
 		<!-- Versions -->
-		<ApplicationDisplayVersion>1.1.1</ApplicationDisplayVersion>
-		<ApplicationVersion>5</ApplicationVersion>
+		<ApplicationDisplayVersion>1.1.6</ApplicationDisplayVersion>
+		<ApplicationVersion>10</ApplicationVersion>
 
 		<!-- To develop, package, and publish an app to the Microsoft Store, see: https://aka.ms/MauiTemplateUnpackaged -->
 		<WindowsPackageType>None</WindowsPackageType>
@@ -51,6 +51,8 @@
 
 	<PropertyGroup Condition="$(TargetFramework.Contains('-ios')) and '$(Configuration)' == 'Release'">
 		<MtouchNoSymbolStrip>true</MtouchNoSymbolStrip>
+		<!-- These assemblies abort during iOS AOT startup. Interpret them instead. -->
+		<MtouchInterpreter>Sentry,Sentry.Maui,Sentry.Bindings.Cocoa,Sentry.Extensions.Logging</MtouchInterpreter>
 	</PropertyGroup>
 
 	<ItemGroup Condition="'$(SentryDsn)' != ''">
