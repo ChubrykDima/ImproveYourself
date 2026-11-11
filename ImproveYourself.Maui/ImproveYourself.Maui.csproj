@@ -90,7 +90,8 @@
 		<PackageReference Include="Sentry.Maui" Version="6.12.1" />
 		<PackageReference Include="sqlite-net-pcl" Version="1.9.172" />
 		<PackageReference Include="SQLitePCLRaw.bundle_green" Version="2.1.11" />
-		<PackageReference Include="SQLitePCLRaw.lib.e_sqlite3" Version="2.1.13" />
+		<!-- Android uses the Android-specific package below; the generic package also supplies Linux binaries. -->
+		<PackageReference Include="SQLitePCLRaw.lib.e_sqlite3" Version="2.1.13" Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) != 'android'" />
 		<PackageReference Include="SQLitePCLRaw.lib.e_sqlite3.android" Version="2.1.13" />
 	</ItemGroup>
 
