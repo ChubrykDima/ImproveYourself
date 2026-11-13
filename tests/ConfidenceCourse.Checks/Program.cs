@@ -128,12 +128,12 @@ Check(personalizedCompleted.Status == ChallengeStatus.Completed
       && personalizedCompleted.Steps.All(step => step.Status == StepStatus.Completed && step.CompletedAt == completed.CompletedAt),
     "Completion metadata changed.");
 
-// The checkmark belongs to the assignment text, not merely the stable step id.
+// Translations and personalized hints preserve the same assignment identity.
 var russianPractice = courses["ru"][0].Steps.Single(step => step.Type == StepType.Practice);
 var englishPractice = courses["en"][0].Steps.Single(step => step.Type == StepType.Practice);
 Check(russianPractice.Id == englishPractice.Id, "Language copies must keep the practice step id.");
-Check(!StepTaskIdentity.SameAssignment(russianPractice, englishPractice),
-    "A translated assignment must not count as the task that was completed.");
+Check(StepTaskIdentity.SameAssignment(russianPractice, englishPractice),
+    "A translated assignment must keep completion.");
 Check(StepTaskIdentity.SameAssignment(russianPractice, russianPractice),
     "The same assignment text must keep its completion.");
 
@@ -166,6 +166,25 @@ other.CompletionTask = courseKey;
 Check(StepTaskIdentity.CompletionBelongsTo(other, otherHint),
     "A wording recorded before hints were stored stays with that assignment.");
 completedSocial.CompletionTask = null;
+
+// Legacy text stamps migrate only when they match a known translation.
+var translations = courses.Values.SelectMany(days => days).SelectMany(day => day.Steps).ToList();
+foreach (var language in labels.Keys)
+{
+    var step = courses[language][0].Steps.Single(step => step.Type == StepType.Practice);
+    step.Status = StepStatus.Completed;
+    step.CompletionTask = StepTaskIdentity.VisibleKey(russianPractice);
+    step.CompletionTask = StepTaskIdentity.UpgradeLegacyCompletion(step, translations);
+    Check(StepTaskIdentity.CompletionBelongsTo(step), $"[{language}] Legacy Russian completion was lost.");
+}
+other.CompletionTask = recordedHint;
+other.CompletionTask = StepTaskIdentity.UpgradeLegacyCompletion(other, translations);
+Check(StepTaskIdentity.CompletionBelongsTo(other, otherHint), "A changed hint must not reset a migrated assignment.");
+other.CompletionTask = "unrecognized older task";
+Check(StepTaskIdentity.UpgradeLegacyCompletion(other, translations) == other.CompletionTask
+      && !StepTaskIdentity.CompletionBelongsTo(other), "An unrelated legacy task must not inherit completion.");
+Check(!StepTaskIdentity.SameAssignment(russianPractice, courses["ru"][1].Steps.Single(step => step.Type == StepType.Practice)),
+    "Different days must retain distinct assignment keys.");
 
 // Factory fallback: deterministic and not limited to a handful of combinations.
 static string FactoryContent(string date)
@@ -340,4 +359,77 @@ foreach (var (language, phrase) in new[] { ("en", "Two simple steps"), ("ru", "Ð
         $"[{language}] Onboarding must not promise three steps.");
 }
 
-Console.WriteLine("PASS: one 30-day program in ru/en/de, stable IDs, additive personalization, completion metadata, factory seeds and plurals.");
+// SQLite regressions: localized legacy stamps, process-style reopen, undo, and weekly stats.
+SQLitePCL.Batteries_V2.Init();
+var testLocalization = new ConfidenceCourse.Checks.TestLocalization();
+LoadStrings("en");
+var repository = new ImproveYourself.Maui.Persistence.SqliteChallengeRepository(testLocalization);
+repository.Initialize();
+var storedDay = repository.GetChallengeForProgramDay(1);
+var storedPractice = storedDay.Steps.Single(step => step.Type == StepType.Practice);
+repository.AdvanceChallengeStepStatus(storedDay.Date, StepType.Practice, StepStatus.Completed);
+repository.RememberStepTask(storedPractice.Id, StepTaskIdentity.VisibleKey(storedPractice));
+var originalCompletedAt = repository.GetChallengeForProgramDay(1).Steps.Single(step => step.Type == StepType.Practice).CompletedAt;
+foreach (var language in new[] { "ru", "de", "en" })
+{
+    LoadStrings(language);
+    testLocalization.SetLanguage(language);
+    repository.ReloadBundledContent();
+    repository.RelocalizeChallenges();
+    repository = new ImproveYourself.Maui.Persistence.SqliteChallengeRepository(testLocalization);
+    var reloaded = repository.GetChallengeForProgramDay(1, snapshot);
+    Check(ProgressCalculator.CountCompletedSteps(reloaded.Steps) == 1,
+        $"[{language}] SQLite lost partial progress after a language change and reopen.");
+    var migratedPractice = reloaded.Steps.Single(step => step.Type == StepType.Practice);
+    Check(migratedPractice.CompletionTask == StepTaskIdentity.AssignmentKey(migratedPractice)
+        && migratedPractice.CompletedAt == originalCompletedAt,
+        $"[{language}] Migration must persist a stable key and preserve the completion timestamp.");
+    Check(!ProgressCalculator.IsStepBlocked(reloaded.Steps, StepType.Social),
+        $"[{language}] Language change relocked the second step.");
+    repository.AdvanceChallengeStepStatus(storedDay.Date, StepType.Social, StepStatus.Completed);
+    repository = new ImproveYourself.Maui.Persistence.SqliteChallengeRepository(testLocalization);
+    Check(repository.GetChallengeForProgramDay(1).Status == ChallengeStatus.Completed,
+        $"[{language}] Completed day was lost on reopen.");
+    repository.AdvanceChallengeStepStatus(storedDay.Date, StepType.Social, StepStatus.NotStarted);
+}
+var statsToday = DateHelpers.LocalTodayIsoDate;
+var weekly = ProgressCalculator.BuildWeeklyStats(repository.ListChallengesBetween(DateHelpers.AddDays(statsToday, -6), statsToday), statsToday);
+Check(weekly.CategoryBreakdown[StepType.Practice] == 1 && weekly.CategoryBreakdown[StepType.Social] == 0,
+    "Undoing step 2 must preserve step 1 in weekly categories.");
+Check(weekly.TotalCompletedDays == 0 && weekly.Days[^1].CompletedSteps == 1 && weekly.Days[^1].TotalSteps == 2,
+    "A partial day must show one of two steps, without counting as a completed day.");
+var splitDay = new DailyChallenge
+{
+    Status = ChallengeStatus.Completed, CompletedAt = DateTimeOffset.Now.ToString("o"), Date = "2000-01-01",
+    Steps = [
+        new() { Type = StepType.Practice, Status = StepStatus.Completed, CompletedAt = DateTimeOffset.Now.AddDays(-8).ToString("o") },
+        new() { Type = StepType.Social, Status = StepStatus.Completed, CompletedAt = DateTimeOffset.Now.ToString("o") }
+    ]
+};
+var splitStats = ProgressCalculator.BuildWeeklyStats([splitDay], statsToday);
+Check(splitStats.TotalCompletedDays == 1 && splitStats.CategoryBreakdown[StepType.Practice] == 0
+    && splitStats.CategoryBreakdown[StepType.Social] == 1, "Categories must use each step's date, not the completed day's date.");
+repository.AdvanceChallengeStepStatus(storedDay.Date, StepType.Social, StepStatus.Completed);
+var completedSocialStep = repository.GetChallengeForProgramDay(1, snapshot).Steps.Single(step => step.Type == StepType.Social);
+repository.RememberStepTask(completedSocialStep.Id, StepTaskIdentity.AssignmentKey(completedSocialStep));
+foreach (var language in new[] { "ru", "de", "en" })
+{
+    LoadStrings(language);
+    testLocalization.SetLanguage(language);
+    repository.ReloadBundledContent();
+    repository.RelocalizeChallenges();
+    Check(repository.GetChallengeForProgramDay(1, otherSnapshot).Status == ChallengeStatus.Completed
+        && repository.ListCompletedDates().Count == 1,
+        $"[{language}] Completed days must survive language and hint changes.");
+}
+foreach (var language in labels.Keys)
+{
+    LoadStrings(language);
+    Check(AccountInput.ValidateLogin("tester@example.com", "") == AppStrings.AuthPasswordRequired,
+        $"[{language}] An empty password must not produce an email error.");
+    Check(AccountInput.ValidateLogin("", "") == AppStrings.AuthEmailRequired, "Empty email must be reported first.");
+    Check(AccountInput.ValidateLogin("bad", "password") == AppStrings.AuthEmailInvalid, "Invalid login email must be rejected.");
+    Check(AccountInput.ValidateLogin(" tester@example.com ", "x") is null, "Login must accept trimmed emails and existing short passwords.");
+}
+
+Console.WriteLine("PASS: SQLite language migration/reopen, partial-day statistics, login validation; one 30-day program in ru/en/de, stable IDs, additive personalization, completion metadata, factory seeds and plurals.");

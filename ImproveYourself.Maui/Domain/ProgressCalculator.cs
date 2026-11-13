@@ -147,36 +147,24 @@ public static class ProgressCalculator
     {
         var reference = DateHelpers.ParseIsoDate(referenceDate ?? DateHelpers.LocalTodayIsoDate);
         var challengeList = challenges.ToList();
-        var lookup = challengeList
-            .GroupBy(challenge => challenge.Date, StringComparer.Ordinal)
-            .ToDictionary(group => group.Key, group => group.ToList(), StringComparer.Ordinal);
-
         var days = Enumerable.Range(0, 7)
-            .Select(index =>
+            .Select(offset =>
             {
-                var date = reference.AddDays(index - 6);
-                var isoDate = date.ToString("yyyy-MM-dd");
-
-                if (!lookup.TryGetValue(isoDate, out var challenges))
-                {
-                    return new WeeklyDayStat
-                    {
-                        Date = isoDate,
-                        CompletedSteps = 0,
-                        TotalSteps = 0,
-                        IsCompleted = false,
-                    };
-                }
-
-                var completedSteps = challenges.Sum(challenge => CountCompletedSteps(challenge.Steps));
-                var totalSteps = challenges.Sum(challenge => challenge.Steps.Count);
-
+                var isoDate = reference.AddDays(offset - 6).ToString("yyyy-MM-dd");
+                var completedSteps = challengeList.SelectMany(challenge => challenge.Steps)
+                    .Count(step => step.Type != StepType.Quote && step.Status == StepStatus.Completed
+                        && CompletionDate(step.CompletedAt) == isoDate);
+                var completedDays = challengeList.Where(challenge => challenge.Status == ChallengeStatus.Completed
+                    && CompletionDate(challenge.CompletedAt) == isoDate).ToList();
+                var activeChallenges = challengeList.Where(challenge => completedDays.Contains(challenge)
+                    || challenge.Steps.Any(step => step.Type != StepType.Quote && step.Status == StepStatus.Completed
+                        && CompletionDate(step.CompletedAt) == isoDate));
                 return new WeeklyDayStat
                 {
                     Date = isoDate,
                     CompletedSteps = completedSteps,
-                    TotalSteps = totalSteps,
-                    IsCompleted = totalSteps > 0 && completedSteps == totalSteps,
+                    TotalSteps = activeChallenges.Sum(challenge => challenge.Steps.Count(step => step.Type != StepType.Quote)),
+                    IsCompleted = completedDays.Count > 0,
                 };
             })
             .ToList();
@@ -190,7 +178,8 @@ public static class ProgressCalculator
 
         foreach (var challenge in challengeList)
         {
-            foreach (var step in challenge.Steps.Where(step => step.Status == StepStatus.Completed))
+            foreach (var step in challenge.Steps.Where(step => step.Status == StepStatus.Completed
+                && IsCompletionBetween(step.CompletedAt, days[0].Date, days[^1].Date)))
             {
                 if (categoryBreakdown.TryGetValue(step.Type, out var value))
                 {
@@ -207,6 +196,14 @@ public static class ProgressCalculator
             CategoryBreakdown = categoryBreakdown,
         };
     }
+
+    public static string? CompletionDate(string? timestamp) =>
+        DateTimeOffset.TryParse(timestamp, out var value) ? DateHelpers.ToLocalIsoDate(value) : null;
+
+    public static bool IsCompletionBetween(string? timestamp, string startDate, string endDate) =>
+        CompletionDate(timestamp) is string date
+        && string.CompareOrdinal(date, startDate) >= 0
+        && string.CompareOrdinal(date, endDate) <= 0;
 
     public static int CalculateRollingCompletionRate(
         IEnumerable<string> completedDates,

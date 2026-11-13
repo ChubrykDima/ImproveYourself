@@ -267,7 +267,7 @@ public sealed class AppState : INotifyPropertyChanged
         if (projectedStep is not null && previousStepStatus != nextStatus)
         {
             var taskKey = nextStatus == StepStatus.Completed
-                ? StepTaskIdentity.VisibleKey(projectedStep)
+                ? StepTaskIdentity.AssignmentKey(projectedStep)
                 : null;
             _challengeRepository.RememberStepTask(projectedStep.Id, taskKey);
             SetStepRegression(

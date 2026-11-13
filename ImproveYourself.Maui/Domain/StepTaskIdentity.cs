@@ -3,14 +3,41 @@ namespace ImproveYourself.Maui.Domain;
 public static class StepTaskIdentity
 {
     public static bool SameAssignment(ChallengeStep completed, ChallengeStep current) =>
-        VisibleKey(completed) == VisibleKey(current);
+        AssignmentKey(completed) == AssignmentKey(current);
+
+    // IDs are shared by all translations. Hints do not change the assignment.
+    public static string AssignmentKey(ChallengeStep step) =>
+        $"assignment:v1:{step.DailyChallengeId}:{step.Id}:{step.Type}";
 
     public static string VisibleKey(ChallengeStep step) => Key(step, step.Tip);
 
-    // A completion recorded before this key existed stays put. Once the key is stored,
-    // the mark belongs to that text: another wording is shown unchecked, and the
-    // original wording shows the mark again. appliedHint is the personalization
-    // suffix currently appended to the tip, so a wording stamp can ignore it.
+    // Upgrade only recognized course text, including its optional appended hint.
+    // Unrecognized legacy assignments keep their old stamp instead of inheriting
+    // completion merely because a newer course reused their ID.
+    public static string? UpgradeLegacyCompletion(ChallengeStep step, IEnumerable<ChallengeStep> translations)
+    {
+        if (string.IsNullOrEmpty(step.CompletionTask)
+            || step.CompletionTask.StartsWith("assignment:", StringComparison.Ordinal))
+        {
+            return step.CompletionTask;
+        }
+
+        var recorded = step.CompletionTask.Split('\u001f');
+        foreach (var translation in translations.Where(candidate => SameAssignment(step, candidate)))
+        {
+            var expected = VisibleKey(translation).Split('\u001f');
+            if (recorded.Length == expected.Length
+                && recorded.Where((field, index) => index != 3).SequenceEqual(expected.Where((field, index) => index != 3))
+                && (recorded[3] == expected[3]
+                    || recorded[3].StartsWith(expected[3] + "\n\n", StringComparison.Ordinal)))
+            {
+                return AssignmentKey(step);
+            }
+        }
+
+        return step.CompletionTask;
+    }
+
     public static bool CompletionBelongsTo(ChallengeStep step, string? appliedHint = null)
     {
         if (step.Status != StepStatus.Completed || string.IsNullOrEmpty(step.CompletionTask))
@@ -18,7 +45,7 @@ public static class StepTaskIdentity
             return true;
         }
 
-        if (step.CompletionTask == VisibleKey(step))
+        if (step.CompletionTask == AssignmentKey(step) || step.CompletionTask == VisibleKey(step))
         {
             return true;
         }
