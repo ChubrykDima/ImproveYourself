@@ -266,8 +266,11 @@ public sealed class AppState : INotifyPropertyChanged
 
         if (projectedStep is not null && previousStepStatus != nextStatus)
         {
+            var focus = projectedStep.Type == StepType.Social
+                ? ChallengePersonalizer.CreateProfile(StartSelfAssessment)?.Focus
+                : null;
             var taskKey = nextStatus == StepStatus.Completed
-                ? StepTaskIdentity.AssignmentKey(projectedStep)
+                ? StepTaskIdentity.AssignmentKey(projectedStep, focus)
                 : null;
             _challengeRepository.RememberStepTask(projectedStep.Id, taskKey);
             SetStepRegression(

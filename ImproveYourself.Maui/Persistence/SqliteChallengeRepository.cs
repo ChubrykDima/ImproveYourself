@@ -111,6 +111,7 @@ public sealed class SqliteChallengeRepository : IChallengeRepository
         new Dictionary<string, DailyChallenge>(StringComparer.Ordinal);
     private bool _initialized;
     private IReadOnlyList<ChallengeStep>? _completionTranslations;
+    private IReadOnlyList<IReadOnlyDictionary<string, string>>? _hintCatalogs;
 
     public SqliteChallengeRepository(ILocalizationService localizationService)
     {
@@ -724,7 +725,28 @@ public sealed class SqliteChallengeRepository : IChallengeRepository
         {
             previous.CompletionTask = StepTaskIdentity.VisibleKey(previous);
         }
-        target.CompletionTask = StepTaskIdentity.UpgradeLegacyCompletion(previous, _completionTranslations);
+        target.CompletionTask = StepTaskIdentity.UpgradeLegacyCompletion(previous, _completionTranslations, HintCatalogs);
+    }
+
+    private IReadOnlyList<IReadOnlyDictionary<string, string>> HintCatalogs =>
+        _hintCatalogs ??= new[] { "en", "ru", "de" }
+            .Select(LoadHintCatalog)
+            .Where(catalog => catalog.Count > 0)
+            .ToList();
+
+    private static IReadOnlyDictionary<string, string> LoadHintCatalog(string language)
+    {
+        try
+        {
+            using var stream = FileSystem.OpenAppPackageFileAsync($"strings/{language}.json").GetAwaiter().GetResult();
+
+            return JsonSerializer.Deserialize<Dictionary<string, string>>(stream)
+                ?? new Dictionary<string, string>(StringComparer.Ordinal);
+        }
+        catch
+        {
+            return new Dictionary<string, string>(StringComparer.Ordinal);
+        }
     }
 
     private static void HideCompletionThatBelongsToAnotherTask(DailyChallenge challenge, string? appliedHint)

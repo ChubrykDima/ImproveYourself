@@ -49,10 +49,44 @@ public static class ChallengePersonalizer
     {
         var profile = CreateProfile(snapshot);
 
-        return profile is null
-            ? null
-            : string.Format(AppStrings.PersonalFocusTipFormat, profile.Title, profile.Tip);
+        return profile is null ? null : HintFor(profile.Focus);
     }
+
+    public static bool MatchesFocus(string? hint, SelfAssessmentFocus focus) =>
+        !string.IsNullOrEmpty(hint) && hint == HintFor(focus);
+
+    public static SelfAssessmentFocus? MatchHint(
+        string? hint,
+        IEnumerable<IReadOnlyDictionary<string, string>> catalogs)
+    {
+        if (string.IsNullOrEmpty(hint))
+        {
+            return null;
+        }
+
+        foreach (var catalog in catalogs)
+        {
+            if (!catalog.TryGetValue("PersonalFocusTipFormat", out var format))
+            {
+                continue;
+            }
+
+            foreach (var focus in Enum.GetValues<SelfAssessmentFocus>())
+            {
+                if (catalog.TryGetValue($"Focus_{focus}", out var title)
+                    && catalog.TryGetValue($"FocusTip_{focus}", out var tip)
+                    && string.Format(format, title, tip) == hint)
+                {
+                    return focus;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    private static string HintFor(SelfAssessmentFocus focus) =>
+        string.Format(AppStrings.PersonalFocusTipFormat, GetFocusTitle(focus), GetFocusTip(focus));
 
     public static string? GetDayFocus(DailyChallenge challenge)
     {

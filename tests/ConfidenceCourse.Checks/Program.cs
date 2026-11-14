@@ -177,9 +177,19 @@ foreach (var language in labels.Keys)
     step.CompletionTask = StepTaskIdentity.UpgradeLegacyCompletion(step, translations);
     Check(StepTaskIdentity.CompletionBelongsTo(step), $"[{language}] Legacy Russian completion was lost.");
 }
+var hintCatalogs = labels.Keys.Select(language =>
+    (IReadOnlyDictionary<string, string>)JsonSerializer.Deserialize<Dictionary<string, string>>(
+        File.ReadAllText(Path.Combine(AppContext.BaseDirectory, $"strings.{language}.json")))!).ToList();
 other.CompletionTask = recordedHint;
-other.CompletionTask = StepTaskIdentity.UpgradeLegacyCompletion(other, translations);
-Check(StepTaskIdentity.CompletionBelongsTo(other, otherHint), "A changed hint must not reset a migrated assignment.");
+other.CompletionTask = StepTaskIdentity.UpgradeLegacyCompletion(other, translations, hintCatalogs);
+LoadStrings("ru");
+Check(other.CompletionTask == StepTaskIdentity.AssignmentKey(other, SelfAssessmentFocus.ConversationStart),
+    "A legacy hint must migrate to its focus, not to a hint-free key.");
+Check(!StepTaskIdentity.CompletionBelongsTo(other, otherHint), "A changed hint must clear a migrated assignment.");
+Check(StepTaskIdentity.CompletionBelongsTo(other, hint), "The same focus must keep a migrated assignment.");
+LoadStrings("en");
+Check(StepTaskIdentity.CompletionBelongsTo(other, ChallengePersonalizer.CurrentHint(snapshot)),
+    "The same focus must keep completion after a language change.");
 other.CompletionTask = "unrecognized older task";
 Check(StepTaskIdentity.UpgradeLegacyCompletion(other, translations) == other.CompletionTask
       && !StepTaskIdentity.CompletionBelongsTo(other), "An unrelated legacy task must not inherit completion.");
@@ -409,18 +419,54 @@ var splitDay = new DailyChallenge
 var splitStats = ProgressCalculator.BuildWeeklyStats([splitDay], statsToday);
 Check(splitStats.TotalCompletedDays == 1 && splitStats.CategoryBreakdown[StepType.Practice] == 0
     && splitStats.CategoryBreakdown[StepType.Social] == 1, "Categories must use each step's date, not the completed day's date.");
+Check(splitStats.Days[^1].IsCompleted && splitStats.Days[^1].CompletedSteps == 2 && splitStats.Days[^1].TotalSteps == 2,
+    "A finished day fills its column on the completion date.");
+var todayDate = DateHelpers.ParseIsoDate(statsToday);
+var localOffset = DateTimeOffset.Now.Offset;
+var spreadDay = new DailyChallenge
+{
+    Status = ChallengeStatus.Completed,
+    CompletedAt = new DateTimeOffset(todayDate.ToDateTime(new TimeOnly(15, 0)), localOffset).ToString("o"),
+    Date = "2000-01-02",
+    Steps = [
+        new()
+        {
+            Type = StepType.Practice,
+            Status = StepStatus.Completed,
+            CompletedAt = new DateTimeOffset(todayDate.AddDays(-1).ToDateTime(new TimeOnly(15, 0)), localOffset).ToString("o"),
+        },
+        new()
+        {
+            Type = StepType.Social,
+            Status = StepStatus.Completed,
+            CompletedAt = new DateTimeOffset(todayDate.ToDateTime(new TimeOnly(18, 0)), localOffset).ToString("o"),
+        }
+    ]
+};
+var spreadStats = ProgressCalculator.BuildWeeklyStats([spreadDay], statsToday);
+Check(spreadStats.Days[^1].IsCompleted && spreadStats.Days[^1].CompletedSteps == 2 && spreadStats.Days[^1].TotalSteps == 2
+    && spreadStats.Days[^2].CompletedSteps == 0 && !spreadStats.Days[^2].IsCompleted,
+    "Steps of a finished day stay on the day the day was completed.");
+LoadStrings("en");
 repository.AdvanceChallengeStepStatus(storedDay.Date, StepType.Social, StepStatus.Completed);
 var completedSocialStep = repository.GetChallengeForProgramDay(1, snapshot).Steps.Single(step => step.Type == StepType.Social);
-repository.RememberStepTask(completedSocialStep.Id, StepTaskIdentity.AssignmentKey(completedSocialStep));
+repository.RememberStepTask(completedSocialStep.Id, StepTaskIdentity.VisibleKey(completedSocialStep));
 foreach (var language in new[] { "ru", "de", "en" })
 {
     LoadStrings(language);
     testLocalization.SetLanguage(language);
     repository.ReloadBundledContent();
     repository.RelocalizeChallenges();
-    Check(repository.GetChallengeForProgramDay(1, otherSnapshot).Status == ChallengeStatus.Completed
-        && repository.ListCompletedDates().Count == 1,
-        $"[{language}] Completed days must survive language and hint changes.");
+    var kept = repository.GetChallengeForProgramDay(1, snapshot);
+    var keptSocial = kept.Steps.Single(step => step.Type == StepType.Social);
+    Check(kept.Status == ChallengeStatus.Completed
+        && keptSocial.Status == StepStatus.Completed
+        && keptSocial.CompletionTask == StepTaskIdentity.AssignmentKey(keptSocial, SelfAssessmentFocus.ConversationStart),
+        $"[{language}] The same focus must keep the social step across languages.");
+    var changed = repository.GetChallengeForProgramDay(1, otherSnapshot);
+    Check(changed.Steps.Single(step => step.Type == StepType.Social).Status != StepStatus.Completed
+        && changed.Status != ChallengeStatus.Completed,
+        $"[{language}] A different focus must clear the social step.");
 }
 foreach (var language in labels.Keys)
 {

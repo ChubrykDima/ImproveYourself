@@ -151,19 +151,16 @@ public static class ProgressCalculator
             .Select(offset =>
             {
                 var isoDate = reference.AddDays(offset - 6).ToString("yyyy-MM-dd");
-                var completedSteps = challengeList.SelectMany(challenge => challenge.Steps)
-                    .Count(step => step.Type != StepType.Quote && step.Status == StepStatus.Completed
-                        && CompletionDate(step.CompletedAt) == isoDate);
                 var completedDays = challengeList.Where(challenge => challenge.Status == ChallengeStatus.Completed
                     && CompletionDate(challenge.CompletedAt) == isoDate).ToList();
-                var activeChallenges = challengeList.Where(challenge => completedDays.Contains(challenge)
-                    || challenge.Steps.Any(step => step.Type != StepType.Quote && step.Status == StepStatus.Completed
-                        && CompletionDate(step.CompletedAt) == isoDate));
+                var partialDays = challengeList.Where(challenge => challenge.Status != ChallengeStatus.Completed
+                    && challenge.Steps.Any(step => IsStepCompletedOn(step, isoDate))).ToList();
                 return new WeeklyDayStat
                 {
                     Date = isoDate,
-                    CompletedSteps = completedSteps,
-                    TotalSteps = activeChallenges.Sum(challenge => challenge.Steps.Count(step => step.Type != StepType.Quote)),
+                    CompletedSteps = completedDays.Sum(CountVisibleSteps)
+                        + partialDays.Sum(challenge => challenge.Steps.Count(step => IsStepCompletedOn(step, isoDate))),
+                    TotalSteps = completedDays.Sum(CountVisibleSteps) + partialDays.Sum(CountVisibleSteps),
                     IsCompleted = completedDays.Count > 0,
                 };
             })
@@ -199,6 +196,14 @@ public static class ProgressCalculator
 
     public static string? CompletionDate(string? timestamp) =>
         DateTimeOffset.TryParse(timestamp, out var value) ? DateHelpers.ToLocalIsoDate(value) : null;
+
+    private static bool IsStepCompletedOn(ChallengeStep step, string isoDate) =>
+        step.Type != StepType.Quote
+        && step.Status == StepStatus.Completed
+        && CompletionDate(step.CompletedAt) == isoDate;
+
+    private static int CountVisibleSteps(DailyChallenge challenge) =>
+        challenge.Steps.Count(step => step.Type != StepType.Quote);
 
     public static bool IsCompletionBetween(string? timestamp, string startDate, string endDate) =>
         CompletionDate(timestamp) is string date
