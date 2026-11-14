@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="ImproveYourself.Maui.Views.RegisterPage"
              HideSoftInputOnTapped="True"
+             SafeAreaEdges="All"
              BackgroundColor="{StaticResource ColorBackground}">
     <ScrollView x:Name="FormScroll"
                 Orientation="Vertical">

@@ -63,4 +63,11 @@ public static class AccountInput
 
         return null;
     }
+
+    public static string? ValidateLogin(string? email, string? password)
+    {
+        if (string.IsNullOrWhiteSpace(email)) return AppStrings.AuthEmailRequired;
+        if (!EmailPattern.IsMatch(email.Trim())) return AppStrings.AuthEmailInvalid;
+        return string.IsNullOrEmpty(password) ? AppStrings.AuthPasswordRequired : null;
+    }
 }

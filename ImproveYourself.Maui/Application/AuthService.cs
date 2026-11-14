@@ -1,6 +1,7 @@
 using System.Net;
 using System.Net.Http.Json;
 using System.Text.Json;
+using ImproveYourself.Maui.Domain;
 using ImproveYourself.Maui.Persistence;
 using ImproveYourself.Maui.Resources.Strings;
 
@@ -85,7 +86,12 @@ public sealed class AuthService : IAuthService
         string password,
         CancellationToken cancellationToken = default)
     {
-        return await AuthenticateAsync("api/auth/login", email, password, cancellationToken);
+        var validationError = AccountInput.ValidateLogin(email, password);
+        if (validationError is not null)
+        {
+            return new AuthOperationResult(false, validationError);
+        }
+        return await AuthenticateAsync("api/auth/login", email.Trim(), password, cancellationToken);
     }
 
     /// <summary>

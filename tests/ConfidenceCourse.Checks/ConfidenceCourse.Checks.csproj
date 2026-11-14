@@ -6,6 +6,11 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="sqlite-net-pcl" Version="1.9.172" />
+    <PackageReference Include="SQLitePCLRaw.bundle_green" Version="2.1.11" />
+    <Compile Include="../../ImproveYourself.Maui/Persistence/SqliteChallengeRepository.cs" Link="SqliteChallengeRepository.cs" />
+    <Compile Include="../../ImproveYourself.Maui/Persistence/IChallengeRepository.cs" Link="IChallengeRepository.cs" />
+    <Compile Include="../../ImproveYourself.Maui/Application/ILocalizationService.cs" Link="ILocalizationService.cs" />
     <Compile Include="../../ImproveYourself.Maui/Domain/*.cs" Link="Domain/%(Filename)%(Extension)" />
     <Compile Include="../../ImproveYourself.Maui/Resources/Strings/AppStrings.cs" Link="AppStrings.cs" />
     <None Include="../../ImproveYourself.Maui/Resources/Raw/daily-challenges.ru.json" Link="course.ru.json" CopyToOutputDirectory="PreserveNewest" />
