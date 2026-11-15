@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:views="clr-namespace:ImproveYourself.Maui.Views"
              x:Class="ImproveYourself.Maui.Views.ChallengeDetailPage"
              BackgroundColor="{StaticResource ColorBackground}">
-    <ScrollView>
-              <ScrollView.GestureRecognizers>
-                     <TapGestureRecognizer Tapped="OnScreenTapped" />
-              </ScrollView.GestureRecognizers>
+    <views:TapDismissScrollView x:Name="ChallengeScroll" OutsideTapped="OnScreenTapped">
         <VerticalStackLayout Padding="22,16,22,30"
                              Spacing="16">
             <Border Style="{StaticResource CardBorderStyle}"
@@ -113,5 +111,5 @@
 
             <VerticalStackLayout x:Name="StepsContainer" Spacing="12" />
         </VerticalStackLayout>
-    </ScrollView>
+    </views:TapDismissScrollView>
 </ContentPage>

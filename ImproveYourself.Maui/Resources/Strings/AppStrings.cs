@@ -294,6 +294,7 @@ public static class AppStrings
     public static string AuthResetTokenRequired => Get("AuthResetTokenRequired");
     public static string AuthResetTokenInvalid => Get("AuthResetTokenInvalid");
     public static string AuthNewPasswordPlaceholder => Get("AuthNewPasswordPlaceholder");
+    public static string AuthPasswordRequired => Get(nameof(AuthPasswordRequired));
     public static string AuthPasswordTooShort => Get("AuthPasswordTooShort");
     public static string AuthResetConfirmSubmit => Get("AuthResetConfirmSubmit");
     public static string AuthResetPasswordSucceeded => Get("AuthResetPasswordSucceeded");

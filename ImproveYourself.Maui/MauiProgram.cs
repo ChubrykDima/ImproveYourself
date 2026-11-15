@@ -12,6 +12,10 @@ public static class MauiProgram
 
 		var builder = MauiApp.CreateBuilder();
 		builder.UseMauiApp<App>();
+#if ANDROID
+        builder.ConfigureMauiHandlers(handlers =>
+            handlers.AddHandler<Views.TapDismissScrollView, TapDismissScrollViewHandler>());
+#endif
 
 		var sentryDsn = SentryDsnResolver.ResolveDsn();
 		if (!string.IsNullOrWhiteSpace(sentryDsn))

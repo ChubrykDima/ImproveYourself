@@ -31,6 +31,10 @@ public partial class App : Microsoft.Maui.Controls.Application
 		localizationService.Initialize();
 
 		InitializeComponent();
+#if ANDROID
+        Microsoft.Maui.Controls.PlatformConfiguration.AndroidSpecific.Application.SetWindowSoftInputModeAdjust(
+            this, Microsoft.Maui.Controls.PlatformConfiguration.AndroidSpecific.WindowSoftInputModeAdjust.Resize);
+#endif
 		_appState = appState;
 		_backendConnectionService = backendConnectionService;
 		_analyticsClient = analyticsClient;

@@ -116,10 +116,12 @@
 
             <VerticalStackLayout Spacing="12">
                 <Button x:Name="StatisticsButton"
+                        LineBreakMode="WordWrap"
                         Text=""
                         Style="{StaticResource GhostButtonStyle}"
                         Clicked="OnOpenStatisticsClicked" />
                 <Button x:Name="CalendarButton"
+                        LineBreakMode="WordWrap"
                         Text=""
                         Style="{StaticResource GhostButtonStyle}"
                         Clicked="OnOpenProfileClicked" />

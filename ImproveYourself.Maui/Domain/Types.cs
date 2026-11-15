@@ -53,7 +53,7 @@ public sealed class ChallengeStep
 
     public string UpdatedAt { get; set; } = string.Empty;
 
-    // Text of the assignment at the moment it was marked completed.
+    // Stable assignment key; older installations may contain a localized text stamp.
     public string? CompletionTask { get; set; }
 }
 

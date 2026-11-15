@@ -16,6 +16,7 @@ public partial class ChallengeDetailPage : ContentPage
     public ChallengeDetailPage(AppState appState, int programDay)
     {
         InitializeComponent();
+        ChallengeScroll.TapExclusion = QuoteSectionBorder;
         _appState = appState;
         _currentProgramDay = programDay;
 
@@ -157,20 +158,9 @@ public partial class ChallengeDetailPage : ContentPage
         RenderQuoteSection(_challenge);
     }
 
-    private void OnScreenTapped(object? sender, TappedEventArgs e)
+    private void OnScreenTapped(object? sender, EventArgs e)
     {
         if (_challenge is null || !_isQuoteNoteVisible)
-        {
-            return;
-        }
-
-        var tapOnQuote = e.GetPosition(QuoteSectionBorder) is Point point
-            && point.X >= 0
-            && point.Y >= 0
-            && point.X <= QuoteSectionBorder.Width
-            && point.Y <= QuoteSectionBorder.Height;
-
-        if (tapOnQuote)
         {
             return;
         }
