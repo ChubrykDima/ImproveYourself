@@ -10,6 +10,7 @@ namespace ImproveYourself.Maui.Application;
 public sealed class AppState : INotifyPropertyChanged
 {
     private static readonly TimeSpan BackendSyncCooldown = TimeSpan.FromMinutes(3);
+    private readonly SemaphoreSlim _repositoryOperation = new(1, 1);
 
     private readonly IChallengeRepository _challengeRepository;
     private readonly ISettingsService _settingsService;
@@ -310,14 +311,19 @@ public sealed class AppState : INotifyPropertyChanged
         SetCurrentProgramDayInternal(ResolveCurrentProgramDay());
     }
 
-    public void ReloadAfterLanguageChange()
+    public async Task ReloadAfterLanguageChangeAsync()
     {
-        _challengeRepository.ReloadBundledContent();
-        _challengeRepository.RelocalizeChallenges();
-
-        RefreshDerivedState();
-
-        _ = RefreshRemindersAsync();
+        await _repositoryOperation.WaitAsync();
+        try
+        {
+            await Task.Run(_challengeRepository.ReloadBundledContent);
+            RefreshDerivedState();
+            _ = RefreshRemindersAsync();
+        }
+        finally
+        {
+            _repositoryOperation.Release();
+        }
     }
 
     public async Task<bool> SetNotificationsEnabledAsync(bool enabled)
@@ -546,9 +552,12 @@ public sealed class AppState : INotifyPropertyChanged
         }
 
         IsBackendSyncing = true;
+        var repositoryLockHeld = false;
 
         try
         {
+            await _repositoryOperation.WaitAsync(cancellationToken);
+            repositoryLockHeld = true;
             var localChallenges = _challengeRepository.ListAllChallenges();
             var beforeProgramDay = CloudProgress.ResolveProgramDay(localChallenges);
             var hadLocalProgress = CurrentProgramDay > 1
@@ -669,6 +678,10 @@ public sealed class AppState : INotifyPropertyChanged
         }
         finally
         {
+            if (repositoryLockHeld)
+            {
+                _repositoryOperation.Release();
+            }
             IsBackendSyncing = false;
         }
     }

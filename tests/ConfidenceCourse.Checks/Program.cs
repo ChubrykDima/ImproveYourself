@@ -380,12 +380,42 @@ var storedPractice = storedDay.Steps.Single(step => step.Type == StepType.Practi
 repository.AdvanceChallengeStepStatus(storedDay.Date, StepType.Practice, StepStatus.Completed);
 repository.RememberStepTask(storedPractice.Id, StepTaskIdentity.VisibleKey(storedPractice));
 var originalCompletedAt = repository.GetChallengeForProgramDay(1).Steps.Single(step => step.Type == StepType.Practice).CompletedAt;
+// A failure halfway through relocalization must not delete a day or its progress.
+using (var faultConnection = new SQLite.SQLiteConnection(Path.Combine(Microsoft.Maui.Storage.FileSystem.AppDataDirectory, "improveyourself.db")))
+{
+    faultConnection.Execute("CREATE TRIGGER fail_relocalization BEFORE INSERT ON challenge_steps BEGIN SELECT RAISE(ABORT, 'injected failure'); END");
+    testLocalization.SetLanguage("ru");
+    var failed = false;
+    try
+    {
+        repository.ReloadBundledContent();
+    }
+    catch (SQLite.SQLiteException)
+    {
+        failed = true;
+    }
+    finally
+    {
+        faultConnection.Execute("DROP TRIGGER fail_relocalization");
+    }
+
+    Check(failed, "The injected database failure must reach the caller.");
+    var rolledBack = repository.GetChallengeForProgramDay(1);
+    Check(repository.ListAllChallenges().Count == 30
+        && ProgressCalculator.CountCompletedSteps(rolledBack.Steps) == 1
+        && rolledBack.Steps.Single(step => step.Type == StepType.Practice).CompletedAt == originalCompletedAt,
+        "A failed language change must roll back the entire course and its progress.");
+}
 foreach (var language in new[] { "ru", "de", "en" })
 {
     LoadStrings(language);
     testLocalization.SetLanguage(language);
     repository.ReloadBundledContent();
-    repository.RelocalizeChallenges();
+    var localizedBeforeReopen = repository.GetChallengeForProgramDay(1);
+    Check(localizedBeforeReopen.Steps.Single(step => step.Type == StepType.Practice).Description
+        == courses[language][0].Steps.Single(step => step.Type == StepType.Practice).Description
+        && ProgressCalculator.CountCompletedSteps(localizedBeforeReopen.Steps) == 1,
+        $"[{language}] One reload must update persisted content without losing progress.");
     repository = new ImproveYourself.Maui.Persistence.SqliteChallengeRepository(testLocalization);
     var reloaded = repository.GetChallengeForProgramDay(1, snapshot);
     Check(ProgressCalculator.CountCompletedSteps(reloaded.Steps) == 1,
@@ -456,7 +486,6 @@ foreach (var language in new[] { "ru", "de", "en" })
     LoadStrings(language);
     testLocalization.SetLanguage(language);
     repository.ReloadBundledContent();
-    repository.RelocalizeChallenges();
     var kept = repository.GetChallengeForProgramDay(1, snapshot);
     var keptSocial = kept.Steps.Single(step => step.Type == StepType.Social);
     Check(kept.Status == ChallengeStatus.Completed

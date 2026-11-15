@@ -9,4 +9,6 @@ public partial class LoadingPage : ContentPage
         InitializeComponent();
         MessageLabel.Text = message ?? AppStrings.AppPreparing;
     }
+
+    protected override bool OnBackButtonPressed() => true;
 }

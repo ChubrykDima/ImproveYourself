@@ -56,11 +56,12 @@ public partial class App : Microsoft.Maui.Controls.Application
 
 	public void ReopenSettingsAfterLanguageChange() => _reopenSettingsAfterLanguageChange = true;
 
-	public void ReloadNavigation()
+	public async Task ReloadNavigationAsync()
 	{
 		var reopenSettings = _reopenSettingsAfterLanguageChange;
 		_reopenSettingsAfterLanguageChange = false;
-		_appState.ReloadAfterLanguageChange();
+		SetRootPage(new LoadingPage());
+		await _appState.ReloadAfterLanguageChangeAsync();
 
 		if (_appState.OnboardingCompleted)
 		{
@@ -78,9 +79,16 @@ public partial class App : Microsoft.Maui.Controls.Application
 		}
 	}
 
-	private void OnLanguageChanged(object? sender, EventArgs e)
+	private async void OnLanguageChanged(object? sender, EventArgs e)
 	{
-		MainThread.BeginInvokeOnMainThread(ReloadNavigation);
+		try
+		{
+			await MainThread.InvokeOnMainThreadAsync(ReloadNavigationAsync);
+		}
+		catch
+		{
+			SetRootPage(new LoadingPage(AppStrings.AppInitError));
+		}
 	}
 
 	private static NavigationPage BuildNavigationPage(Page rootPage)
