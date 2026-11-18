@@ -136,12 +136,24 @@ public sealed class SqliteChallengeRepository : IChallengeRepository
 
     public void ReloadBundledContent()
     {
+        var previousChallenges = _bundledChallenges;
         _bundledChallenges = LoadBundledChallengesForLanguage(_localizationService.CurrentLanguage);
 
         if (_initialized)
         {
-            SeedBundledChallenges();
-            RelocalizePristineFactoryChallenges();
+            try
+            {
+                _database.RunInTransaction(() =>
+                {
+                    SeedBundledChallenges();
+                    RelocalizePristineFactoryChallenges();
+                });
+            }
+            catch
+            {
+                _bundledChallenges = previousChallenges;
+                throw;
+            }
         }
     }
 
