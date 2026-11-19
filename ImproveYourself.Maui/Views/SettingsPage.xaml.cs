@@ -202,7 +202,6 @@ public partial class SettingsPage : ContentPage
     private async void OnExportAccountClicked(object? sender, EventArgs e)
     {
         ExportAccountButton.IsEnabled = false;
-        string? filePath = null;
 
         try
         {
@@ -214,9 +213,9 @@ public partial class SettingsPage : ContentPage
                 return;
             }
 
-            var fileName = $"improveyourself-export-{DateTime.Now:yyyyMMdd-HHmmss}.json";
-            filePath = Path.Combine(FileSystem.CacheDirectory, fileName);
-            DeletePreviousExports(filePath);
+            var fileName = $"improveyourself-export-{DateTime.Now:yyyyMMdd-HHmmss}-{Guid.NewGuid():N}.json";
+            var filePath = Path.Combine(FileSystem.CacheDirectory, fileName);
+            DeletePreviousExports(FileSystem.CacheDirectory);
             await File.WriteAllTextAsync(filePath, result.JsonPayload);
 
             await Share.Default.RequestAsync(new ShareFileRequest
@@ -231,18 +230,7 @@ public partial class SettingsPage : ContentPage
         }
         finally
         {
-            if (filePath is not null)
-            {
-                try
-                {
-                    File.Delete(filePath);
-                }
-                catch
-                {
-                    // Best-effort cleanup of the temporary export file.
-                }
-            }
-
+            // Share may return before the receiving app reads the file on Android or iOS.
             ExportAccountButton.IsEnabled = true;
         }
     }
@@ -275,30 +263,29 @@ public partial class SettingsPage : ContentPage
         }
     }
 
-    private static void DeletePreviousExports(string currentPath)
+    private static void DeletePreviousExports(string directory)
     {
-        var directory = Path.GetDirectoryName(currentPath);
-
-        if (string.IsNullOrWhiteSpace(directory) || !Directory.Exists(directory))
+        try
         {
-            return;
+            var cutoff = DateTime.UtcNow.AddDays(-1);
+            foreach (var path in Directory.EnumerateFiles(directory, "improveyourself-export-*.json"))
+            {
+                try
+                {
+                    if (File.GetLastWriteTimeUtc(path) < cutoff)
+                    {
+                        File.Delete(path);
+                    }
+                }
+                catch
+                {
+                    // Cleanup must not prevent a new export.
+                }
+            }
         }
-
-        foreach (var path in Directory.EnumerateFiles(directory, "improveyourself-export-*.json"))
+        catch
         {
-            if (string.Equals(path, currentPath, StringComparison.Ordinal))
-            {
-                continue;
-            }
-
-            try
-            {
-                File.Delete(path);
-            }
-            catch
-            {
-                // A previous share sheet may still be holding the file.
-            }
+            // Cache cleanup is best effort.
         }
     }
 
